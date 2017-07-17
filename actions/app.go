@@ -1,21 +1,25 @@
 package actions
 
 import (
+	"log"
+
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/buffalo/middleware"
-
-	"github.com/hyeoncheon/uart/models"
-
-	"github.com/gobuffalo/envy"
-
 	"github.com/gobuffalo/buffalo/middleware/csrf"
 	"github.com/gobuffalo/buffalo/middleware/i18n"
+	"github.com/gobuffalo/envy"
 	"github.com/gobuffalo/packr"
+	"github.com/gorilla/sessions"
+	"github.com/markbates/goth/gothic"
+
+	"github.com/hyeoncheon/uart/models"
 )
 
 // ENV is used to help switch settings based on where the
 // application is being run. Default is "development".
 var ENV = envy.Get("GO_ENV", "development")
+var brandName = envy.Get("BRAND_NAME", "UART")
+var sessionName = envy.Get("SESSION_NAME", "_uart_session")
 var app *buffalo.App
 var T *i18n.Translator
 
@@ -25,8 +29,9 @@ var T *i18n.Translator
 func App() *buffalo.App {
 	if app == nil {
 		app = buffalo.Automatic(buffalo.Options{
-			Env:         ENV,
-			SessionName: "_uart_session",
+			Env:          ENV,
+			SessionName:  sessionName,
+			SessionStore: newSessionStore(ENV),
 		})
 		// Automatically save the session if the underlying
 		// Handler does not return an error.
@@ -55,9 +60,30 @@ func App() *buffalo.App {
 		app.Use(T.Middleware())
 
 		app.GET("/", HomeHandler)
+		app.GET("/login", LoginHandler)
+		app.GET("/logout", LogoutHandler)
 
 		app.ServeFiles("/assets", packr.NewBox("../public/assets"))
+
+		// authentication
+		auth := app.Group("/auth")
+		auth.GET("/{provider}", buffalo.WrapHandlerFunc(gothic.BeginAuthHandler))
+		auth.GET("/{provider}/callback", AuthCallback)
+
+		app.Use(AuthenticateHandler)
+		app.Middleware.Skip(AuthenticateHandler, LoginHandler)
+		app.Middleware.Skip(AuthenticateHandler, LogoutHandler)
 	}
 
 	return app
+}
+
+func newSessionStore(env string) sessions.Store {
+	secret := envy.Get("SESSION_SECRET", "")
+	if env == "production" && secret == "" {
+		log.Fatal("set SESSION_SECRET environtmental variable for security!")
+	}
+	cookieStore := sessions.NewCookieStore([]byte(secret))
+	cookieStore.MaxAge(60 * 60 * 1)
+	return cookieStore
 }

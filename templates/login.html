@@ -1,0 +1,86 @@
+<div class="row">
+	<div class="login-dialog col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1
+		col-sm-10 col-sm-offset-1 col-xs-12 col-xs-offset-0">
+		<div class="col-lg-6 col-md-6 col-sm-7 left-box">
+			<div class="col-md-10 col-md-offset-1">
+				<h3>Welcome to</h3>
+				<h1><%= brand_name %></h1>
+				<div>Use your social ID to sign in or sign up.</div>
+
+				<a href="/auth/gplus" class="list-group-item social-google">
+					<i class="fa fa-google-plus-official"></i> Sign in with Google
+				</a>
+				<a href="/auth/facebook" class="list-group-item social-facebook">
+					<i class="fa fa-facebook-official"></i> Sign in with Facebook
+				</a>
+				<a href="/auth/github" class="list-group-item social-github">
+					<i class="fa fa-github"></i> Sign in with Github
+				</a>
+				<div class="list-group-item">
+					Email signing will coming soon!
+				</div>
+			</div>
+		</div>
+		<div class="col-lg-6 col-md-6 col-sm-5 right-box">
+		</div>
+	</div>
+</div>
+
+<style>
+.login-dialog {
+	font-size: 16px;
+	border: 1px solid #ddd;
+	border-radius: 10px;
+	margin-top: 50px;
+	padding: 0px;
+	min-height: 300px;
+	background-color: #FFF;
+}
+.login-dialog .list-group-item {
+	margin: 5px 0;
+	border-radius: 7px;
+	border: none;
+}
+.login-dialog a.list-group-item {
+	color: #fff;
+}
+.login-dialog a.list-group-item:hover {
+	background-color: slategray;
+	box-shadow: 0 0 4px #18f;
+}
+.login-dialog h1 {
+	margin: 10px 0 10px;
+	font-size: 2.4em;
+}
+.login-dialog h3 {
+	margin: 10px 0 10px;
+	font-size: 1.6em;
+}
+.login-dialog h4 {
+	margin: 10px 0 10px;
+	font-size: 1em;
+}
+.login-dialog > div {
+	min-height: 100%;
+	padding: 30px 0;
+}
+.login-dialog > div.left-box {
+}
+.login-dialog > div.right-box {
+	min-height: 400px;
+	background: url("/assets/images/road.jpg") no-repeat scroll 0 0;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+}
+.social-google {
+	background-color: #dd4b3e;
+}
+.social-facebook {
+	background-color: rgb(59,89,152);
+}
+.social-github {
+	background-color: #000;
+}
+</style>
