@@ -1,15 +1,20 @@
 package actions
 
 import (
+	"errors"
 	"fmt"
+	"net/http"
 	"os"
 
 	"github.com/gobuffalo/buffalo"
+	"github.com/jinzhu/copier"
 	"github.com/markbates/goth"
 	"github.com/markbates/goth/gothic"
 	"github.com/markbates/goth/providers/facebook"
 	"github.com/markbates/goth/providers/github"
 	"github.com/markbates/goth/providers/gplus"
+
+	"github.com/hyeoncheon/uart/models"
 )
 
 func init() {
@@ -31,6 +36,79 @@ func AuthCallback(c buffalo.Context) error {
 	if err != nil {
 		return c.Error(401, err)
 	}
-	// Do something with the user, maybe register them/sign them in
-	return c.Render(200, r.JSON(user))
+	c.Logger().Debugf("raw user data: %v", r.JSON(user))
+
+	credentials := &models.Credentials{}
+	if err := models.SelectByAttrs(credentials, map[string]interface{}{
+		"provider": user.Provider,
+		"user_id":  user.UserID,
+	}); err != nil {
+		return c.Error(501, err)
+	}
+
+	switch len(*credentials) {
+	case 0:
+		member, err := createMember(user)
+		if err != nil {
+			c.Flash().Add("danger", t(c, err.Error()))
+			return c.Redirect(http.StatusTemporaryRedirect, "/login")
+		}
+		c.Flash().Add("success", t(c, "welcome.to.uart"))
+		return loggedIn(c, member)
+	case 1:
+		member, err := (*credentials)[0].GetMember()
+		if err != nil {
+			return c.Error(501, errors.New("SYSTEM ERROR: cannot found member"))
+		}
+		c.Flash().Add("success", t(c, "welcome.back.i.missed.you"))
+		return loggedIn(c, member)
+	default:
+		return c.Error(501, errors.New("SYSTEM ERROR: duplicated credentials"))
+	}
+}
+
+func createMember(user goth.User) (*models.Member, error) {
+	if user.Email == "" {
+		return nil, errors.New("unacceptable.no.email.provided")
+	}
+	if user.Name == "" {
+		return nil, errors.New("unacceptable.no.name.provided")
+	}
+	if user.Provider == "gplus" {
+		if vm, ok := user.RawData["verified_email"].(bool); ok && !vm {
+			return nil, errors.New("unacceptable.email.not.verified")
+		}
+	}
+
+	cred := &models.Credential{}
+	copier.Copy(cred, user)
+	cred.IsAuthorized = true
+	cred.IsPrimary = true
+
+	if user.Provider == "facebook" {
+		if p, ok := user.RawData["picture"].(map[string]interface{}); ok {
+			if d, ok := p["data"].(map[string]interface{}); ok {
+				if s, ok := d["is_silhouette"].(bool); ok && s {
+					cred.AvatarURL = ""
+				}
+			}
+		}
+	}
+	return models.CreateMember(cred), nil
+}
+
+func loggedIn(c buffalo.Context, member *models.Member) error {
+	c.Logger().Debug("--- member --- ", models.Marshal(member))
+	c.Logger().Infof("member %v logged in.", member)
+
+	session := c.Session()
+	session.Set("member_id", member.ID)
+	session.Set("member_name", member.Name)
+	session.Set("member_mail", member.Email)
+	session.Set("member_icon", member.Icon)
+	err := session.Save()
+	if err != nil {
+		c.Logger().Error("SYSTEM ERROR: cannot save session! ", err)
+	}
+	return c.Redirect(http.StatusTemporaryRedirect, "/")
 }

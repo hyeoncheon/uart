@@ -1,15 +1,14 @@
 package models
 
 import (
-	"log"
-
 	"github.com/gobuffalo/envy"
 	"github.com/markbates/pop"
+	"github.com/sirupsen/logrus"
 )
 
-// DB is a connection to your database to be used
-// throughout your application.
 var DB *pop.Connection
+var log = logrus.New().WithField("category", "model")
+var isDev = false
 
 func init() {
 	var err error
@@ -19,4 +18,10 @@ func init() {
 		log.Fatal(err)
 	}
 	pop.Debug = env == "development"
+
+	if env == "development" {
+		log.Logger.Level = logrus.DebugLevel
+		isDev = true
+		log.Info("models initialized with log level ", log.Logger.Level)
+	}
 }

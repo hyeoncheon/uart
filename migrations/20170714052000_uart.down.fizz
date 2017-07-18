@@ -1,0 +1,25 @@
+
+drop_index("access_grants", "access_grants_member_id_idx")
+drop_index("access_grants", "access_grants_app_id_idx")
+drop_table("access_grants")
+
+drop_index("role_maps", "role_maps_role_id_idx")
+drop_index("role_maps", "role_maps_member_id_idx")
+drop_table("role_maps")
+drop_index("roles", "roles_app_id_idx")
+drop_table("roles")
+
+drop_index("apps", "apps_app_key_idx")
+drop_table("apps")
+
+drop_index("team_maps", "team_maps_team_id_idx")
+drop_index("team_maps", "team_maps_member_id_idx")
+drop_table("team_maps")
+drop_index("teams", "teams_member_id_idx")
+drop_table("teams")
+
+drop_index("credentials", "credentials_member_id_idx")
+drop_index("credentials", "credentials_provider_user_id_idx")
+drop_table("credentials")
+
+drop_table("members")
