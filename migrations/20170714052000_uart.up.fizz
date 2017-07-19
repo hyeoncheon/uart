@@ -54,6 +54,7 @@ create_table("roles", func(t) {
 	t.Column("name", "string", {})
 	t.Column("description", "string", {})
 	t.Column("code", "string", {})
+	t.Column("rank", "integer", {})
 })
 add_index("roles", "app_id", {})
 create_table("role_maps", func(t) {

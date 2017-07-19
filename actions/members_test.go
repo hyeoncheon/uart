@@ -4,10 +4,6 @@ func (as *ActionSuite) Test_MembersResource_List() {
 	as.Fail("Not Implemented!")
 }
 
-func (as *ActionSuite) Test_MembersResource_Show() {
-	as.Fail("Not Implemented!")
-}
-
 func (as *ActionSuite) Test_MembersResource_New() {
 	as.Fail("Not Implemented!")
 }

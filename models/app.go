@@ -40,12 +40,13 @@ func (a *App) Grant(member *Member) error {
 }
 
 // AddRole create role for the app.
-func (a *App) AddRole(name, desc, code string) error {
+func (a *App) AddRole(name, desc, code string, rank int) error {
 	return DB.Create(&Role{
 		AppID:       a.ID,
 		Name:        name,
 		Description: desc,
 		Code:        code,
+		Rank:        rank,
 	})
 }
 
@@ -76,7 +77,7 @@ func (a *App) GenerateKeyPair() {
 	a.AppSecret = secret
 }
 
-// GetApp returns a app instance of given name
+// GetAppByName returns a app instance of given name
 func GetAppByName(name string) *App {
 	app := &App{}
 	err := DB.Where("name = ?", name).First(app)
@@ -104,9 +105,12 @@ func NewApp(name, desc, url, callback string, icon ...string) *App {
 func createUARTApp() *App {
 	uart := NewApp("UART", "UART: Identity Management System", "", "", "")
 	DB.Create(uart)
-	uart.AddRole("Admin", "Administrator", "admin")
-	uart.AddRole("User", "Normal User", "user")
-	uart.AddRole("Guest", "Guest, without any privileges", "guest")
+	uart.AddRole("Admin", "Administrator", "admin", 64)
+	uart.AddRole("User Manager", "User Manager", "userman", 8)
+	uart.AddRole("App Manager", "Application Manager", "appman", 4)
+	uart.AddRole("Leader", "Team Leader", "leader", 2)
+	uart.AddRole("User", "Normal User", "user", 1)
+	uart.AddRole("Guest", "Guest, without any privileges", "guest", 0)
 	return uart
 }
 

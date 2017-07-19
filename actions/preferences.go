@@ -9,7 +9,7 @@ import (
 	"github.com/hyeoncheon/uart/models"
 )
 
-func preferencesHandler(c buffalo.Context) error {
+func membershipHandler(c buffalo.Context) error {
 	member := &models.Member{}
 	if c.Value("member_is_admin").(bool) && c.Param("member_id") != "" {
 		member = models.GetMember(c.Param("member_id"))
@@ -23,7 +23,7 @@ func preferencesHandler(c buffalo.Context) error {
 
 	c.Set("member", member)
 	c.Set("credentials", member.Credentials())
-	return c.Render(http.StatusOK, r.HTML("preferences.html"))
+	return c.Render(http.StatusOK, r.HTML("membership.html"))
 }
 
 func currentMember(c buffalo.Context) *models.Member {

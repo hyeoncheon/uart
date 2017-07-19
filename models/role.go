@@ -19,6 +19,7 @@ type Role struct {
 	Name        string    `json:"name" db:"name"`
 	Description string    `json:"description" db:"description"`
 	Code        string    `json:"code" db:"code"`
+	Rank        int       `json:"rank" db:"rank"`
 }
 
 // String returns pretty printable string of this model.

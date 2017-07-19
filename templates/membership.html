@@ -1,0 +1,55 @@
+<div class="row wg phead">
+	<div class="col-md-3 col-xs-12 wg ptitle">
+		<h1><%=t("membership")%></h1>
+	</div>
+	<div class="col-md-9 col-xs-12 wg pnav">
+		<span class="pull-right" data-toggle="popover" data-trigger="hover"
+			data-placement="left" data-content="<%=t("show.and.edit.your.settings")
+			%>"><i class="fa fa-question-circle"></i></span>
+	</div>
+</div>
+
+<div class="row">
+	<%= if (role_guest) { %>
+	<div class="col-md-8 col-md-offset-2 col-xs-12">
+		<div class="alert alert-warning">
+			<%=t("your.current.rank.is.guest")%>
+		</div>
+	</div>
+	<% } %>
+
+	<div class="col-md-6 col-xs-12">
+		<div>
+			<h2 class="wg underline chapter head">
+				<%=t("my.apps")%>
+			</h2>
+			<div>
+			</div>
+		</div>
+
+	</div><div class="col-md-6 col-xs-12"> <!-- ---------------------------- -->
+		<div>
+			<h2 class="wg underline chapter head">
+				<%=t("teams")%>
+				<span class="pull-right"><a class="btn btn-sm btn-primary"><%=
+						t("create.new.team")%></a></span>
+			</h2>
+			<div>
+			</div>
+		</div>
+
+		<div>
+			<h2 class="wg underline chapter head">
+				<%=t("credentials")%>
+				<span class="pull-right"><a class="btn btn-sm btn-default disabled"><%=
+						t("under.construction")%></a></span>
+			</h2>
+			<div class="ui cards">
+				<%= for (credential) in credentials { %><%=
+					partial("credentials/credential.html") %><%
+				} %>
+			</div>
+		</div>
+
+	</div>
+</div>

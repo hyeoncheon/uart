@@ -56,9 +56,10 @@ func AuthCallback(c buffalo.Context) error {
 		c.Flash().Add("success", t(c, "welcome.to.uart"))
 		return loggedIn(c, member)
 	case 1:
-		member, err := (*credentials)[0].GetMember()
-		if err != nil {
-			return c.Error(501, errors.New("SYSTEM ERROR: cannot found member"))
+		member := (*credentials)[0].Owner()
+		if member.Email == "" {
+			c.Flash().Add("danger", t(c, "credential.exist.without.owner"))
+			return c.Redirect(http.StatusTemporaryRedirect, "/login")
 		}
 		c.Flash().Add("success", t(c, "welcome.back.i.missed.you"))
 		return loggedIn(c, member)

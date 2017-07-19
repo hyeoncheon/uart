@@ -28,11 +28,19 @@ func (c Credential) String() string {
 	return c.Provider + "/" + c.UserID
 }
 
-// GetMember find and return associated member instance
-func (c Credential) GetMember() (*Member, error) {
+// Owner find and return associated member instance
+func (c Credential) Owner() *Member {
 	member := &Member{}
 	err := DB.Find(member, c.MemberID)
-	return member, err
+	if err != nil {
+		log.Error("cannot found associated member: ", err)
+	}
+	return member
+}
+
+// OwnerID returns id of associated member
+func (c Credential) OwnerID() uuid.UUID {
+	return c.Owner().ID
 }
 
 // Credentials is an array of Credentials.

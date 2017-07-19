@@ -33,19 +33,13 @@ type Member struct {
 
 // String returns pretty printable string of this model.
 func (m Member) String() string {
+	if m.Email == "" {
+		return "Empty"
+	}
 	return m.Name + " (" + m.Email + ")"
 }
 
-// GetMember picks a member instance with given id.
-func GetMember(id interface{}) *Member {
-	m := &Member{}
-	err := DB.Find(m, id)
-	if err != nil {
-		log.Error("cannot found member with id: ", id)
-		return nil
-	}
-	return m
-}
+//// actions and relational functions below:
 
 // AddRole create mapping object for the member.
 func (m *Member) AddRole(r *Role) error {
@@ -80,6 +74,37 @@ func (m Member) Credentials() *Credentials {
 		log.Error("cannot found associated credentials: ", err)
 	}
 	return creds
+}
+
+// CredentialCount returns count of associated credentials
+func (m Member) CredentialCount() int {
+	count, err := DB.BelongsTo(&m).Count(&Credentials{})
+	if err != nil {
+		log.Error("cannot count associated credentials: ", err)
+	}
+	return count
+}
+
+// AccessGrantCount returns count of associated access grants
+func (m Member) AccessGrantCount() int {
+	count, err := DB.BelongsTo(&m).Count(&AccessGrants{})
+	if err != nil {
+		log.Error("cannot count associated access grants: ", err)
+	}
+	return count
+}
+
+//// Generic model manifulation functions below:
+
+// GetMember picks a member instance with given id.
+func GetMember(id interface{}) *Member {
+	m := &Member{}
+	err := DB.Find(m, id)
+	if err != nil {
+		log.Error("cannot found member with id: ", id)
+		return nil
+	}
+	return m
 }
 
 // CreateMember creates a member with an associated credential
@@ -117,7 +142,7 @@ func CreateMember(cred *Credential) *Member {
 		log.Info("FIRST FLIGHT! register my self ", uart)
 		err = member.AddRole(uart.GetRole("admin"))
 	} else {
-		err = member.AddRole(uart.GetRole("user"))
+		err = member.AddRole(uart.GetRole("guest"))
 	}
 	if err != nil {
 		// TODO admin alert for failed role assignment

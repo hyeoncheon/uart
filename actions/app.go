@@ -83,8 +83,13 @@ func App() *buffalo.App {
 		r = &MembersResource{&buffalo.BaseResource{}}
 		g := app.Resource("/members", r)
 		g.Use(adminHandler)
-		app.GET("/preferences", preferencesHandler)
-		app.GET("/preferences/{member_id}", preferencesHandler)
+		app.GET("/membership/me", membershipHandler)
+		app.GET("/membership/{member_id}", membershipHandler)
+
+		r = &CredentialsResource{&buffalo.BaseResource{}}
+		g = app.Resource("/credentials", r)
+		g.Use(adminHandler)
+		g.Middleware.Skip(adminHandler, r.Destroy)
 	}
 
 	return app

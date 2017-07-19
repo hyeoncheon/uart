@@ -32,8 +32,10 @@ body > .container:not(.page-trailer) {
 	}
 }
 
-.container { // for small screen, default
-	width: 90%;
+@media screen and (max-width: 767px) {
+	.container {
+		margin: 0 10px;
+	}
 }
 
 // special widgets ---------------------------------------------------
