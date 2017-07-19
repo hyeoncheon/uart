@@ -1,18 +1,95 @@
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>Buffalo - Uart</title>
-    <link rel="stylesheet" href="/assets/application.css" type="text/css" media="all" />
-    <meta name="csrf-param" content="authenticity_token" />
-    <meta name="csrf-token" content="<%= authenticity_token %>" />
-  </head>
-  <body>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title><%= brand_name %></title>
+	<link rel="stylesheet" href="/assets/vendor/semantic/semantic.min.css" type="text/css" media="all" />
+	<link rel="stylesheet" href="/assets/application.css" type="text/css" media="all" />
+	<link rel="stylesheet" href="/assets/themes/<%= theme %>/theme.css" type="text/css" media="all" />
+	<link rel="shortcut icon" href="/assets/images/favicon.png">
+	<meta name="csrf-param" content="authenticity_token" />
+	<meta name="csrf-token" content="<%= authenticity_token %>" />
 
-    <div class="container">
-      <%= partial("flash.html") %>
-      <%= yield %>
-    </div>
+	<script src="/assets/application.js" type="text/javascript" charset="utf-8"></script>
+	<script src="/assets/vendor/semantic/semantic.min.js" type="text/javascript" charset="utf-8"></script>
+</head>
+<body>
+	<nav class="navbar navbar-default navbar-fixed-top">
+		<div class="container wide">
+			<div class="navbar-header">
+				<a class="navbar-brand navbar-logo" href="/">
+					<img class="wg icon32" src="/assets/images/hyeoncheon-icon.png">
+				</a>
+				<button type="button" class="navbar-toggle collapsed"
+					data-toggle="collapse" data-target="#main-navbar-collapse"
+					aria-expanded="false">
+					<span class="sr-only">Toggle navigation</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="/"><%= brand_name %></a>
+			</div>
+			<div class="collapse navbar-collapse" id="main-navbar-collapse">
+				<ul class="nav navbar-nav">
+					<%= if ((member_is_admin) || (role_manager)) { %>
+					<li><a href="/apps" class="navbar-link"><%=t("all.apps")%></a></li>
+					<% } %>
+					<%= if ((member_is_admin) || (role_user)) { %>
+					<li><a href="/grants" class="navbar-link"><%=t("my.apps")%></a></li>
+					<li><a href="/docs" class="navbar-link"><%=t("docs")%></a></li>
+					<% } %>
+					<%= if (member_is_admin) { %>
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><%=t("admin")%> <span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a href="<%= membersPath() %>"><i aria-hidden="true" class="fa fa-address-card"></i> <%=t("members")%></a></li>
+							<li role="separator" class="divider"></li>
+							<li><a href=""><i aria-hidden="true" class="fa fa-ticket"></i> <%=t("meta")%>:<%=t("tickets")%></a></li>
+						</ul>
+					</li>
+					<% } %>
+				</ul>
+				<ul class="nav navbar-nav navbar-right" id="member-menu">
+					<%= if (member_id) { %>
+					<li><img class="wg rounded icon32" src="<%= member_icon %>"></li>
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><%= member_name %> <span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><span><i aria-hidden="true" class="fa fa-id-card"></i> <%= member_name %></span></li>
+							<li><span><i aria-hidden="true" class="fa"></i> <%= member_mail %></span></li>
+							<%= if (member_is_admin) { %>
+							<li><span><i aria-hidden="true" class="fa fa-star-o"></i> Administrator</span></li>
+							<% } %>
+							<li role="separator" class="divider"></li>
+							<li><a href="/preferences"><i aria-hidden="true" class="fa fa-address-card"></i> <%=t("preferences")%></a></li>
+							<li role="separator" class="divider"></li>
+							<li><a href="/logout"><i aria-hidden="true" class="fa fa-sign-out"></i> <%=t("logout")%></a></li>
+						</ul>
+					</li>
+					<% } else { %>
+					<li><a href="/login" class="navbar-link"><%=t("login")%></a></li>
+					<% } %>
+				</ul>
+			</div>
+		</div>
+	</nav>
+	<div class="container wide">
+<%= partial("flash.html") %>
 
-    <script src="/assets/application.js" type="text/javascript" charset="utf-8"></script>
-  </body>
+<%= yield %>
+	</div>
+	<div class="page-tailer">
+		<div class="container wide">
+			<div class="col-md-6 col-sm-6 col-xs-12">
+			</div>
+			<div class="col-md-6 col-sm-6 col-xs-12 text-right">
+				UART, the Hyeoncheon Project Member<br>
+				Golang, Buffalo, and many FOSSes under the hood<br>
+			</div>
+		</div>
+	</div>
+</body>
 </html>

@@ -14,7 +14,6 @@ func HomeHandler(c buffalo.Context) error {
 
 // LoginHandler renders login page
 func LoginHandler(c buffalo.Context) error {
-	c.Set("brand_name", brandName)
 	return c.Render(http.StatusOK, r.HTML("login.html"))
 }
 

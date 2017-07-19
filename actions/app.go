@@ -71,8 +71,20 @@ func App() *buffalo.App {
 		auth.GET("/{provider}/callback", AuthCallback)
 
 		app.Use(AuthenticateHandler)
+		app.Middleware.Skip(AuthenticateHandler, HomeHandler)
 		app.Middleware.Skip(AuthenticateHandler, LoginHandler)
 		app.Middleware.Skip(AuthenticateHandler, LogoutHandler)
+
+		app.Use(contextHandler) // just after authentication
+
+		var r buffalo.Resource
+
+		// Admin Resources
+		r = &MembersResource{&buffalo.BaseResource{}}
+		g := app.Resource("/members", r)
+		g.Use(adminHandler)
+		app.GET("/preferences", preferencesHandler)
+		app.GET("/preferences/{member_id}", preferencesHandler)
 	}
 
 	return app

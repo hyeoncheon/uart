@@ -1,0 +1,138 @@
+// standard style for hyeoncheon project.
+@import url('https://fonts.googleapis.com/css?family=PT+Sans|PT+Sans+Narrow|PT+Serif');
+
+// structure and layout
+html,
+body,
+body > .container:not(.page-trailer) {
+	height: 100%;
+	font-family: "PT Sans", MalgunGothic, NanumGothic;
+}
+body > .container:not(.page-trailer) {
+	display: table;
+	margin-top: -60px;
+	padding: 100px 15px 15px 15px;
+	box-sizing: border-box;
+}
+.page-tailer {
+	position: relative;
+	display: flex;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	min-height: 60px;
+	padding-top: 5px;
+	background: darken(rgba(128,128,128, 0.1), 5%);
+	border: 1px solid darken(rgba(128,128,128, 0.1), 15%);
+	border-width: 1px 0 0 0;
+	font-size: 0.9em;
+	color: lighten(rgba(64,64,64, 0.6), 30%);
+	a {
+		color: lighten(rgba(64,64,64, 0.6), 30%);
+	}
+}
+
+.container { // for small screen, default
+	width: 90%;
+}
+
+// special widgets ---------------------------------------------------
+.wg.icon {
+	&24 {
+		height: 24px;
+	}
+	&32 {
+		height: 32px;
+	}
+	&.rounded {
+		border-radius: 16px;
+	}
+}
+
+.wg.phead {
+	margin: 20px 0 15px;
+	& > div {
+		padding: 0;
+		height: 30px;
+	}
+	.wg.ptitle {
+		h1 {
+			margin: 0;
+		}
+	}
+}
+
+.wg {
+	&.underline {
+		border-bottom: 1px solid #ccc;
+	}
+}
+.wg.chapter.head > span > .btn {
+	margin-bottom: 8px;
+}
+
+.overlay-flash {
+	position: fixed;
+	right: 0;
+	top: 55px;
+	width: 600px;
+	z-index: 999;
+	opacity: 0.95;
+	.alert {
+		padding: 10px 15px;
+		display: inline-block;
+		position: absolute;
+		right: 25px;
+		box-shadow: 2px 2px 2px rgba(100,100,100, 0.5);
+		border-width: 0 0 0 3px;
+		border-radius: 0;
+		.close {
+			margin-left: 10px;
+		}
+	}
+}
+
+// override bootstrap styles -----------------------------------------
+.navbar {
+	.navbar-header {
+		.navbar-brand.navbar-logo {
+			.wg.icon {
+				&32 {
+					margin: -6px;
+				}
+				&24 {
+					margin: -2px;
+				}
+			}
+		}
+	}
+	.navbar-nav {
+		.wg.icon {
+			&32 {
+				margin: 4px;
+			}
+			&24 {
+				margin: 8px;
+			}
+		}
+		.dropdown-menu {
+			padding: 0;
+			li > span,
+			li > a {
+				display: block;
+				padding: 3px 10px 3px 3px;
+				white-space: nowrap;
+				i.fa {
+					padding: 5px 5px 5px 0;
+					text-align: center;
+					width: 2em;
+				}
+			}
+			li.divider {
+				margin: 0;
+			}
+		}
+	}
+}
+
+// override default styles

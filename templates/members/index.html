@@ -1,0 +1,43 @@
+<div class="row wg phead">
+	<div class="col-md-3 col-xs-12 wg ptitle">
+		<h1><%=t("members")%></h1>
+	</div>
+	<div class="col-md-9 col-xs-12 wg pnav">
+		<span class="pull-right" data-toggle="popover" data-trigger="hover"
+			data-placement="left" data-content="<%=t("all.registered.members")
+			%>"><i class="fa fa-question-circle"></i></span>
+	</div>
+</div>
+
+<table class="table table-striped table-condensed table-hover">
+	<thead>
+		<tr>
+			<th>&nbsp;</th>
+			<th><%=t("name")%></th>
+			<th><%=t("email")%></th>
+			<th><%=t("status")%></th>
+			<th>&nbsp;</th>
+		</tr>
+	</thead>
+	<tbody>
+		<%= for (member) in members { %><tr class="clickable">
+			<td><%= imageFor(member.Icon, "wg icon24") %></td>
+			<td><a id="link" href="<%= preferencePath({ member_id: member.ID })
+					%>"><%= member.Name %></a></td>
+			<td><%= member.Email %></td>
+			<td><%= member.Status %></td>
+			<td class="unclickable">
+				<div class="pull-right btn-group">
+					<a class="btn btn-xs btn-warning" href="<%=
+						editMemberPath({ member_id: member.ID }) %>"><%=t("edit")%></a>
+					<a class="btn btn-xs btn-danger" href="<%=
+						memberPath({ member_id: member.ID }) %>"
+						data-method="DELETE" data-confirm="<%=t("are.you.sure")
+						%>"><%=t("delete")%></a>
+				</div>
+			</td>
+		</tr><% } %>
+	</tbody>
+</table>
+
+<%= paginate(searchParams) %>

@@ -4,9 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/markbates/pop"
-	"github.com/markbates/validate"
-	"github.com/markbates/validate/validators"
+	"github.com/gobuffalo/buffalo"
 	"github.com/satori/go.uuid"
 )
 
@@ -41,28 +39,16 @@ func (c Credential) GetMember() (*Member, error) {
 type Credentials []Credential
 
 // String is not required by pop and may be deleted
-func (c Credentials) String() string {
-	jc, _ := json.Marshal(c)
+func (cs Credentials) String() string {
+	jc, _ := json.Marshal(cs)
 	return string(jc)
 }
 
-// Validate gets run every time you call a "pop.Validate" method.
-func (c *Credential) Validate(tx *pop.Connection) (*validate.Errors, error) {
-	return validate.Validate(
-		&validators.StringIsPresent{Field: c.Provider, Name: "Provider"},
-		&validators.StringIsPresent{Field: c.UserID, Name: "UserID"},
-		&validators.StringIsPresent{Field: c.Name, Name: "Name"},
-		&validators.StringIsPresent{Field: c.Email, Name: "Email"},
-		&validators.StringIsPresent{Field: c.AvatarURL, Name: "AvatarURL"},
-	), nil
-}
+const credentialsDefaultSort = "created_at"
 
-// ValidateSave gets run every time you call "pop.ValidateSave" method.
-func (c *Credential) ValidateSave(tx *pop.Connection) (*validate.Errors, error) {
-	return validate.NewErrors(), nil
-}
-
-// ValidateUpdate gets run every time you call "pop.ValidateUpdate" method.
-func (c *Credential) ValidateUpdate(tx *pop.Connection) (*validate.Errors, error) {
-	return validate.NewErrors(), nil
+// SearchParams implementation (Searchable)
+func (cs Credentials) SearchParams(c buffalo.Context) SearchParams {
+	sp := newSearchParams(c)
+	sp.DefaultSort = credentialsDefaultSort
+	return sp
 }

@@ -16,6 +16,10 @@ func init() {
 		TemplatesBox: packr.NewBox("../templates"),
 
 		// Add template helpers here:
-		Helpers: render.Helpers{},
+		Helpers: render.Helpers{
+			"imageFor": imageForHelper,
+			"paginate": paginateHelper,
+			"logoFor":  logoForHelper,
+		},
 	})
 }

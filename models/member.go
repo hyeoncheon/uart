@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/gobuffalo/buffalo"
 	"github.com/markbates/pop"
 	"github.com/markbates/validate"
 	"github.com/markbates/validate/validators"
@@ -35,6 +36,17 @@ func (m Member) String() string {
 	return m.Name + " (" + m.Email + ")"
 }
 
+// GetMember picks a member instance with given id.
+func GetMember(id interface{}) *Member {
+	m := &Member{}
+	err := DB.Find(m, id)
+	if err != nil {
+		log.Error("cannot found member with id: ", id)
+		return nil
+	}
+	return m
+}
+
 // AddRole create mapping object for the member.
 func (m *Member) AddRole(r *Role) error {
 	log.Infof("assign role %v to member %v", r, m)
@@ -42,6 +54,32 @@ func (m *Member) AddRole(r *Role) error {
 		MemberID: m.ID,
 		RoleID:   r.ID,
 	})
+}
+
+// GetAppRoleCodes returns the member's role codes of given app.
+func (m Member) GetAppRoleCodes(app string) []string {
+	rs := &Roles{}
+	rmap := &RoleMap{}
+	err := DB.BelongsToThrough(&m, rmap).All(rs)
+	if err != nil {
+		log.Warn("cannot found associated roles: ", err)
+	}
+	roles := []string{}
+	for _, r := range *rs {
+		roles = append(roles, r.Code)
+	}
+	log.Debug("-----------------------------------", roles)
+	return roles
+}
+
+// Credentials returns the member's associated credentials
+func (m Member) Credentials() *Credentials {
+	creds := &Credentials{}
+	err := DB.BelongsTo(&m).All(creds)
+	if err != nil {
+		log.Error("cannot found associated credentials: ", err)
+	}
+	return creds
 }
 
 // CreateMember creates a member with an associated credential
@@ -106,6 +144,15 @@ func (m Members) String() string {
 	return string(jm)
 }
 
+const membersDefaultSort = "created_at"
+
+// SearchParams implementation (Searchable)
+func (m Members) SearchParams(c buffalo.Context) SearchParams {
+	sp := newSearchParams(c)
+	sp.DefaultSort = membersDefaultSort
+	return sp
+}
+
 // Validate gets run every time you call a "pop.Validate" method.
 func (m *Member) Validate(tx *pop.Connection) (*validate.Errors, error) {
 	return validate.Validate(
@@ -113,7 +160,6 @@ func (m *Member) Validate(tx *pop.Connection) (*validate.Errors, error) {
 		&validators.StringIsPresent{Field: m.Email, Name: "Email"},
 		&validators.StringIsPresent{Field: m.Icon, Name: "Icon"},
 		&validators.StringIsPresent{Field: m.Status, Name: "Status"},
-		&validators.StringIsPresent{Field: m.Note, Name: "Note"},
 	), nil
 }
 

@@ -3,12 +3,65 @@ package models
 import (
 	"encoding/json"
 	"math/rand"
+	"strings"
 	"time"
+
+	"github.com/gobuffalo/buffalo"
+	"github.com/hyeoncheon/uart/utils"
 )
+
+// SearchParams is a structure for storing paginated query
+type SearchParams struct {
+	Page        int
+	PerPage     int
+	TotalPages  int
+	Sort        string
+	DefaultSort string
+	FilterKey   string
+	FilterValue interface{}
+}
+
+func newSearchParams(c buffalo.Context) SearchParams {
+	return SearchParams{
+		Page:        utils.GetIntParam(c, "page", 1, 0),
+		PerPage:     utils.GetIntParam(c, "pp", 10, 200),
+		Sort:        utils.GetStringParam(c, "sort", ""),
+		FilterKey:   utils.GetStringParam(c, "filter", ""),
+		FilterValue: utils.GetParam(c, "value"),
+	}
+}
 
 // Searchable Interface
 //
 type Searchable interface {
+	SearchParams(buffalo.Context) SearchParams
+}
+
+// All returns paginated search result for given model.
+func All(c buffalo.Context, m Searchable) (SearchParams, error) {
+	sp := m.SearchParams(c)
+	q := DB.Q().Paginate(sp.Page, sp.PerPage)
+	if sp.Sort != "" {
+		for _, o := range strings.Split(sp.Sort, ",") {
+			q = q.Order(o)
+		}
+	}
+	if sp.DefaultSort != "" {
+		q = q.Order(sp.DefaultSort)
+	}
+	if sp.FilterKey != "" {
+		if s, ok := sp.FilterValue.(string); ok && s != "" {
+			q = q.Where(sp.FilterKey+" LIKE ?", s)
+		} else {
+			q = q.Where(sp.FilterKey+" = ?", sp.FilterValue)
+		}
+	}
+	err := q.All(m)
+	sp.TotalPages = q.Paginator.TotalPages
+	if err != nil {
+		return sp, err
+	}
+	return sp, nil
 }
 
 // SelectByAttrs find and store models with given search attributes

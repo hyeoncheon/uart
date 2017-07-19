@@ -106,6 +106,7 @@ func loggedIn(c buffalo.Context, member *models.Member) error {
 	session.Set("member_name", member.Name)
 	session.Set("member_mail", member.Email)
 	session.Set("member_icon", member.Icon)
+	session.Set("member_roles", member.GetAppRoleCodes("UART"))
 	err := session.Save()
 	if err != nil {
 		c.Logger().Error("SYSTEM ERROR: cannot save session! ", err)

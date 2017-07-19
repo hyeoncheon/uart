@@ -1,0 +1,23 @@
+<div class="row wg phead">
+	<div class="col-md-3 col-xs-12 wg ptitle">
+		<h1><%=t("edit")%> <%= member.Name %></h1>
+	</div>
+	<div class="col-md-9 col-xs-12 wg pnav">
+		<span class="pull-right" data-toggle="popover" data-trigger="hover"
+			data-placement="left" data-content="<%=t("set.member.status.and.notes")
+			%>"><i class="fa fa-question-circle"></i></span>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-9 col-xs-12 pull-right">
+	<%= form_for(member, {action: memberPath({ member_id: member.ID }), method: "PUT"}) { %>
+	<%= partial("members/form.html") %>
+	<a href="<%= membersPath({ member_id: member.ID })
+		%>" class="btn btn-warning" data-confirm="<%=t("are.you.sure")
+		%>"><%=t("cancel")%></a>
+	<% } %>
+	</div>
+	<div class="col-md-3 col-md-offset-0 col-xs-6 col-xs-offset-3">
+	</div>
+</div>
