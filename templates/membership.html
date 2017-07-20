@@ -19,34 +19,47 @@
 	<% } %>
 
 	<div class="col-md-6 col-xs-12">
-		<div>
-			<h2 class="wg underline chapter head">
-				<%=t("my.apps")%>
+		<div class="wg chapter">
+			<h2 class="wg underline head">
+				<%=t("my.roles")%>
+				<span class="pull-right"><a class="btn btn-sm btn-default"><%=
+						t("role.request")%></a></span>
 			</h2>
-			<div>
+			<div class="wg content-box">
+				<%= for (role) in roles { %><%
+partial("roles/rolecard.html") %><%
+				} %>
+			</div>
+		</div>
+
+		<div class="wg chapter">
+			<h2 class="wg underline head">
+				<%=t("my.authorized.apps")%>
+			</h2>
+			<div class="wg content-box">
 			</div>
 		</div>
 
 	</div><div class="col-md-6 col-xs-12"> <!-- ---------------------------- -->
-		<div>
-			<h2 class="wg underline chapter head">
+		<div class="wg chapter">
+			<h2 class="wg underline head">
 				<%=t("teams")%>
-				<span class="pull-right"><a class="btn btn-sm btn-primary"><%=
+				<span class="pull-right"><a class="btn btn-sm btn-default"><%=
 						t("create.new.team")%></a></span>
 			</h2>
-			<div>
+			<div class="wg content-box">
 			</div>
 		</div>
 
-		<div>
-			<h2 class="wg underline chapter head">
+		<div class="wg chapter">
+			<h2 class="wg underline head">
 				<%=t("credentials")%>
 				<span class="pull-right"><a class="btn btn-sm btn-default disabled"><%=
 						t("under.construction")%></a></span>
 			</h2>
-			<div class="ui cards">
+			<div class="wg content-box">
 				<%= for (credential) in credentials { %><%=
-					partial("credentials/credential.html") %><%
+partial("credentials/creditcard.html") %><%
 				} %>
 			</div>
 		</div>

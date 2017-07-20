@@ -1,0 +1,56 @@
+<div class="row wg phead">
+	<div class="col-md-3 col-xs-12 wg ptitle">
+		<h1><%=t("all.applications")%></h1>
+	</div>
+	<div class="col-md-9 col-xs-12 wg pnav">
+		<span class="pull-right" data-toggle="popover" data-trigger="hover"
+			data-placement="left" data-content="<%=t("all.registered.apps")
+			%>"><i class="fa fa-question-circle"></i></span>
+	</div>
+</div>
+
+<div class="row" style="margin-bottom: 10px;">
+	<div class="col-md-12">
+		<p class="pull-right">
+			<a class="btn btn-xs btn-default" href="<%= newAppsPath()
+				%>"><%=t("new.app")%></a>
+		</p>
+	</div>
+</div>
+
+<table class="table table-striped table-condensed table-hover">
+	<thead>
+		<tr>
+			<th>&nbsp;</th>
+			<th><%=t("name")%></th>
+			<th><%=t("description")%></th>
+			<th><%=t("site.url")%></th>
+			<th><%=t("members")%></th>
+			<th><%=t("since")%></th>
+			<th>&nbsp;</th>
+		</tr>
+	</thead>
+	<tbody>
+		<%= for (app) in apps { %><tr class="clickable">
+			<td><%= imageFor(app.AppIcon, "wg icon24") %></td>
+			<td><a id="link" href="<%= appPath({ app_id: app.ID })
+					%>"><%= app.Name %></a></td>
+			<td><%= app.Description %></td>
+			<td><%= app.SiteURL %></td>
+			<td><%= app.GrantCount() %></td>
+			<td><%= timeYYMD(app.CreatedAt) %></td>
+			<td class="unclickable">
+				<div class="pull-right btn-group">
+					<a class="btn btn-xs btn-default" href="<%=
+						editAppPath({ app_id: app.ID }) %>"><%=t("edit")%></a>
+					<a class="btn btn-xs btn-danger" href="<%=
+						appPath({ app_id: app.ID }) %>"
+						data-method="DELETE" data-confirm="<%=t("are.you.sure")
+						%>"><%=t("delete")%></a>
+				</div>
+			</td>
+		</tr><% } %>
+	</tbody>
+</table>
+
+<%= paginate(searchParams) %>

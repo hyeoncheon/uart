@@ -42,27 +42,42 @@ func (m Member) String() string {
 //// actions and relational functions below:
 
 // AddRole create mapping object for the member.
-func (m *Member) AddRole(r *Role) error {
+func (m *Member) AddRole(tx *pop.Connection, r *Role) error {
 	log.Infof("assign role %v to member %v", r, m)
-	return DB.Create(&RoleMap{
+	return tx.Create(&RoleMap{
 		MemberID: m.ID,
 		RoleID:   r.ID,
 	})
 }
 
 // GetAppRoleCodes returns the member's role codes of given app.
-func (m Member) GetAppRoleCodes(app string) []string {
+func (m Member) GetAppRoleCodes(appCode string) []string {
+	roles := []string{}
 	rs := &Roles{}
 	rmap := &RoleMap{}
-	err := DB.BelongsToThrough(&m, rmap).All(rs)
+	app := GetAppByCode(appCode)
+	if app == nil {
+		log.Error("OOPS! cannot found app with given code!")
+		return roles
+	}
+	err := DB.BelongsToThrough(&m, rmap).Where("app_id = ?", app.ID).All(rs)
 	if err != nil {
 		log.Warn("cannot found associated roles: ", err)
 	}
-	roles := []string{}
 	for _, r := range *rs {
 		roles = append(roles, r.Code)
 	}
 	log.Debug("-----------------------------------", roles)
+	return roles
+}
+
+// Roles returns the member's associcated roles
+func (m Member) Roles() *Roles {
+	roles := &Roles{}
+	err := DB.BelongsToThrough(&m, &RoleMap{}).All(roles)
+	if err != nil {
+		log.Error("OOPS! cannot found associated roles:", err)
+	}
 	return roles
 }
 
@@ -71,7 +86,7 @@ func (m Member) Credentials() *Credentials {
 	creds := &Credentials{}
 	err := DB.BelongsTo(&m).All(creds)
 	if err != nil {
-		log.Error("cannot found associated credentials: ", err)
+		log.Error("OOPS! cannot found associated credentials: ", err)
 	}
 	return creds
 }
@@ -94,7 +109,7 @@ func (m Member) AccessGrantCount() int {
 	return count
 }
 
-//// Generic model manifulation functions below:
+//// Generic model operation functions below:
 
 // GetMember picks a member instance with given id.
 func GetMember(id interface{}) *Member {
@@ -130,29 +145,30 @@ func CreateMember(cred *Credential) *Member {
 		if err != nil {
 			return err
 		}
+
+		uart := GetAppByCode("uart")
+		if uart == nil {
+			uart = createUARTApp(tx)
+			log.Info("FIRST FLIGHT! register my self ", uart)
+			err = member.AddRole(tx, uart.GetRole(tx, "admin"))
+		} else {
+			err = member.AddRole(tx, uart.GetRole(tx, "guest"))
+		}
+		if err != nil {
+			// TODO admin alert for failed role assignment
+			log.Errorf("add role to member %v failed: %v", member, err)
+		}
+
+		err = uart.Grant(tx, member)
+		if err != nil {
+			// TODO admin alert for failed access grant
+			log.Errorf("access grant failed for %v to %v: %v", uart, member, err)
+		}
+
 		return nil
 	})
 	if err != nil {
 		log.Error("transaction error while member registration: ", err)
-	}
-
-	uart := GetAppByName("UART")
-	if uart == nil {
-		uart = createUARTApp()
-		log.Info("FIRST FLIGHT! register my self ", uart)
-		err = member.AddRole(uart.GetRole("admin"))
-	} else {
-		err = member.AddRole(uart.GetRole("guest"))
-	}
-	if err != nil {
-		// TODO admin alert for failed role assignment
-		log.Errorf("add role to member %v failed: %v", member, err)
-	}
-
-	err = uart.Grant(member)
-	if err != nil {
-		// TODO admin alert for failed access grant
-		log.Errorf("access grant failed for %v to %v: %v", uart, member, err)
 	}
 
 	log.Infof("new member %v registered successfully.", member)

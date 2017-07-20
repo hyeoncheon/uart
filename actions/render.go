@@ -19,6 +19,7 @@ func init() {
 
 		// Add template helpers here:
 		Helpers: render.Helpers{
+			"shorten":  shortenHelper,
 			"imageFor": imageForHelper,
 			"paginate": paginateHelper,
 			"logoFor":  logoForHelper,

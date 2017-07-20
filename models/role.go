@@ -17,8 +17,8 @@ type Role struct {
 	UpdatedAt   time.Time `json:"updated_at" db:"updated_at"`
 	AppID       uuid.UUID `json:"app_id" db:"app_id"`
 	Name        string    `json:"name" db:"name"`
-	Description string    `json:"description" db:"description"`
 	Code        string    `json:"code" db:"code"`
+	Description string    `json:"description" db:"description"`
 	Rank        int       `json:"rank" db:"rank"`
 }
 
@@ -32,6 +32,12 @@ func (r Role) App() *App {
 	app := &App{}
 	DB.Find(app, r.AppID)
 	return app
+}
+
+// MemberCount returns count of members who has the role
+func (r Role) MemberCount() int {
+	count, _ := DB.BelongsToThrough(&r, &RoleMap{}).Count(&Members{})
+	return count
 }
 
 // Roles is array of Role.

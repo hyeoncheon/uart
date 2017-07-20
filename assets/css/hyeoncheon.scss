@@ -46,6 +46,12 @@ body > .container:not(.page-trailer) {
 	&32 {
 		height: 32px;
 	}
+	&64 {
+		height: 64px;
+	}
+	&128 {
+		height: 128px;
+	}
 	&.rounded {
 		border-radius: 16px;
 	}
@@ -69,8 +75,82 @@ body > .container:not(.page-trailer) {
 		border-bottom: 1px solid #ccc;
 	}
 }
-.wg.chapter.head > span > .btn {
-	margin-bottom: 8px;
+
+.wg.chapter {
+	margin-bottom: 20px;
+	.wg.head {
+		& > span > .btn {
+			margin-bottom: 8px;
+		}
+	}
+	.wg.content-box {
+		display: inline-block;
+	}
+}
+
+.wg.card {
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	padding: 8px;
+	.wg.thumb {
+		float: right;
+		margin: 0 0 3px 3px;
+	}
+	.wg.frame {
+		text-align: center;
+		margin-bottom: 10px;
+	}
+	.wg.title {
+		h3, h4, h5 {
+			margin: 0px;
+		}
+		.wg.meta,
+		.wg.meta > a {
+			color: #888;
+			font-size: 0.8em;
+		}
+	}
+	.wg.content {
+		margin-top: 2px;
+		font-size: 0.95em;
+	}
+	.wg.extra {
+		color: #888;
+		border-top: 1px solid #eee;
+		padding-top: 5px;
+		margin-top: 4px;
+	}
+	&.float2 {
+		float: left;
+		width: 48%;
+		margin: 0.5% 0.5%;
+	}
+}
+
+@media (max-width: 767px) {
+	.wg.card.float2 {
+		width: 200px;
+		margin: 2px;
+	}
+}
+@media (min-width: 768px) { // container effective 720px
+	.wg.card.float2 {
+		width: 236px;
+		margin: 2px;
+	}
+}
+@media (min-width: 992px) { // container effective 940px
+	.wg.card.float2 {
+		width: 184px;
+		margin: 2px;
+	}
+}
+@media (min-width: 1200px) { // container effective 1140px
+	.wg.card.float2 {
+		width: 224px;
+		margin: 2px;
+	}
 }
 
 .overlay-flash {
@@ -135,6 +215,32 @@ body > .container:not(.page-trailer) {
 			}
 		}
 	}
+}
+
+form.horizontal {
+	.form-group {
+		label {
+			width: 23%;
+			text-align: right;
+		}
+		input {
+			display: inline-block;
+			margin-left: 2%;
+			width: 75%;
+		}
+		span.help-block {
+			width: 75%;
+			margin: 0 0 0 25%;
+		}
+	}
+	.buttons {
+		width: 75%;
+		margin: 0 0 0 25%;
+	}
+}
+
+.fa.rect {
+	width: 1em;
 }
 
 // override default styles

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"time"
 
+	"github.com/gobuffalo/buffalo"
 	"github.com/markbates/pop"
 	"github.com/markbates/validate"
 	"github.com/markbates/validate/validators"
@@ -16,6 +17,7 @@ type App struct {
 	CreatedAt   time.Time `json:"created_at" db:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at" db:"updated_at"`
 	Name        string    `json:"name" db:"name"`
+	Code        string    `json:"code" db:"code"`
 	Description string    `json:"description" db:"description"`
 	AppKey      string    `json:"app_key" db:"app_key"`
 	AppSecret   string    `json:"app_secret" db:"app_secret"`
@@ -29,10 +31,12 @@ func (a App) String() string {
 	return a.Name
 }
 
+//// actions and relational functions below:
+
 // Grant create an access grant for given member to the app
-func (a *App) Grant(member *Member) error {
+func (a *App) Grant(tx *pop.Connection, member *Member) error {
 	log.Infof("access grant for app %v to member %v", a, member)
-	return DB.Create(&AccessGrant{
+	return tx.Create(&AccessGrant{
 		AppID:       a.ID,
 		MemberID:    member.ID,
 		AccessCount: 1,
@@ -40,24 +44,31 @@ func (a *App) Grant(member *Member) error {
 }
 
 // AddRole create role for the app.
-func (a *App) AddRole(name, desc, code string, rank int) error {
-	return DB.Create(&Role{
+func (a *App) AddRole(tx *pop.Connection, na, cd, dc string, rk int) error {
+	return tx.Create(&Role{
 		AppID:       a.ID,
-		Name:        name,
-		Description: desc,
-		Code:        code,
-		Rank:        rank,
+		Name:        na,
+		Code:        cd,
+		Description: dc,
+		Rank:        rk,
 	})
 }
 
 // GetRole returns a named role of the app
-func (a *App) GetRole(name string) *Role {
+func (a *App) GetRole(tx *pop.Connection, code string) *Role {
 	r := &Role{}
-	err := DB.BelongsTo(a).Where("name = ?", name).First(r)
+	err := tx.BelongsTo(a).Where("code = ?", code).First(r)
 	if err != nil {
 		return nil
 	}
 	return r
+}
+
+// GetRoles returns array of roles of the app
+func (a *App) GetRoles() *Roles {
+	roles := &Roles{}
+	DB.BelongsTo(a).Order("rank desc").All(roles)
+	return roles
 }
 
 // GenerateKeyPair generates key and secret for the app.
@@ -77,10 +88,18 @@ func (a *App) GenerateKeyPair() {
 	a.AppSecret = secret
 }
 
-// GetAppByName returns a app instance of given name
-func GetAppByName(name string) *App {
+// GrantCount returns count of access grant for the app
+func (a App) GrantCount() int {
+	count, _ := DB.BelongsTo(&a).Count(&AccessGrants{})
+	return count
+}
+
+//// Generic model operation functions below:
+
+// GetAppByCode returns an app instance has given code
+func GetAppByCode(code string) *App {
 	app := &App{}
-	err := DB.Where("name = ?", name).First(app)
+	err := DB.Where("code = ?", code).First(app)
 	if err != nil {
 		return nil
 	}
@@ -88,9 +107,10 @@ func GetAppByName(name string) *App {
 }
 
 // NewApp create an app with given values.
-func NewApp(name, desc, url, callback string, icon ...string) *App {
+func NewApp(name, code, desc, url, callback string, icon ...string) *App {
 	app := &App{
 		Name:        name,
+		Code:        code,
 		Description: desc,
 		SiteURL:     url,
 		CallbackURL: callback,
@@ -102,15 +122,18 @@ func NewApp(name, desc, url, callback string, icon ...string) *App {
 	return app
 }
 
-func createUARTApp() *App {
-	uart := NewApp("UART", "UART: Identity Management System", "", "", "")
+const hyeoncheonIcon = "/assets/images/hyeoncheon-icon.png"
+
+func createUARTApp(tx *pop.Connection) *App {
+	uart := NewApp("UART", "uart", "UART: Identity Management System", "", "")
+	uart.AppIcon = hyeoncheonIcon
 	DB.Create(uart)
-	uart.AddRole("Admin", "Administrator", "admin", 64)
-	uart.AddRole("User Manager", "User Manager", "userman", 8)
-	uart.AddRole("App Manager", "Application Manager", "appman", 4)
-	uart.AddRole("Leader", "Team Leader", "leader", 2)
-	uart.AddRole("User", "Normal User", "user", 1)
-	uart.AddRole("Guest", "Guest, without any privileges", "guest", 0)
+	uart.AddRole(tx, "Admin", "admin", "Administrator", 64)
+	uart.AddRole(tx, "User Manager", "userman", "User Manager", 8)
+	uart.AddRole(tx, "App Manager", "appman", "Application Manager", 4)
+	uart.AddRole(tx, "Leader", "leader", "Team Leader", 2)
+	uart.AddRole(tx, "User", "user", "Normal User", 1)
+	uart.AddRole(tx, "Guest", "guest", "Guest, without any privileges", 0)
 	return uart
 }
 
@@ -123,10 +146,25 @@ func (a Apps) String() string {
 	return string(ja)
 }
 
+const appsDefaultSort = "name"
+
+// SearchParams implementation (Searchable)
+func (a Apps) SearchParams(c buffalo.Context) SearchParams {
+	sp := newSearchParams(c)
+	sp.DefaultSort = appsDefaultSort
+	return sp
+}
+
+const defaultAppIcon = "/assets/images/dummy-app.png"
+
 // Validate gets run every time you call a "pop.Validate" method.
 func (a *App) Validate(tx *pop.Connection) (*validate.Errors, error) {
+	if a.AppIcon == "" {
+		a.AppIcon = defaultAppIcon
+	}
 	return validate.Validate(
 		&validators.StringIsPresent{Field: a.Name, Name: "Name"},
+		&validators.StringIsPresent{Field: a.Code, Name: "Code"},
 		&validators.StringIsPresent{Field: a.AppKey, Name: "AppKey"},
 		&validators.StringIsPresent{Field: a.AppSecret, Name: "AppSecret"},
 		&validators.StringIsPresent{Field: a.SiteURL, Name: "SiteUrl"},

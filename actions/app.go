@@ -90,6 +90,15 @@ func App() *buffalo.App {
 		g = app.Resource("/credentials", r)
 		g.Use(adminHandler)
 		g.Middleware.Skip(adminHandler, r.Destroy)
+
+		// App Resources
+		r = &AppsResource{&buffalo.BaseResource{}}
+		g = app.Resource("/apps", r)
+		g.Use(roleBasedLockHandler)
+
+		r = &RolesResource{&buffalo.BaseResource{}}
+		g = app.Resource("/roles", r)
+		g.Use(roleBasedLockHandler)
 	}
 
 	return app

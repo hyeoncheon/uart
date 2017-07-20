@@ -8,6 +8,13 @@ import (
 	"github.com/hyeoncheon/uart/models"
 )
 
+func shortenHelper(s string, l int) string {
+	if len(s) > l {
+		return s[0:l-3] + "..."
+	}
+	return s
+}
+
 func imageForHelper(url, class string) template.HTML {
 	return template.HTML(`<img class="` + class + `" src="` + url + `">`)
 }

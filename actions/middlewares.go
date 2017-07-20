@@ -60,6 +60,27 @@ func adminHandler(next buffalo.Handler) buffalo.Handler {
 	}
 }
 
+func roleBasedLockHandler(next buffalo.Handler) buffalo.Handler {
+	return func(c buffalo.Context) error {
+		if val, ok := c.Value("member_is_admin").(bool); !ok || !val {
+			pos := strings.Split(c.Value("current_path").(string), "/")[1]
+			perms := map[string]string{
+				"apps": "appman",
+			}
+			if p := perms[pos]; p != "" {
+				if c.Value("role_"+p) == nil {
+					c.Logger().Warnf("%v has no permission for %v",
+						currentMember(c), pos)
+					c.Flash().Add("danger", t(c, "you.dont.have.permission"))
+					return c.Redirect(http.StatusTemporaryRedirect, "/")
+				}
+				c.Logger().Infof("user aquires permission %v for %v.", p, pos)
+			}
+		}
+		return next(c)
+	}
+}
+
 //helpers
 
 func languageSelector(c buffalo.Context) string {

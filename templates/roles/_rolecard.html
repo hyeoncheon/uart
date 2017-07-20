@@ -1,0 +1,15 @@
+<div class="wg card float2">
+	<div class="wg thumb">
+		<i class="fa fa-star"></i>
+	</div>
+	<div class="wg title">
+		<% let app = role.App() %>
+		<b><%= role.Name %></b>@<%= if (role.Code == "admin") {
+			%><a href="<%= appPath({app_id: app.ID}) %>"><%= role.App() %></a><%
+			} else {
+			%><%= role.App() %><% } %>
+		<div class="wg meta">
+			<%= role.Description %>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,186 @@
+<div class="row wg phead">
+	<div class="col-md-3 col-xs-12 wg ptitle">
+		<h1><%=t("app")%> <%= app.Name %></h1>
+	</div>
+	<div class="col-md-9 col-xs-12 wg pnav">
+		<span class="pull-right" data-toggle="popover" data-trigger="hover"
+			data-placement="left" data-content="<%=t("app.details")
+			%>"><i class="fa fa-question-circle"></i></span>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-3 col-xs-12">
+		<div class="wg card">
+			<div class="wg frame"><%= imageFor(app.AppIcon, "wg icon128") %></div>
+			<div class="wg title">
+				<h3><%= app.Name %></h3>
+				<div class="wg meta">
+					<div><%=t("since")%>: <%= timeYYMD(app.CreatedAt) %></div>
+					<div><%=t("code")%>: <%= app.Code %></div>
+					<div><%=t("members")%>: <%= app.GrantCount() %></div>
+				</div>
+			</div>
+			<div class="wg content">
+			</div>
+		</div>
+	</div>
+
+	<div class="col-md-9 col-xs-12">
+		<p class="btn-group pull-right">
+		<a class="btn btn-xs btn-default" href="<%= appsPath()
+			%>"><i class="fa fa-arrow-left"></i></a>
+		<a class="btn btn-xs btn-default" href="<%= editAppPath({ app_id: app.ID })
+			%>"><%=t("edit")%></a>
+		<a class="btn btn-xs btn-danger" href="<%= appPath({ app_id: app.ID })
+			%>" data-method="DELETE" data-confirm="<%=t("are.you.sure")
+			%>"><%=t("delete")%></a>
+		</p>
+
+		<div>
+			<h3><%= app.Description %></h3>
+			<table class="table table-striped table-condensed">
+				<tbody>
+				<tr>
+					<td><%=t("site.url")%></td>
+					<td><%= app.SiteURL %></td>
+				</tr>
+				<tr>
+					<td><%=t("callback.url")%></td>
+					<td><%= app.CallbackURL %></td>
+				</tr>
+				<tr>
+					<td><%=t("app.key")%></td>
+					<td><%= app.AppKey %></td>
+				</tr>
+				<tr>
+					<td><%=t("app.secret")%></td>
+					<td><%= app.AppSecret %></td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<div>
+			<p class="btn-group pull-right">
+				<a class="btn btn-xs btn-default" data-toggle="modal"
+					data-target="#newRole"><%=t("new.role")%></a>
+			</p>
+			<h3><%=t("roles")%></h3>
+			<table class="table table-striped table-condensed">
+				<thead>
+				<tr>
+					<th><%=t("name")%></th>
+					<th><%=t("description")%></th>
+					<th><%=t("code")%></th>
+					<th><%=t("rank")%></th>
+					<th><%=t("members")%></th>
+					<th>&nbsp;</th>
+				</tr>
+				</thead>
+				<tbody>
+				<%= for (role) in roles { %>
+				<tr>
+					<td><%= role.Name %></td>
+					<td><%= role.Description %></td>
+					<td><%= role.Code %></td>
+					<td><%= role.Rank %></td>
+					<td><%= role.MemberCount() %></td>
+					<td>
+						<p class="pull-right btn-group">
+							<a class="btn btn-xs btn-default" data-toggle="modal"
+								data-target="#editRole" data-roleid="<%=
+								role.ID %>" data-appid="<%=
+								role.AppID %>" data-rname="<%=
+								role.Name %>" data-rcode="<%=
+								role.Code %>" data-rdesc="<%=
+								role.Description %>" data-rrank="<%=
+								role.Rank %>"><%=t("edit")%></a>
+							<a class="btn btn-xs btn-danger" href="<%=
+								rolePath({ role_id: role.ID })
+								%>" data-method="DELETE" data-confirm="<%=t("are.you.sure")
+								%>"><%=t("delete")%></a>
+						</p>
+					</td>
+				</tr>
+				<% } %>
+				</tbody>
+			</table>
+		</div>
+
+
+
+
+
+
+
+
+	</div>
+</div>
+
+
+
+
+<!-- Modal for Role -->
+<div class="modal fade" id="newRole" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title"><%=t("new.role")%></h4>
+			</div>
+<%= form_for(role, {action: rolesPath(), method: "POST", errors: errors, class: "horizontal"}) { %>
+			<div class="modal-body">
+<%= partial("roles/form.html") %>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-warning" data-dismiss="modal" aria-label="Close"><%=t("close")%></button>
+				<button class="btn btn-success" style="width: 120px" role="submit"><%=t("add")%></button>
+			</div>
+<% } %>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!-- Modal for Role -->
+<div class="modal fade" id="editRole" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title"><%=t("new.role")%></h4>
+			</div>
+<%= form_for(role, {action: rolePath({ role_id: role.ID }), method: "PUT", class:"horizontal"}) { %>
+			<div class="modal-body">
+<%= partial("roles/form.html") %>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-warning" data-dismiss="modal" aria-label="Close"><%=t("close")%></button>
+				<button class="btn btn-success" style="width: 120px" role="submit"><%=t("update")%></button>
+			</div>
+<% } %>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<script>
+$(document).ready(function() {
+	$('#editRole').on('show.bs.modal', function (event) {
+		var button = $(event.relatedTarget);
+		var roleid = button.data('roleid');
+		var appid = button.data('appid');
+		var rname = button.data('rname');
+		var rcode = button.data('rcode');
+		var rdesc = button.data('rdesc');
+		var rrank = button.data('rrank');
+		var modal = $(this);
+		modal.find('.modal-title').text('Edit ' + rname);
+		modal.find('form#role-form').attr('action', '/roles/'+roleid);
+		modal.find('.modal-body input#role-AppID').val(appid);
+		modal.find('.modal-body input#role-Name').val(rname);
+		modal.find('.modal-body input#role-Code').val(rcode);
+		modal.find('.modal-body input#role-Description').val(rdesc);
+		modal.find('.modal-body input#role-Rank').val(rrank);
+	});
+});
+</script>

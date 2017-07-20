@@ -1,0 +1,24 @@
+<div class="row wg phead">
+	<div class="col-md-3 col-xs-12 wg ptitle">
+		<h1><%=t("edit.app")%></h1>
+	</div>
+	<div class="col-md-9 col-xs-12 wg pnav">
+		<span class="pull-right" data-toggle="popover" data-trigger="hover"
+			data-placement="left" data-content="<%=t("all.registered.apps")
+			%>"><i class="fa fa-question-circle"></i></span>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-8 col-md-offset-2">
+	<%= form_for(app, {action: appPath({ app_id: app.ID }),
+		method: "PUT", class: "horizontal"}) { %>
+	<%= partial("apps/form.html") %>
+	<div class="buttons">
+		<button class="btn btn-success" role="submit"><%=t("save")%></button>
+		<a class="btn btn-warning" href="<%= appsPath()
+			%>" data-confirm="<%=t("are.you.sure")%>"><%=t("cancel")%></a>
+	</div>
+	<% } %>
+	</div>
+</div>
