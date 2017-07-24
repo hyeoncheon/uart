@@ -77,6 +77,16 @@ func App() *buffalo.App {
 
 		app.Use(contextHandler) // just after authentication
 
+		// oauth provider
+		oauth := app.Group("/oauth")
+		oauth.GET("/authorize", authorizeHandler)
+		oauth.POST("/token", tokenHandler)
+		oauth.Middleware.Skip(csrf.Middleware, tokenHandler)
+		oauth.Middleware.Skip(AuthenticateHandler, tokenHandler)
+		app.GET("/userinfo", userInfoHandler)
+		app.Middleware.Skip(csrf.Middleware, userInfoHandler)
+		app.Middleware.Skip(AuthenticateHandler, userInfoHandler)
+
 		var r buffalo.Resource
 
 		// Admin Resources

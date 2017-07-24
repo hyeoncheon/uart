@@ -12,5 +12,6 @@
 
 /debug
 /.vscode/
+/examples/client
 
 database.yml

@@ -12,6 +12,7 @@ func AuthenticateHandler(next buffalo.Handler) buffalo.Handler {
 	return func(c buffalo.Context) error {
 		memberID := c.Session().Get("member_id")
 		if memberID == nil {
+			c.Session().Set("origin", c.Request().RequestURI)
 			c.Logger().Warn("unauthorized access to ", c.Request().RequestURI)
 			c.Flash().Add("danger", t(c, "login.required"))
 			return c.Redirect(http.StatusTemporaryRedirect, "/login")

@@ -19,6 +19,15 @@ func LoginHandler(c buffalo.Context) error {
 
 // LogoutHandler clears all session information and redirects user to root.
 func LogoutHandler(c buffalo.Context) error {
+	// workaround for goth logout feature. originally gothic.Logout(res, req)
+	for _, p := range []string{"gplus", "facebook", "github"} {
+		s, err := app.SessionStore.Get(c.Request(), p+"_gothic_session")
+		if err == nil {
+			s.Options.MaxAge = -1
+			s.Values = make(map[interface{}]interface{})
+			s.Save(c.Request(), c.Response())
+		}
+	}
 	session := c.Session()
 	session.Clear()
 	session.Save()

@@ -106,6 +106,15 @@ func GetAppByCode(code string) *App {
 	return app
 }
 
+func GetAppByKey(key string) *App {
+	app := &App{}
+	err := DB.Where("app_key = ?", key).First(app)
+	if err != nil {
+		return nil
+	}
+	return app
+}
+
 // NewApp create an app with given values.
 func NewApp(name, code, desc, url, callback string, icon ...string) *App {
 	app := &App{

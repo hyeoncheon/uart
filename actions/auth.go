@@ -103,6 +103,12 @@ func loggedIn(c buffalo.Context, member *models.Member) error {
 	c.Logger().Infof("member %v logged in.", member)
 
 	session := c.Session()
+	origin := session.Get("origin")
+	session.Delete("origin")
+	c.Logger().Infof("origin of authentication is %v", origin)
+	if origin == "" {
+		origin = "/"
+	}
 	session.Set("member_id", member.ID)
 	session.Set("member_name", member.Name)
 	session.Set("member_mail", member.Email)
@@ -112,5 +118,5 @@ func loggedIn(c buffalo.Context, member *models.Member) error {
 	if err != nil {
 		c.Logger().Error("SYSTEM ERROR: cannot save session! ", err)
 	}
-	return c.Redirect(http.StatusTemporaryRedirect, "/")
+	return c.Redirect(http.StatusTemporaryRedirect, origin.(string))
 }
