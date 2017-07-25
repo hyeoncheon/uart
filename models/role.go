@@ -20,6 +20,7 @@ type Role struct {
 	Code        string    `json:"code" db:"code"`
 	Description string    `json:"description" db:"description"`
 	Rank        int       `json:"rank" db:"rank"`
+	IsReadonly  bool      `json:"is_readonly" db:"is_readonly"`
 }
 
 // String returns pretty printable string of this model.
@@ -71,6 +72,7 @@ func (r *Role) ValidateUpdate(tx *pop.Connection) (*validate.Errors, error) {
 
 // RoleMap is a mapping object for role and member.
 type RoleMap struct {
+	ID        int       `json:"id" db:"id"`
 	CreatedAt time.Time `json:"created_at" db:"created_at"`
 	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
 	RoleID    uuid.UUID `json:"role_id" db:"role_id"`

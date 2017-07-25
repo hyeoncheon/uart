@@ -41,6 +41,33 @@ func (m Member) String() string {
 
 //// actions and relational functions below:
 
+// HaveGrantFor checks if the member have granted for given app.
+// additionally it increase reference count as access count.
+func (m Member) HaveGrantFor(appID uuid.UUID) bool {
+	grant := &AccessGrant{}
+	err := DB.Where("member_id = ? AND app_id = ?", m.ID, appID).
+		Where("is_revoked = ?", false).
+		First(grant)
+	if err != nil {
+		log.Error("error while getting grant apps.", err)
+		return false
+	}
+	grant.AccessCount++
+	DB.Save(grant)
+	return true
+}
+
+// GrantedApps returns the member's associcated granted apps
+func (m Member) GrantedApps() *Apps {
+	apps := &Apps{}
+	err := DB.BelongsToThrough(&m, &AccessGrants{}).
+		Where("is_revoked = ?", false).All(apps)
+	if err != nil {
+		log.Error("OOPS! cannot found associated apps:", err)
+	}
+	return apps
+}
+
 // AddRole create mapping object for the member.
 func (m *Member) AddRole(tx *pop.Connection, r *Role) error {
 	log.Infof("assign role %v to member %v", r, m)
@@ -48,6 +75,22 @@ func (m *Member) AddRole(tx *pop.Connection, r *Role) error {
 		MemberID: m.ID,
 		RoleID:   r.ID,
 	})
+}
+
+// RemoveRole remove rolemap between the member and given role.
+func (m *Member) RemoveRole(tx *pop.Connection, r *Role) error {
+	log.Debugf("decouple role %v from member %v.", r, m)
+	rolemap := &RoleMap{}
+	err := tx.BelongsTo(m).Where("role_id = ?", r.ID).First(rolemap)
+	if err != nil {
+		log.Errorf("cannot found rolemap for %v+%v(%v+%v)", m, r, m.ID, r.ID)
+		return err
+	}
+	err = tx.Destroy(rolemap)
+	if err != nil {
+		log.Errorf("cannot delete the rolemap for %v: %v", rolemap.ID, err)
+	}
+	return err
 }
 
 // GetAppRoleCodes returns the member's role codes of given app.

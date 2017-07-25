@@ -66,7 +66,8 @@ func roleBasedLockHandler(next buffalo.Handler) buffalo.Handler {
 		if val, ok := c.Value("member_is_admin").(bool); !ok || !val {
 			pos := strings.Split(c.Value("current_path").(string), "/")[1]
 			perms := map[string]string{
-				"apps": "appman",
+				"apps":  "appman",
+				"roles": "appman",
 			}
 			if p := perms[pos]; p != "" {
 				if c.Value("role_"+p) == nil {

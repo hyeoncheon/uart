@@ -1,0 +1,53 @@
+<div class="row">
+<div class="center-dialog col-md-8 col-md-offset-2">
+	<div class="col-md-8 message">
+		<h1 class="title">Grant <%= app.Name %>?</h1>
+		<table class="table table-transparent"><tbody>
+			<tr><td class="tlabel">Name</td><td><%= app.Name %></td></tr>
+			<tr><td class="tlabel">Description</td><td><%= app.Description %></td></tr>
+			<tr><td class="tlabel">URL</td><td><%= app.SiteURL %></td></tr>
+			<tr><td class="tlabel">Requested Scope</td><td><%= scope %></td></tr>
+		</tbody></table>
+	</div>
+	<div class="col-md-4 message">
+		<%= imageFor(app.AppIcon, "pull-right") %>
+	</div>
+	<div class="row">
+	<div class="col-md-12 bottom text-right">
+		<a class="btn btn-danger" href="<%= grantPath({ key: appkey })
+			%>"><%=t("grant")%></a>
+		<a class="btn btn-warning"><%=t("cancel")%></a>
+	</div>
+	</div>
+</div>
+</div>
+
+<style>
+.center-dialog {
+	font-size: 16px;
+	border: 1px solid #ddd;
+	border-radius: 10px;
+	margin-top: 50px;
+	padding: 15px 20px;
+	min-height: 300px;
+	background-color: #FFF;
+}
+.center-dialog h1 {
+	margin: 10px 0 10px;
+	font-size: 2.4em;
+}
+.center-dialog > .message {
+	min-height: 250px;
+	padding: 0 0 20px 0;
+}
+.table.table-transparent,
+.table.table-transparent tr,
+.table.table-transparent tr td {
+	background: transparent;
+	border: none;
+}
+.table.table-transparent td.tlabel {
+	text-align: right;
+	padding-right: 20px;
+}
+</style>

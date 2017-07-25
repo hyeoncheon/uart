@@ -43,18 +43,30 @@ func (a *App) Grant(tx *pop.Connection, member *Member) error {
 	})
 }
 
+// Revoke decouples the app and given member, returns database status
+func (a *App) Revoke(tx *pop.Connection, member *Member) error {
+	log.Infof("revoke access to %v by %v", a.Name, member.Name)
+	grant := &AccessGrant{}
+	err := tx.BelongsTo(member).Where("app_id = ?", a.ID).First(grant)
+	if err != nil {
+		log.Errorf("cannot found grant for app %v to %v: %v", a, member, err)
+	}
+	return tx.Destroy(grant)
+}
+
 // AddRole create role for the app.
-func (a *App) AddRole(tx *pop.Connection, na, cd, dc string, rk int) error {
+func (a *App) AddRole(tx *pop.Connection, n, c, d string, r int, o bool) error {
 	return tx.Create(&Role{
 		AppID:       a.ID,
-		Name:        na,
-		Code:        cd,
-		Description: dc,
-		Rank:        rk,
+		Name:        n,
+		Code:        c,
+		Description: d,
+		Rank:        r,
+		IsReadonly:  o,
 	})
 }
 
-// GetRole returns a named role of the app
+// GetRole returns a role with given code of the app or nil.
 func (a *App) GetRole(tx *pop.Connection, code string) *Role {
 	r := &Role{}
 	err := tx.BelongsTo(a).Where("code = ?", code).First(r)
@@ -68,6 +80,24 @@ func (a *App) GetRole(tx *pop.Connection, code string) *Role {
 func (a *App) GetRoles() *Roles {
 	roles := &Roles{}
 	DB.BelongsTo(a).Order("rank desc").All(roles)
+	return roles
+}
+
+// MemberRoles returns roles of the app which is associated with given member
+func (a App) MemberRoles(memberID interface{}) *Roles {
+	member := &Member{}
+	roles := &Roles{}
+	err := DB.Find(member, memberID)
+	if err != nil {
+		log.Errorf("cannot found member with given id %v: %v", memberID, err)
+		return roles
+	}
+	DB.BelongsToThrough(member, &RoleMap{}).
+		Where("roles.app_id = ?", a.ID).All(roles)
+	var rs = []string{}
+	for _, r := range *roles {
+		rs = append(rs, r.Name)
+	}
 	return roles
 }
 
@@ -106,6 +136,7 @@ func GetAppByCode(code string) *App {
 	return app
 }
 
+// GetAppByKey returns an app instance has given app_key or nil.
 func GetAppByKey(key string) *App {
 	app := &App{}
 	err := DB.Where("app_key = ?", key).First(app)
@@ -137,12 +168,12 @@ func createUARTApp(tx *pop.Connection) *App {
 	uart := NewApp("UART", "uart", "UART: Identity Management System", "", "")
 	uart.AppIcon = hyeoncheonIcon
 	DB.Create(uart)
-	uart.AddRole(tx, "Admin", "admin", "Administrator", 64)
-	uart.AddRole(tx, "User Manager", "userman", "User Manager", 8)
-	uart.AddRole(tx, "App Manager", "appman", "Application Manager", 4)
-	uart.AddRole(tx, "Leader", "leader", "Team Leader", 2)
-	uart.AddRole(tx, "User", "user", "Normal User", 1)
-	uart.AddRole(tx, "Guest", "guest", "Guest, without any privileges", 0)
+	uart.AddRole(tx, "Admin", "admin", "UART Administrator", 64, true)
+	uart.AddRole(tx, "User Manager", "userman", "UART User Manager", 32, true)
+	uart.AddRole(tx, "App Manager", "appman", "UART App Manager", 16, true)
+	uart.AddRole(tx, "Leader", "leader", "Team Leader", 2, true)
+	uart.AddRole(tx, "User", "user", "Normal User", 1, true)
+	uart.AddRole(tx, "Guest", "guest", "Guest, No Privileges", 0, true)
 	return uart
 }
 

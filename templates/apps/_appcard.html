@@ -1,0 +1,23 @@
+<div class="wg card float2">
+	<div class="wg thumb">
+		<i class="fa fa-asterisk"></i>
+	</div>
+	<div class="wg title">
+		<b><a href="<%= appPath({app_id: app.ID}) %>"><%= app.Name %></a></b>
+		<div class="wg meta">
+			<div><%= app.Description %></div>
+			<div><%= for (r) in app.MemberRoles(member_id) { %>
+			<%= r.Name %>
+			<% } %></div>
+		</div>
+	</div>
+	<div class="wg extra">
+		<% let rolecount = len(app.MemberRoles(member_id)) %>
+		<p class="btn-group">
+		<a class="btn btn-xs btn-danger<%=
+		if ((app.Code == "uart") || (rolecount > 0)) { %> disabled<%
+			} %>" href="<%= revokePath({ role_id: role.ID })
+			%>" data-confirm="<%=t("are.you.sure")%>"><%=t("revoke")%></a>
+		</p>
+	</div>
+</div>

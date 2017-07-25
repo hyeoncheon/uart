@@ -18,7 +18,7 @@
 				<div class="wg meta">
 					<div><%=t("since")%>: <%= timeYYMD(app.CreatedAt) %></div>
 					<div><%=t("code")%>: <%= app.Code %></div>
-					<div><%=t("members")%>: <%= app.GrantCount() %></div>
+					<div><%=t("grants")%>: <%= app.GrantCount() %></div>
 				</div>
 			</div>
 			<div class="wg content">
@@ -30,9 +30,11 @@
 		<p class="btn-group pull-right">
 		<a class="btn btn-xs btn-default" href="<%= appsPath()
 			%>"><i class="fa fa-arrow-left"></i></a>
-		<a class="btn btn-xs btn-default" href="<%= editAppPath({ app_id: app.ID })
+		<a class="btn btn-xs btn-default<%= if (app.Code == "uart") {
+			%> disabled<% } %>" href="<%= editAppPath({ app_id: app.ID })
 			%>"><%=t("edit")%></a>
-		<a class="btn btn-xs btn-danger" href="<%= appPath({ app_id: app.ID })
+		<a class="btn btn-xs btn-danger<%= if (app.Code == "uart") {
+			%> disabled<% } %>" href="<%= appPath({ app_id: app.ID })
 			%>" data-method="DELETE" data-confirm="<%=t("are.you.sure")
 			%>"><%=t("delete")%></a>
 		</p>
@@ -88,7 +90,8 @@
 					<td><%= role.MemberCount() %></td>
 					<td>
 						<p class="pull-right btn-group">
-							<a class="btn btn-xs btn-default" data-toggle="modal"
+							<a class="btn btn-xs btn-default<%= if (role.IsReadonly) {
+								%> disabled<% } %>" data-toggle="modal"
 								data-target="#editRole" data-roleid="<%=
 								role.ID %>" data-appid="<%=
 								role.AppID %>" data-rname="<%=
@@ -96,7 +99,8 @@
 								role.Code %>" data-rdesc="<%=
 								role.Description %>" data-rrank="<%=
 								role.Rank %>"><%=t("edit")%></a>
-							<a class="btn btn-xs btn-danger" href="<%=
+							<a class="btn btn-xs btn-danger<%= if (role.IsReadonly) {
+								%> disabled<% } %>" href="<%=
 								rolePath({ role_id: role.ID })
 								%>" data-method="DELETE" data-confirm="<%=t("are.you.sure")
 								%>"><%=t("delete")%></a>

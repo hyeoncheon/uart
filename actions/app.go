@@ -105,10 +105,13 @@ func App() *buffalo.App {
 		r = &AppsResource{&buffalo.BaseResource{}}
 		g = app.Resource("/apps", r)
 		g.Use(roleBasedLockHandler)
+		app.GET("/grant/{key}", r.(*AppsResource).Grant)
+		app.GET("/revoke/{app_id}", r.(*AppsResource).Revoke)
 
 		r = &RolesResource{&buffalo.BaseResource{}}
 		g = app.Resource("/roles", r)
 		g.Use(roleBasedLockHandler)
+		app.GET("/retire/{role_id}", r.(*RolesResource).Retire)
 	}
 
 	return app

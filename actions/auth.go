@@ -106,7 +106,7 @@ func loggedIn(c buffalo.Context, member *models.Member) error {
 	origin := session.Get("origin")
 	session.Delete("origin")
 	c.Logger().Infof("origin of authentication is %v", origin)
-	if origin == "" {
+	if origin == nil {
 		origin = "/"
 	}
 	session.Set("member_id", member.ID)

@@ -29,8 +29,14 @@ func authorizeHandler(c buffalo.Context) error {
 		app := models.GetAppByKey(ar.Client.GetId())
 		user := currentMember(c)
 		logger.Infof("trying to grant access from %v against %v...", app, user)
-		// grant code here.
-		ar.Authorized = true
+		if ar.Authorized = user.HaveGrantFor(app.ID); !ar.Authorized {
+			logger.Error("NOT GRANTED!!!")
+			c.Set("app", app)
+			c.Set("scope", ar.Scope)
+			c.Set("appkey", ar.Client.GetId())
+			c.Session().Set("origin", c.Request().RequestURI)
+			return c.Render(200, r.HTML("oauth2/grant.html"))
+		}
 		logger.Debugf("--- state: %v, scopes: %v", ar.State, ar.Scope)
 		ar.UserData = map[string]interface{}{
 			"user_id":      user.ID,

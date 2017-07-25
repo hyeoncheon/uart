@@ -105,6 +105,10 @@ body > .container:not(.page-trailer) {
 		h3, h4, h5 {
 			margin: 0px;
 		}
+		.wg.meta {
+			white-space: nowrap;
+			overflow: hidden;
+		}
 		.wg.meta,
 		.wg.meta > a {
 			color: #888;

@@ -37,6 +37,9 @@ partial("roles/rolecard.html") %><%
 				<%=t("my.authorized.apps")%>
 			</h2>
 			<div class="wg content-box">
+				<%= for (app) in apps { %><%
+partial("apps/appcard.html") %><%
+				} %>
 			</div>
 		</div>
 

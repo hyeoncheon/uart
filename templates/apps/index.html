@@ -41,9 +41,11 @@
 			<td><%= timeYYMD(app.CreatedAt) %></td>
 			<td class="unclickable">
 				<div class="pull-right btn-group">
-					<a class="btn btn-xs btn-default" href="<%=
+					<a class="btn btn-xs btn-default<%= if (app.Code == "uart") {
+						%> disabled<% } %>" href="<%=
 						editAppPath({ app_id: app.ID }) %>"><%=t("edit")%></a>
-					<a class="btn btn-xs btn-danger" href="<%=
+					<a class="btn btn-xs btn-danger<%= if (app.Code == "uart") {
+						%> disabled<% } %>" href="<%=
 						appPath({ app_id: app.ID }) %>"
 						data-method="DELETE" data-confirm="<%=t("are.you.sure")
 						%>"><%=t("delete")%></a>

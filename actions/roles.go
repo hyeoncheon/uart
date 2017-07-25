@@ -1,6 +1,8 @@
 package actions
 
 import (
+	"net/http"
+
 	"github.com/gobuffalo/buffalo"
 	"github.com/hyeoncheon/uart/models"
 	"github.com/markbates/pop"
@@ -84,4 +86,22 @@ func (v RolesResource) Destroy(c buffalo.Context) error {
 	}
 	c.Flash().Add("success", "Role was destroyed successfully")
 	return c.Redirect(302, "/apps/%s", role.AppID)
+}
+
+// Retire remove the role of current user
+func (v RolesResource) Retire(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
+	role := &models.Role{}
+	err := tx.Find(role, c.Param("role_id"))
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	member := currentMember(c)
+	err = member.RemoveRole(tx, role)
+	if err != nil {
+		c.Flash().Add("danger", t(c, "cannot.remove.this.role.from.you"))
+	}
+	c.Flash().Add("success", t(c, "role.removed.from.you.successfully"))
+	return c.Redirect(http.StatusTemporaryRedirect, "/membership/me")
 }
