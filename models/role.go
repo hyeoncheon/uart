@@ -23,6 +23,15 @@ type Role struct {
 	IsReadonly  bool      `json:"is_readonly" db:"is_readonly"`
 }
 
+// standard role codes
+const (
+	RCAdmin   = "admin"
+	RCUser    = "user"
+	RCAppMan  = "appman"
+	RCUserMan = "userman"
+	RCLeader  = "leader"
+)
+
 // String returns pretty printable string of this model.
 func (r Role) String() string {
 	return r.App().String() + "." + r.Name
@@ -35,9 +44,26 @@ func (r Role) App() *App {
 	return app
 }
 
+// Members returns members have the role.
+// if optional flag is true, only active members are returned.
+func (r Role) Members(flag ...bool) *Members {
+	members := &Members{}
+	q := DB.BelongsToThrough(&r, &RoleMap{})
+	if len(flag) > 0 {
+		q = q.Where("role_maps.is_active = ?", flag[0])
+	}
+	err := q.All(members)
+	if err != nil {
+		log.Warnf("cannot found member of %v: %v", r, err)
+	}
+	return members
+}
+
 // MemberCount returns count of members who has the role
-func (r Role) MemberCount() int {
-	count, _ := DB.BelongsToThrough(&r, &RoleMap{}).Count(&Members{})
+func (r Role) MemberCount(isActive bool) int {
+	count, _ := DB.BelongsToThrough(&r, &RoleMap{}).
+		Where("role_maps.is_active = ?", isActive).
+		Count(&Members{})
 	return count
 }
 
@@ -77,4 +103,27 @@ type RoleMap struct {
 	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
 	RoleID    uuid.UUID `json:"role_id" db:"role_id"`
 	MemberID  uuid.UUID `json:"member_id" db:"member_id"`
+	IsActive  bool      `json:"is_active" db:"is_active"`
+}
+
+// Role returns associated role instance of this map.
+func (rm RoleMap) Role() *Role {
+	role := &Role{}
+	err := DB.Find(role, rm.RoleID)
+	if err != nil {
+		log.Errorf("cannot found role for rolemap %v (%v+%v)",
+			rm.ID, rm.RoleID, rm.MemberID)
+	}
+	return role
+}
+
+// Member returns associated member instance of this map.
+func (rm RoleMap) Member() *Member {
+	member := &Member{}
+	err := DB.Find(member, rm.MemberID)
+	if err != nil {
+		log.Errorf("cannot found member for rolemap %v (%v+%v)",
+			rm.ID, rm.RoleID, rm.MemberID)
+	}
+	return member
 }

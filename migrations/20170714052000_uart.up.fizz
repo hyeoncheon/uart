@@ -4,7 +4,7 @@ create_table("members", func(t) {
 	t.Column("email", "string", {})
 	t.Column("mobile", "string", {})
 	t.Column("icon", "string", {"default": "/assets/image/shadow.png"})
-	t.Column("status", "string", {})
+	t.Column("is_active", "bool", {})
 	t.Column("note", "text", {})
 })
 
@@ -62,6 +62,7 @@ add_index("roles", "app_id", {})
 create_table("role_maps", func(t) {
 	t.Column("member_id", "uuid", {})
 	t.Column("role_id", "uuid", {})
+	t.Column("is_active", "bool", {})
 })
 add_index("role_maps", "member_id", {})
 add_index("role_maps", "role_id", {})

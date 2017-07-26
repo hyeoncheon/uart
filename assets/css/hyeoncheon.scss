@@ -66,6 +66,7 @@ body > .container:not(.page-trailer) {
 	.wg.ptitle {
 		h1 {
 			margin: 0;
+			white-space: nowrap;
 		}
 	}
 }
@@ -78,13 +79,16 @@ body > .container:not(.page-trailer) {
 
 .wg.chapter {
 	margin-bottom: 20px;
+	display: table;
+	width: 100%;
+	clear: both;
 	.wg.head {
 		& > span > .btn {
 			margin-bottom: 8px;
 		}
 	}
 	.wg.content-box {
-		display: inline-block;
+		//display: inline-block;
 	}
 }
 
@@ -93,9 +97,10 @@ body > .container:not(.page-trailer) {
 	border: 1px solid #ddd;
 	border-radius: 5px;
 	padding: 8px;
+	margin: 2px;
 	.wg.thumb {
 		float: right;
-		margin: 0 0 3px 3px;
+		margin: 0 0 5px 5px;
 	}
 	.wg.frame {
 		text-align: center;
@@ -118,17 +123,48 @@ body > .container:not(.page-trailer) {
 	.wg.content {
 		margin-top: 2px;
 		font-size: 0.95em;
+		&.indented {
+			padding-left: 20px;
+		}
 	}
-	.wg.extra {
+	& > .wg.extra {
+		clear: both;
 		color: #888;
 		border-top: 1px solid #eee;
 		padding-top: 5px;
 		margin-top: 4px;
+		display: table;
+		width: 100%;
 	}
 	&.float2 {
 		float: left;
 		width: 48%;
-		margin: 0.5% 0.5%;
+		margin: 2px;
+	}
+	&.shadow {
+		box-shadow: 1px 1px 2px rgba(128,128,128, 0.2);
+	}
+}
+
+.wg.line {
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	padding: 4px 6px;
+	display: table;
+	width: 100%;
+	.wg.thumb {
+		float: left;
+		margin: 0 5px 0 0;
+	}
+	.wg.title {
+		float: left;
+		.wg.meta {
+
+		}
+	}
+	.wg.extra {
+		float: right;
 	}
 }
 
@@ -159,15 +195,17 @@ body > .container:not(.page-trailer) {
 
 .overlay-flash {
 	position: fixed;
-	right: 0;
+	right: 25px;
 	top: 55px;
 	width: 600px;
 	z-index: 999;
 	opacity: 0.95;
 	.alert {
+		margin-bottom: 10px;
 		padding: 10px 15px;
 		display: inline-block;
-		position: absolute;
+		clear: both;
+		float: right;
 		right: 25px;
 		box-shadow: 2px 2px 2px rgba(100,100,100, 0.5);
 		border-width: 0 0 0 3px;
@@ -241,6 +279,15 @@ form.horizontal {
 		width: 75%;
 		margin: 0 0 0 25%;
 	}
+}
+
+.table > thead > tr > th,
+.table > tbody > tr > th,
+.table > tfoot > tr > th,
+.table > thead > tr > td,
+.table > tbody > tr > td,
+.table > tfoot > tr > td {
+	vertical-align: middle !important;
 }
 
 .fa.rect {

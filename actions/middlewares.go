@@ -5,6 +5,8 @@ import (
 	"strings"
 
 	"github.com/gobuffalo/buffalo"
+
+	"github.com/hyeoncheon/uart/models"
 )
 
 // AuthenticateHandler protect all application pages from unauthorized access.
@@ -39,7 +41,7 @@ func contextHandler(next buffalo.Handler) buffalo.Handler {
 			for _, role := range roles {
 				c.Logger().Debug("role-----------", role)
 				c.Set("role_"+role, true)
-				if role == "admin" {
+				if role == models.RCAdmin {
 					c.Set("member_is_admin", true)
 				}
 			}
@@ -66,8 +68,8 @@ func roleBasedLockHandler(next buffalo.Handler) buffalo.Handler {
 		if val, ok := c.Value("member_is_admin").(bool); !ok || !val {
 			pos := strings.Split(c.Value("current_path").(string), "/")[1]
 			perms := map[string]string{
-				"apps":  "appman",
-				"roles": "appman",
+				"apps":  models.RCAppMan,
+				"roles": models.RCAppMan,
 			}
 			if p := perms[pos]; p != "" {
 				if c.Value("role_"+p) == nil {

@@ -15,7 +15,7 @@
 			<th>&nbsp;</th>
 			<th><%=t("name")%></th>
 			<th><%=t("email")%></th>
-			<th><%=t("status")%></th>
+			<th><%=t("active")%></th>
 			<th><%=t("credentials")%></th>
 			<th><%=t("access.grants")%></th>
 			<th><%=t("since")%></th>
@@ -28,7 +28,7 @@
 			<td><a id="link" href="<%= membershipPath({ member_id: member.ID })
 					%>"><%= member.Name %></a></td>
 			<td><%= member.Email %></td>
-			<td><%= humanize(member.Status) %></td>
+			<td><%= if (member.IsActive) { %>Active<% } else { %>Locked<% } %></td>
 			<td><%= member.CredentialCount() %></td>
 			<td><%= member.AccessGrantCount() %></td>
 			<td><%= timeYYMD(member.CreatedAt) %></td>

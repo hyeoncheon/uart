@@ -1,6 +1,6 @@
 <div class="row wg phead">
 	<div class="col-md-3 col-xs-12 wg ptitle">
-		<h1><%=t("app")%> <%= app.Name %></h1>
+		<h1><i class="fa fa-asterisk"></i> <%= app.Name %></h1>
 	</div>
 	<div class="col-md-9 col-xs-12 wg pnav">
 		<span class="pull-right" data-toggle="popover" data-trigger="hover"
@@ -11,14 +11,14 @@
 
 <div class="row">
 	<div class="col-md-3 col-xs-12">
-		<div class="wg card">
+		<div class="wg card"> <!-- left card ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 			<div class="wg frame"><%= imageFor(app.AppIcon, "wg icon128") %></div>
 			<div class="wg title">
 				<h3><%= app.Name %></h3>
 				<div class="wg meta">
 					<div><%=t("since")%>: <%= timeYYMD(app.CreatedAt) %></div>
 					<div><%=t("code")%>: <%= app.Code %></div>
-					<div><%=t("grants")%>: <%= app.GrantCount() %></div>
+					<div><%=t("grants")%>: <%= app.GrantsCount() %></div>
 				</div>
 			</div>
 			<div class="wg content">
@@ -39,7 +39,7 @@
 			%>"><%=t("delete")%></a>
 		</p>
 
-		<div>
+		<div> <!-- app details ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 			<h3><%= app.Description %></h3>
 			<table class="table table-striped table-condensed">
 				<tbody>
@@ -63,7 +63,7 @@
 			</table>
 		</div>
 
-		<div>
+		<div> <!-- roles ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 			<p class="btn-group pull-right">
 				<a class="btn btn-xs btn-default" data-toggle="modal"
 					data-target="#newRole"><%=t("new.role")%></a>
@@ -75,8 +75,9 @@
 					<th><%=t("name")%></th>
 					<th><%=t("description")%></th>
 					<th><%=t("code")%></th>
+					<th><%=t("active.members")%></th>
+					<th><%=t("role.requests")%></th>
 					<th><%=t("rank")%></th>
-					<th><%=t("members")%></th>
 					<th>&nbsp;</th>
 				</tr>
 				</thead>
@@ -86,8 +87,9 @@
 					<td><%= role.Name %></td>
 					<td><%= role.Description %></td>
 					<td><%= role.Code %></td>
+					<td><%= role.MemberCount(true) %></td>
+					<td><%= role.MemberCount(false) %></td>
 					<td><%= role.Rank %></td>
-					<td><%= role.MemberCount() %></td>
 					<td>
 						<p class="pull-right btn-group">
 							<a class="btn btn-xs btn-default<%= if (role.IsReadonly) {
@@ -112,12 +114,34 @@
 			</table>
 		</div>
 
-
-
-
-
-
-
+		<div> <!-- role requests ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+			<h3><%=t("role.requests")%></h3>
+			<table class="table table-striped table-condensed">
+				<thead>
+				<tr>
+					<th><%=t("request.id")%></th>
+					<th><%=t("member")%></th>
+					<th><%=t("role")%></th>
+					<th>&nbsp;</th>
+				</tr>
+				</thead>
+				<tbody>
+				<%= for (rm) in requests { %>
+				<tr>
+					<td><%= rm.ID %></td>
+					<td><%= rm.Member() %></td>
+					<td><%= rm.Role() %></td>
+					<td>
+						<p class="pull-right btn-group">
+							<a class="btn btn-xs btn-default" href="<%=
+								acceptPath({ app_id: app.ID, rolemap_id: rm.ID })
+								%>"><%=t("accept")%></a>
+					</td>
+				</tr>
+				<% } %>
+				</tbody>
+			</table>
+		</div>
 
 	</div>
 </div>

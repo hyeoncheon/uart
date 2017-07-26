@@ -26,6 +26,7 @@
 			<th><%=t("description")%></th>
 			<th><%=t("site.url")%></th>
 			<th><%=t("members")%></th>
+			<th><%=t("requests")%></th>
 			<th><%=t("since")%></th>
 			<th>&nbsp;</th>
 		</tr>
@@ -37,7 +38,8 @@
 					%>"><%= app.Name %></a></td>
 			<td><%= app.Description %></td>
 			<td><%= app.SiteURL %></td>
-			<td><%= app.GrantCount() %></td>
+			<td><%= app.GrantsCount() %></td>
+			<td><%= app.RequestsCount() %></td>
 			<td><%= timeYYMD(app.CreatedAt) %></td>
 			<td class="unclickable">
 				<div class="pull-right btn-group">

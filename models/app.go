@@ -76,28 +76,23 @@ func (a *App) GetRole(tx *pop.Connection, code string) *Role {
 	return r
 }
 
-// GetRoles returns array of roles of the app
-func (a *App) GetRoles() *Roles {
-	roles := &Roles{}
-	DB.BelongsTo(a).Order("rank desc").All(roles)
-	return roles
+// Requests returns array of inactive rolemaps
+func (a App) Requests() *[]RoleMap {
+	rolemaps := &[]RoleMap{}
+	err := DB.Q().
+		LeftJoin("roles", "roles.id = role_maps.role_id").
+		Where("roles.app_id = ?", a.ID).
+		Where("role_maps.is_active = ?", false).All(rolemaps)
+	if err != nil {
+		log.Warn("cannot found requests. ignore: ", err)
+	}
+	return rolemaps
 }
 
-// MemberRoles returns roles of the app which is associated with given member
-func (a App) MemberRoles(memberID interface{}) *Roles {
-	member := &Member{}
+// GetRoles returns array of roles of the app
+func (a App) GetRoles() *Roles {
 	roles := &Roles{}
-	err := DB.Find(member, memberID)
-	if err != nil {
-		log.Errorf("cannot found member with given id %v: %v", memberID, err)
-		return roles
-	}
-	DB.BelongsToThrough(member, &RoleMap{}).
-		Where("roles.app_id = ?", a.ID).All(roles)
-	var rs = []string{}
-	for _, r := range *roles {
-		rs = append(rs, r.Name)
-	}
+	DB.BelongsTo(&a).Order("rank desc").All(roles)
 	return roles
 }
 
@@ -118,15 +113,26 @@ func (a *App) GenerateKeyPair() {
 	a.AppSecret = secret
 }
 
-// GrantCount returns count of access grant for the app
-func (a App) GrantCount() int {
+// GrantsCount returns count of access grant for the app
+func (a App) GrantsCount() int {
 	count, _ := DB.BelongsTo(&a).Count(&AccessGrants{})
+	return count
+}
+
+// RequestsCount returns count of role requests for the app
+func (a App) RequestsCount() int {
+	count, _ := DB.Q().
+		LeftJoin("roles", "roles.id = role_maps.role_id").
+		LeftJoin("apps", "apps.id = roles.app_id").
+		Where("apps.id = ?", a.ID).
+		Where("role_maps.is_active = ?", false).
+		Count(&RoleMap{})
 	return count
 }
 
 //// Generic model operation functions below:
 
-// GetAppByCode returns an app instance has given code
+// GetAppByCode search and returns an app instance by given code, or nil
 func GetAppByCode(code string) *App {
 	app := &App{}
 	err := DB.Where("code = ?", code).First(app)
@@ -164,16 +170,19 @@ func NewApp(name, code, desc, url, callback string, icon ...string) *App {
 
 const hyeoncheonIcon = "/assets/images/hyeoncheon-icon.png"
 
+// createUARTApp create UART app and return it or nil.
 func createUARTApp(tx *pop.Connection) *App {
 	uart := NewApp("UART", "uart", "UART: Identity Management System", "", "")
 	uart.AppIcon = hyeoncheonIcon
-	DB.Create(uart)
-	uart.AddRole(tx, "Admin", "admin", "UART Administrator", 64, true)
-	uart.AddRole(tx, "User Manager", "userman", "UART User Manager", 32, true)
-	uart.AddRole(tx, "App Manager", "appman", "UART App Manager", 16, true)
-	uart.AddRole(tx, "Leader", "leader", "Team Leader", 2, true)
-	uart.AddRole(tx, "User", "user", "Normal User", 1, true)
-	uart.AddRole(tx, "Guest", "guest", "Guest, No Privileges", 0, true)
+	err := DB.Create(uart)
+	if err != nil {
+		return nil
+	}
+	uart.AddRole(tx, "Admin", RCAdmin, "UART Administrator", 64, true)
+	uart.AddRole(tx, "User Manager", RCUserMan, "UART User Manager", 32, true)
+	uart.AddRole(tx, "App Manager", RCAppMan, "UART App Manager", 16, true)
+	uart.AddRole(tx, "Leader", RCLeader, "Team Leader", 8, true)
+	uart.AddRole(tx, "User", RCUser, "Normal User", 0, true)
 	return uart
 }
 
@@ -193,6 +202,21 @@ func (a Apps) SearchParams(c buffalo.Context) SearchParams {
 	sp := newSearchParams(c)
 	sp.DefaultSort = appsDefaultSort
 	return sp
+}
+
+// QueryAndParams implementation (Searchable)
+func (a Apps) QueryAndParams(c buffalo.Context) (*pop.Query, SearchParams) {
+	sp := newSearchParams(c)
+	sp.DefaultSort = appsDefaultSort
+	q := DB.Q()
+	if !c.Value("member_is_admin").(bool) {
+		q = q.
+			LeftJoin("roles", "roles.app_id = apps.id").
+			LeftJoin("role_maps", "role_maps.role_id = roles.id").
+			Where("role_maps.member_id = ?", c.Value("member_id")).
+			Where("roles.code = ?", RCAdmin)
+	}
+	return q, sp
 }
 
 const defaultAppIcon = "/assets/images/dummy-app.png"

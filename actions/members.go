@@ -64,7 +64,6 @@ func (v MembersResource) Edit(c buffalo.Context) error {
 		return errors.WithStack(err)
 	}
 	c.Set("member", member)
-	c.Set("memberStatus", models.MemberStatus)
 	return c.Render(200, r.HTML("members/edit.html"))
 }
 
@@ -87,10 +86,27 @@ func (v MembersResource) Update(c buffalo.Context) error {
 	}
 	if verrs.HasAny() {
 		c.Set("member", member)
-		c.Set("memberStatus", models.MemberStatus)
 		c.Set("errors", verrs)
 		return c.Render(422, r.HTML("members/edit.html"))
 	}
+
+	rolemap := &models.RoleMap{}
+	uRole := models.GetAppByCode("uart").GetRole(tx, models.RCUser)
+	err = tx.Where("member_id = ? AND role_id = ?", member.ID, uRole.ID).
+		First(rolemap)
+	if err != nil {
+		c.Logger().Error("cannot found rolemap for UART.User: ", err)
+		c.Flash().Add("warning", t(c, "cannot.update.role.automatically"))
+	} else {
+		rolemap.IsActive = member.IsActive
+		err = tx.Save(rolemap)
+		if err != nil {
+			c.Logger().Errorf("cannot save rolemap for %v: %v", uRole, err)
+			c.Flash().Add("warning", t(c, "cannot.save.role.automatically"))
+		}
+		c.Flash().Add("info", t(c, "uart.role.also.update"))
+	}
+
 	c.Flash().Add("success", "Member was updated successfully")
 	return c.Redirect(302, "/members")
 }

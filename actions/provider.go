@@ -1,6 +1,8 @@
 package actions
 
 import (
+	"net/http"
+
 	"github.com/RangelReale/osin"
 	"github.com/gobuffalo/buffalo"
 	"github.com/hyeoncheon/uart/models"
@@ -11,12 +13,12 @@ var svr = osin.NewServer(providerConf(), newProvider())
 var logger = logrus.New().WithField("category", "provider")
 
 func providerConf() *osin.ServerConfig {
-	logger.Info("provider setup...")
+	logger.Info("provider initialize...")
 	logger.Logger.Level = logrus.DebugLevel
 
 	conf := osin.NewServerConfig()
-	conf.AllowGetAccessRequest = true
-	conf.AllowClientSecretInParams = true
+	//conf.AllowGetAccessRequest = true
+	//conf.AllowClientSecretInParams = true
 	return conf
 }
 
@@ -28,8 +30,12 @@ func authorizeHandler(c buffalo.Context) error {
 	if ar := svr.HandleAuthorizeRequest(resp, c.Request()); ar != nil {
 		app := models.GetAppByKey(ar.Client.GetId())
 		user := currentMember(c)
+		if !user.IsActive {
+			c.Flash().Add("danger", t(c, "no.perm.inactive.member"))
+			return c.Redirect(http.StatusTemporaryRedirect, "/membership/me")
+		}
 		logger.Infof("trying to grant access from %v against %v...", app, user)
-		if ar.Authorized = user.HaveGrantFor(app.ID); !ar.Authorized {
+		if ar.Authorized = user.HasGrantFor(app.ID); !ar.Authorized {
 			logger.Error("NOT GRANTED!!!")
 			c.Set("app", app)
 			c.Set("scope", ar.Scope)
@@ -190,8 +196,9 @@ func (s *Provider) LoadAccess(code string) (*osin.AccessData, error) {
 	return nil, osin.ErrNotFound
 }
 
-// Others
+// Others: Refresh Token related things maybe.
 
+// LoadRefresh is not used yet
 func (s *Provider) LoadRefresh(code string) (*osin.AccessData, error) {
 	logger.Info("provider.loadrefresh invoked")
 	if d, ok := s.refresh[code]; ok {
@@ -200,12 +207,14 @@ func (s *Provider) LoadRefresh(code string) (*osin.AccessData, error) {
 	return nil, osin.ErrNotFound
 }
 
+// RemoveAccess is not used yet
 func (s *Provider) RemoveAccess(code string) error {
 	logger.Info("provider.removeaccess invoked")
 	delete(s.access, code)
 	return nil
 }
 
+// RemoveRefresh is not used yet
 func (s *Provider) RemoveRefresh(code string) error {
 	logger.Info("provider.removerefresh invoked")
 	delete(s.refresh, code)

@@ -48,11 +48,13 @@ func AuthCallback(c buffalo.Context) error {
 
 	switch len(*credentials) {
 	case 0:
-		member, err := createMember(user)
+		member, err := createMember(c, user)
 		if err != nil {
+			// TODO admin alert, selective
 			c.Flash().Add("danger", t(c, err.Error()))
 			return c.Redirect(http.StatusTemporaryRedirect, "/login")
 		}
+		// TODO admin notification
 		c.Flash().Add("success", t(c, "welcome.to.uart"))
 		return loggedIn(c, member)
 	case 1:
@@ -68,16 +70,16 @@ func AuthCallback(c buffalo.Context) error {
 	}
 }
 
-func createMember(user goth.User) (*models.Member, error) {
+func createMember(c buffalo.Context, user goth.User) (*models.Member, error) {
 	if user.Email == "" {
-		return nil, errors.New("unacceptable.no.email.provided")
+		return nil, errors.New(t(c, "unacceptable.no.email.provided"))
 	}
 	if user.Name == "" {
-		return nil, errors.New("unacceptable.no.name.provided")
+		return nil, errors.New(t(c, "unacceptable.no.name.provided"))
 	}
 	if user.Provider == "gplus" {
 		if vm, ok := user.RawData["verified_email"].(bool); ok && !vm {
-			return nil, errors.New("unacceptable.email.not.verified")
+			return nil, errors.New(t(c, "unacceptable.email.not.verified"))
 		}
 	}
 
@@ -95,7 +97,11 @@ func createMember(user goth.User) (*models.Member, error) {
 			}
 		}
 	}
-	return models.CreateMember(cred), nil
+	member, err := models.CreateMember(cred)
+	if err != nil {
+		err = errors.New(t(c, "oops.cannot.register.a.member"))
+	}
+	return member, err
 }
 
 func loggedIn(c buffalo.Context, member *models.Member) error {

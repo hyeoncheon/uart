@@ -7,6 +7,8 @@ import (
 	"time"
 
 	"github.com/gobuffalo/buffalo"
+	"github.com/markbates/pop"
+
 	"github.com/hyeoncheon/uart/utils"
 )
 
@@ -35,12 +37,13 @@ func newSearchParams(c buffalo.Context) SearchParams {
 //
 type Searchable interface {
 	SearchParams(buffalo.Context) SearchParams
+	QueryAndParams(buffalo.Context) (*pop.Query, SearchParams)
 }
 
 // All returns paginated search result for given model.
 func All(c buffalo.Context, m Searchable) (SearchParams, error) {
-	sp := m.SearchParams(c)
-	q := DB.Q().Paginate(sp.Page, sp.PerPage)
+	q, sp := m.QueryAndParams(c)
+	q = q.Paginate(sp.Page, sp.PerPage)
 	if sp.Sort != "" {
 		for _, o := range strings.Split(sp.Sort, ",") {
 			q = q.Order(o)

@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"errors"
 	"time"
 
 	"github.com/gobuffalo/buffalo"
@@ -10,13 +11,6 @@ import (
 	"github.com/markbates/validate/validators"
 	"github.com/satori/go.uuid"
 )
-
-// MemberStatus is pseudo constant for member's current status
-var MemberStatus = map[string]string{
-	"New":    "new",
-	"Active": "active",
-	"Locked": "lockec",
-}
 
 // Member is the main model which presents the user.
 type Member struct {
@@ -27,7 +21,7 @@ type Member struct {
 	Email     string    `json:"email" db:"email"`
 	Mobile    string    `json:"mobile" db:"mobile"`
 	Icon      string    `json:"icon" db:"icon"`
-	Status    string    `json:"status" db:"status"`
+	IsActive  bool      `json:"is_active" db:"is_active"`
 	Note      string    `json:"note" db:"note"`
 }
 
@@ -41,9 +35,9 @@ func (m Member) String() string {
 
 //// actions and relational functions below:
 
-// HaveGrantFor checks if the member have granted for given app.
+// HasGrantFor checks if the member have granted for given app.
 // additionally it increase reference count as access count.
-func (m Member) HaveGrantFor(appID uuid.UUID) bool {
+func (m Member) HasGrantFor(appID uuid.UUID) bool {
 	grant := &AccessGrant{}
 	err := DB.Where("member_id = ? AND app_id = ?", m.ID, appID).
 		Where("is_revoked = ?", false).
@@ -57,11 +51,20 @@ func (m Member) HaveGrantFor(appID uuid.UUID) bool {
 	return true
 }
 
+// HasRole return true if the member has the role regardless of activated.
+func (m Member) HasRole(roleID uuid.UUID) bool {
+	err := DB.BelongsToThrough(&m, &RoleMap{}).Find(&Role{}, roleID)
+	if err != nil {
+		return false
+	}
+	return true
+}
+
 // GrantedApps returns the member's associcated granted apps
 func (m Member) GrantedApps() *Apps {
 	apps := &Apps{}
 	err := DB.BelongsToThrough(&m, &AccessGrants{}).
-		Where("is_revoked = ?", false).All(apps)
+		Where("is_revoked = ?", false).Order(membersDefaultSort).All(apps)
 	if err != nil {
 		log.Error("OOPS! cannot found associated apps:", err)
 	}
@@ -69,11 +72,16 @@ func (m Member) GrantedApps() *Apps {
 }
 
 // AddRole create mapping object for the member.
-func (m *Member) AddRole(tx *pop.Connection, r *Role) error {
+func (m *Member) AddRole(tx *pop.Connection, r *Role, active ...bool) error {
 	log.Infof("assign role %v to member %v", r, m)
+	isActive := false
+	if len(active) > 0 {
+		isActive = active[0]
+	}
 	return tx.Create(&RoleMap{
 		MemberID: m.ID,
 		RoleID:   r.ID,
+		IsActive: isActive,
 	})
 }
 
@@ -93,25 +101,34 @@ func (m *Member) RemoveRole(tx *pop.Connection, r *Role) error {
 	return err
 }
 
-// GetAppRoleCodes returns the member's role codes of given app.
-func (m Member) GetAppRoleCodes(appCode string) []string {
-	roles := []string{}
-	rs := &Roles{}
-	rmap := &RoleMap{}
-	app := GetAppByCode(appCode)
-	if app == nil {
-		log.Error("OOPS! cannot found app with given code!")
-		return roles
+// AppRoles returns associated roles of given app, assigned to the member.
+func (m Member) AppRoles(app App, flag ...bool) *Roles {
+	roles := &Roles{}
+	Q := DB.BelongsToThrough(&m, &RoleMap{})
+	if len(flag) > 0 {
+		Q = Q.Where("role_maps.is_active = ?", flag[0])
 	}
-	err := DB.BelongsToThrough(&m, rmap).Where("app_id = ?", app.ID).All(rs)
+	err := Q.Where("roles.app_id = ?", app.ID).All(roles)
 	if err != nil {
 		log.Warn("cannot found associated roles: ", err)
 	}
-	for _, r := range *rs {
-		roles = append(roles, r.Code)
-	}
-	log.Debug("-----------------------------------", roles)
 	return roles
+}
+
+// GetAppRoleCodes returns the member's active role codes of given app.
+func (m Member) GetAppRoleCodes(appCode string) []string {
+	ret := []string{}
+	app := GetAppByCode(appCode)
+	if app == nil {
+		log.Error("OOPS! cannot found app with given code!")
+		return ret
+	}
+	roles := m.AppRoles(*app, true)
+	for _, r := range *roles {
+		ret = append(ret, r.Code)
+	}
+	log.Debug("---- AppRoleCode ---- ", ret)
+	return ret
 }
 
 // Roles returns the member's associcated roles
@@ -166,9 +183,9 @@ func GetMember(id interface{}) *Member {
 }
 
 // CreateMember creates a member with an associated credential
-func CreateMember(cred *Credential) *Member {
+func CreateMember(cred *Credential) (*Member, error) {
 	member := &Member{}
-	member.Status = MemberStatus["New"]
+	member.IsActive = false
 	member.Icon = cred.AvatarURL
 	member.Name = cred.Name
 	member.Email = cred.Email
@@ -181,42 +198,52 @@ func CreateMember(cred *Credential) *Member {
 	err := DB.Transaction(func(tx *pop.Connection) error {
 		err := tx.Create(member, excl...)
 		if err != nil {
+			log.Error("OOPS! cannot create member! ", err)
 			return err
 		}
 		cred.MemberID = member.ID
 		err = tx.Create(cred)
 		if err != nil {
+			log.Error("OOPS! cannot create credential! ", err)
 			return err
 		}
 
 		uart := GetAppByCode("uart")
 		if uart == nil {
+			member.IsActive = true
+			err = tx.Save(member)
+			if err != nil {
+				log.Error("OOPS! cannot activate this admin user! ", err)
+			}
 			uart = createUARTApp(tx)
+			if uart == nil {
+				log.Error("OOPS! CRITICAL! cannot create UART itself!")
+				return errors.New("UART CREATION ERROR")
+			}
 			log.Info("FIRST FLIGHT! register my self ", uart)
-			err = member.AddRole(tx, uart.GetRole(tx, "admin"))
+			err = member.AddRole(tx, uart.GetRole(tx, RCAdmin), true)
 		} else {
-			err = member.AddRole(tx, uart.GetRole(tx, "guest"))
+			err = member.AddRole(tx, uart.GetRole(tx, RCUser))
 		}
 		if err != nil {
-			// TODO admin alert for failed role assignment
-			log.Errorf("add role to member %v failed: %v", member, err)
+			log.Errorf("OOPS! cannot assign a role to member: %v", err)
+			return err
 		}
 
 		err = uart.Grant(tx, member)
 		if err != nil {
-			// TODO admin alert for failed access grant
-			log.Errorf("access grant failed for %v to %v: %v", uart, member, err)
+			log.Errorf("OOPS! cannot grant %v to %v: %v", uart, member, err)
+			return err
 		}
-
 		return nil
 	})
+
 	if err != nil {
 		log.Error("transaction error while member registration: ", err)
+		return member, err
 	}
-
 	log.Infof("new member %v registered successfully.", member)
-	// TODO admin notification for member registration
-	return member
+	return member, nil
 }
 
 // Members is an array of Members.
@@ -237,13 +264,20 @@ func (m Members) SearchParams(c buffalo.Context) SearchParams {
 	return sp
 }
 
+// QueryAndParams implementation (Searchable)
+func (m Members) QueryAndParams(c buffalo.Context) (*pop.Query, SearchParams) {
+	sp := newSearchParams(c)
+	sp.DefaultSort = membersDefaultSort
+	q := DB.Q()
+	return q, sp
+}
+
 // Validate gets run every time you call a "pop.Validate" method.
 func (m *Member) Validate(tx *pop.Connection) (*validate.Errors, error) {
 	return validate.Validate(
 		&validators.StringIsPresent{Field: m.Name, Name: "Name"},
 		&validators.StringIsPresent{Field: m.Email, Name: "Email"},
 		&validators.StringIsPresent{Field: m.Icon, Name: "Icon"},
-		&validators.StringIsPresent{Field: m.Status, Name: "Status"},
 	), nil
 }
 

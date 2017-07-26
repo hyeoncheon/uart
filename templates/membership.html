@@ -10,28 +10,15 @@
 </div>
 
 <div class="row">
-	<%= if (role_guest) { %>
+	<%= if (!member.IsActive) { %>
 	<div class="col-md-8 col-md-offset-2 col-xs-12">
-		<div class="alert alert-warning">
-			<%=t("your.current.rank.is.guest")%>
+		<div class="alert alert-danger">
+			<%=t("you.are.currently.locked.or.new")%>
 		</div>
 	</div>
 	<% } %>
 
 	<div class="col-md-6 col-xs-12">
-		<div class="wg chapter">
-			<h2 class="wg underline head">
-				<%=t("my.roles")%>
-				<span class="pull-right"><a class="btn btn-sm btn-default"><%=
-						t("role.request")%></a></span>
-			</h2>
-			<div class="wg content-box">
-				<%= for (role) in roles { %><%
-partial("roles/rolecard.html") %><%
-				} %>
-			</div>
-		</div>
-
 		<div class="wg chapter">
 			<h2 class="wg underline head">
 				<%=t("my.authorized.apps")%>
@@ -47,7 +34,7 @@ partial("apps/appcard.html") %><%
 		<div class="wg chapter">
 			<h2 class="wg underline head">
 				<%=t("teams")%>
-				<span class="pull-right"><a class="btn btn-sm btn-default"><%=
+				<span class="pull-right"><a class="btn btn-sm btn-default disabled"><%=
 						t("create.new.team")%></a></span>
 			</h2>
 			<div class="wg content-box">
@@ -58,7 +45,7 @@ partial("apps/appcard.html") %><%
 			<h2 class="wg underline head">
 				<%=t("credentials")%>
 				<span class="pull-right"><a class="btn btn-sm btn-default disabled"><%=
-						t("under.construction")%></a></span>
+						t("add.credential")%></a></span>
 			</h2>
 			<div class="wg content-box">
 				<%= for (credential) in credentials { %><%=
@@ -69,3 +56,4 @@ partial("credentials/creditcard.html") %><%
 
 	</div>
 </div>
+

@@ -17,11 +17,13 @@ import (
 
 // ENV is used to help switch settings based on where the
 // application is being run. Default is "development".
-var ENV = envy.Get("GO_ENV", "development")
-var brandName = envy.Get("BRAND_NAME", "UART")
-var sessionName = envy.Get("SESSION_NAME", "_uart_session")
-var app *buffalo.App
-var T *i18n.Translator
+var (
+	ENV         = envy.Get("GO_ENV", "development")
+	brandName   = envy.Get("BRAND_NAME", "UART")
+	sessionName = envy.Get("SESSION_NAME", "_uart_session")
+	app         *buffalo.App
+	T           *i18n.Translator
+)
 
 // App is where all routes and middleware for buffalo
 // should be defined. This is the nerve center of your
@@ -111,6 +113,8 @@ func App() *buffalo.App {
 		r = &RolesResource{&buffalo.BaseResource{}}
 		g = app.Resource("/roles", r)
 		g.Use(roleBasedLockHandler)
+		app.POST("/request", r.(*RolesResource).Request)
+		app.GET("/accept/{app_id}/{rolemap_id}", r.(*RolesResource).Accept)
 		app.GET("/retire/{role_id}", r.(*RolesResource).Retire)
 	}
 

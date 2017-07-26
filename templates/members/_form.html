@@ -1,3 +1,15 @@
-<%= f.SelectTag("Status", {options: memberStatus}) %>
+<div class="form-group">
+	<div class="radio-inline abc-radio abc-radio-info">
+		<input name="IsActive" id="memActiveT" type="radio"<%=
+			if (member.IsActive) { %> checked="true"<% }
+			%> value="true"><label for="memActiveT">Active</label>
+	</div>
+	<div class="radio-inline abc-radio abc-radio-info">
+		<input name="IsActive" id="memActiveF" type="radio"<%=
+			if (!member.IsActive) { %> checked="true"<% }
+			%> value="false"><label for="memActiveF">Locked</label>
+	</div>
+</div>
+
 <%= f.TextArea("Note", {rows: 5}) %>
 <button id="member-edit" class="btn btn-success" role="submit"><%=t("save")%></button>

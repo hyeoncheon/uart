@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/gobuffalo/buffalo"
+	"github.com/markbates/pop"
 	"github.com/satori/go.uuid"
 )
 
@@ -59,4 +60,12 @@ func (cs Credentials) SearchParams(c buffalo.Context) SearchParams {
 	sp := newSearchParams(c)
 	sp.DefaultSort = credentialsDefaultSort
 	return sp
+}
+
+// QueryAndParams implementation (Searchable)
+func (cs Credentials) QueryAndParams(c buffalo.Context) (*pop.Query, SearchParams) {
+	sp := newSearchParams(c)
+	sp.DefaultSort = credentialsDefaultSort
+	q := DB.Q()
+	return q, sp
 }

@@ -6,6 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// DB and others: shared variables for models
 var DB *pop.Connection
 var log = logrus.New().WithField("category", "model")
 var isDev = false

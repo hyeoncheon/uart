@@ -4,9 +4,10 @@ import (
 	"net/http"
 
 	"github.com/gobuffalo/buffalo"
-	"github.com/hyeoncheon/uart/models"
 	"github.com/markbates/pop"
 	"github.com/pkg/errors"
+
+	"github.com/hyeoncheon/uart/models"
 )
 
 // AppsResource is the resource for the app model
@@ -30,11 +31,13 @@ func (v AppsResource) List(c buffalo.Context) error {
 func (v AppsResource) Show(c buffalo.Context) error {
 	_, app, err := safeSetAppAdmin(c)
 	if err != nil {
-		return errors.WithStack(err)
+		c.Flash().Add("danger", t(c, "you.have.no.right.for.this.app"))
+		return c.Redirect(http.StatusFound, "/apps")
 	}
-	c.Set("app", app)
+	c.Set("app", *app)
 	c.Set("roles", app.GetRoles())
 	c.Set("role", &models.Role{AppID: app.ID})
+	c.Set("requests", app.Requests())
 	return c.Render(200, r.HTML("apps/show.html"))
 }
 
@@ -65,10 +68,11 @@ func (v AppsResource) Create(c buffalo.Context) error {
 	}
 
 	// set default roles
-	app.AddRole(tx, "Admin", "admin", "Administrator", 64, true)
-	app.AddRole(tx, "User", "user", "Normal User", 1, true)
-	app.AddRole(tx, "Guest", "guest", "Guest, No Privileges", 0, true)
-	currentMember(c).AddRole(tx, app.GetRole(tx, "admin"))
+	app.AddRole(tx, "Admin", models.RCAdmin, "Administrator", 64, true)
+	app.AddRole(tx, "User", models.RCUser, "Normal User", 0, true)
+	me := currentMember(c)
+	me.AddRole(tx, app.GetRole(tx, models.RCAdmin), true)
+	app.Grant(tx, me)
 
 	c.Flash().Add("success", t(c, "app.was.created.successfully"))
 	return c.Redirect(302, "/apps/%s", app.ID)
@@ -118,7 +122,7 @@ func (v AppsResource) Destroy(c buffalo.Context) error {
 	}
 
 	adminMember := currentMember(c)
-	err = adminMember.RemoveRole(tx, app.GetRole(tx, "admin"))
+	err = adminMember.RemoveRole(tx, app.GetRole(tx, models.RCAdmin))
 	if err != nil {
 		tx.TX.Rollback()
 		c.Logger().Errorf("cannot remove admin role from member")
@@ -192,15 +196,15 @@ func (v AppsResource) Grant(c buffalo.Context) error {
 	}
 	c.Logger().Infof("app %v granted to member %v", app, member)
 
-	guest := app.GetRole(tx, "guest")
-	err = member.AddRole(tx, guest)
+	uRole := app.GetRole(tx, models.RCUser)
+	err = member.AddRole(tx, uRole)
 	if err != nil {
 		tx.TX.Rollback()
 		c.Logger().Error("cannot add a role to user: ", err)
 		c.Flash().Add("danger", t(c, "oops.cannot.assign.a.role"))
 		return c.Redirect(http.StatusTemporaryRedirect, "%s", origin)
 	}
-	c.Logger().Infof("role %v added to %v", guest, member)
+	c.Logger().Infof("role %v added to %v", uRole, member)
 
 	return c.Redirect(http.StatusTemporaryRedirect, "%s", origin)
 }
@@ -209,13 +213,29 @@ func (v AppsResource) Grant(c buffalo.Context) error {
 func (v AppsResource) Revoke(c buffalo.Context) error {
 	tx, app, err := safeSetApp(c)
 	if err != nil {
-		c.Flash().Add("warning", t(c, "cannot.revoke.your.access.right"))
+		c.Flash().Add("warning", t(c, "cannot.revoke.cannot.found.the.app"))
 		return c.Redirect(http.StatusTemporaryRedirect, "/membership/me")
 	}
 	member := currentMember(c)
+
+	// cleanup! force remove roles!
+	for _, role := range *member.AppRoles(*app) {
+		if role.Code == models.RCAdmin {
+			continue
+		}
+		err := member.RemoveRole(tx, &role)
+		if err != nil {
+			c.Logger().Errorf("cannot remove role %v for %v", role, member)
+		}
+		c.Flash().Add("info", t(c, "all.remining.roles.also.removed"))
+	}
 	err = app.Revoke(tx, member)
 	if err != nil {
-		return errors.New("cannot revoke")
+		tx.TX.Rollback()
+		c.Flash().Clear()
+		c.Flash().Add("danger", t(c, "cannot.revoke.your.access.right"))
+	} else {
+		c.Flash().Add("success", t(c, "successfully.revoked"))
 	}
 	return c.Redirect(http.StatusTemporaryRedirect, "/membership/me")
 }
@@ -228,7 +248,7 @@ func safeSetAppAdmin(c buffalo.Context) (*pop.Connection, *models.App, error) {
 		LeftJoin("roles", "roles.app_id = apps.id").
 		LeftJoin("role_maps", "role_maps.role_id = roles.id").
 		Where("role_maps.member_id = ?", currentMember(c).ID).
-		Where("roles.code = ?", "admin").
+		Where("roles.code = ?", models.RCAdmin).
 		Find(app, c.Param("app_id"))
 	if err != nil {
 		c.Logger().Error("cannot found app with your right: ", err)
@@ -240,11 +260,7 @@ func safeSetAppAdmin(c buffalo.Context) (*pop.Connection, *models.App, error) {
 func safeSetApp(c buffalo.Context) (*pop.Connection, *models.App, error) {
 	tx := c.Value("tx").(*pop.Connection)
 	app := &models.App{}
-	err := pop.Q(tx).
-		LeftJoin("roles", "roles.app_id = apps.id").
-		LeftJoin("role_maps", "role_maps.role_id = roles.id").
-		Where("role_maps.member_id = ?", currentMember(c).ID).
-		Where("roles.code != ?", "admin").
+	err := tx.BelongsToThrough(currentMember(c), &models.AccessGrants{}).
 		Find(app, c.Param("app_id"))
 	if err != nil {
 		c.Logger().Error("cannot found app with your right: ", err)
