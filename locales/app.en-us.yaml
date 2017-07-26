@@ -1,0 +1,257 @@
+
+# Login & Authentication
+- id: login
+  translation: "Login"
+- id: logout
+  translation: "Logout"
+- id: login.required
+  translation: "Login required"
+- id: staff.only
+  translation: "Staff Only!"
+- id: unacceptable.email.not.verified
+  translation: "Unacceptable credential. Email not verified."
+- id: unacceptable.no.email.provided
+  translation: "Unacceptable credential. No email provided."
+- id: unacceptable.no.name.provided
+  translation: "Unacceptable credential. No name provided."
+- id: credential.exist.without.owner
+  translation: "Your credential already exists. Please contact to administrator"
+- id: welcome.to.uart
+  translation: "Welcome to UART!"
+- id: welcome.back.i.missed.you
+  translation: "Welcome back! I missed you."
+- id: you.have.been.successfully.logged.out
+  translation: "You have been successfully logged out."
+
+# Menu Items
+- id: all.apps
+  translation: "All Apps"
+- id: docs
+  translation: "Docs"
+- id: members
+  translation: "Members"
+- id: membership
+  translation: "Membership"
+- id: my.apps
+  translation: "My Apps"
+
+# Member
+- id: access.grants
+  translation: "Access Grants"
+- id: credentials
+  translation: "Credentials"
+- id: teams
+  translation: "Teams"
+- id: create.new.team
+  translation: "Create New Team"
+- id: my.authorized.apps
+  translation: "My Authorized Apps"
+- id: my.roles
+  translation: "My Roles"
+- id: all.registered.members
+  translation: "All Registered Members"
+- id: set.member.status.and.notes
+  translation: "Set member status and notes"
+- id: show.and.edit.your.settings
+  translation: "Show and edit your settings"
+- id: you.are.currently.locked.or.new
+  translation: "You are currently locked or new. Most features are not available until upgrade your status. Please contact administrators."
+
+# Credentials
+- id: credential
+  translation: "Credential"
+- id: all.registered.credentials
+  translation: "All Registered Credentials"
+
+# Apps
+- id: app.details
+  translation: "App Details"
+- id: app.key
+  translation: "App Key"
+- id: app.secret
+  translation: "App Secret"
+- id: app
+  translation: "App"
+- id: apps
+  translation: "Apps"
+- id: callback.url
+  translation: "Callback Url"
+- id: description
+  translation: "Description"
+- id: edit.app
+  translation: "Edit App"
+- id: new.app
+  translation: "New App"
+- id: site.url
+  translation: "Site URL"
+- id: all.applications
+  translation: "All Applications"
+- id: all.registered.apps
+  translation: "All registered apps"
+- id: register.new.app.here
+  translation: "Register new app here"
+
+# Apps & Roles
+- id: new.role
+  translation: "New Role"
+- id: role.request
+  translation: "Role Request"
+- id: app.not.found.check.your.permission
+  translation: "App not found. Check your permission!"
+- id: app.was.created.successfully
+  translation: "App was created successfully!"
+- id: app.was.deleted.successfully
+  translation: "App was deleted successfully!"
+- id: app.was.updated.successfully
+  translation: "App was updated successfully!"
+- id: oops.cannot.delete.app
+  translation: "OOPS! Cannot delete the App!"
+- id: oops.cannot.update.app
+  translation: "OOPS! Cannot update the App!"
+
+# Access Grant
+- id: grant
+  translation: "Grant"
+- id: grants
+  translation: "Grants"
+- id: cannot.delete.the.app.user.exists
+  translation: "Cannot delete the app. Active user exists"
+- id: cannot.found.app
+  translation: "Cannot found app"
+- id: cannot.remove.admin.role.from.you
+  translation: "Cannot remove admin role from you"
+- id: cannot.remove.this.role.from.you
+  translation: "Cannot remove this role from you"
+- id: cannot.revoke.your.access.right
+  translation: "Cannot revoke your access right"
+- id: no.perm.inactive.member
+  translation: "No permmission! You are currently inactive member."
+- id: oops.cannot.assign.a.role
+  translation: "OOPS! Cannot assign a role!"
+- id: oops.cannot.grant
+  translation: "OOPS! Cannot grant!"
+- id: role.removed.from.you.successfully
+  translation: "The role removed from you successfully!"
+
+# Role and membership
+- id: active.members
+  translation: "Active Members"
+- id: add.credential
+  translation: "Add Credential"
+- id: modal.message.select.perfered.roles.for.this.app
+  translation: "Select perfered roles for this app"
+- id: register.new.role.here
+  translation: "Register new role here"
+- id: request.id
+  translation: "Request ID"
+- id: request
+  translation: "Request"
+- id: requests
+  translation: "Requests"
+- id: role.requests
+  translation: "Role Requests"
+- id: all.remining.roles.also.removed
+  translation: "All remining roles also removed."
+- id: cannot.add.a.role
+  translation: "Cannot add a role"
+- id: cannot.revoke.access.right.for.you
+  translation: "Cannot revoke access right for you"
+- id: cannot.revoke.cannot.found.the.app
+  translation: "Cannot revoke cannot found the app"
+- id: cannot.save.role.automatically
+  translation: "Cannot save role automatically"
+- id: cannot.update.role.automatically
+  translation: "Cannot update role automatically"
+- id: eep.how.can.you.reach.here
+  translation: "EEP! How can you reach here?"
+- id: oops.cannot.found.request
+  translation: "OOPS! Cannot found request!"
+- id: oops.cannot.found.the.role
+  translation: "OOPS! Cannot found the role!"
+- id: oops.cannot.proceed.acception
+  translation: "OOPS! Cannot proceed acception!"
+- id: oops.cannot.register.a.member
+  translation: "OOPS! Cannot register a member!"
+- id: request.accepted.successfully
+  translation: "Request accepted successfully!"
+- id: role.request.finished.successfully
+  translation: "Role request finished successfully!"
+- id: role.was.created.successfully
+  translation: "Role was created successfully!"
+- id: role.was.destroyed.successfully
+  translation: "Role was destroyed successfully!"
+- id: role.was.updated.successfully
+  translation: "Role was updated successfully!"
+- id: successfully.revoked
+  translation: "Successfully revoked!"
+- id: uart.role.also.update
+  translation: "UART Role also update!"
+- id: you.have.no.right.for.this.app
+  translation: "You have no right for this app!"
+
+# Common words
+- id: accept
+  translation: "Accept"
+- id: active
+  translation: "Active"
+- id: add
+  translation: "Add"
+- id: admin
+  translation: "Admin"
+- id: cancel
+  translation: "Cancel"
+- id: close
+  translation: "Close"
+- id: code
+  translation: "Code"
+- id: codes
+  translation: "Codes"
+- id: delete
+  translation: "Delete"
+- id: edit
+  translation: "Edit"
+- id: email
+  translation: "Email"
+- id: emails
+  translation: "Emails"
+- id: member
+  translation: "Member"
+- id: members
+  translation: "Members"
+- id: meta
+  translation: "Meta"
+- id: name
+  translation: "Name"
+- id: names
+  translation: "Names"
+- id: ok
+  translation: "OK"
+- id: owner
+  translation: "Owner"
+- id: owners
+  translation: "Owners"
+- id: provider
+  translation: "Provider"
+- id: rank
+  translation: "Rank"
+- id: revoke
+  translation: "Revoke"
+- id: role
+  translation: "Role"
+- id: roles
+  translation: "Roles"
+- id: save
+  translation: "Save"
+- id: since
+  translation: "Since"
+- id: status
+  translation: "Status"
+- id: update
+  translation: "Update"
+- id: user.id
+  translation: "User ID"
+- id: are.you.sure
+  translation: "Are you sure? This action cannot be reversed."
+
+- id: you.dont.have.permission
+  translation: "You don't have permission for this action!"
