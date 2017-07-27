@@ -1,5 +1,7 @@
 package models
 
+// TODO REVIEW REQUIRED
+
 import (
 	"encoding/json"
 	"time"
@@ -33,6 +35,8 @@ func (g AccessGrant) String() string {
 	return app.String() + " to " + mem.String()
 }
 
+//** actions, relational accessor and functions below:
+
 // Member returns the associcated member instance
 func (g AccessGrant) Member() *Member {
 	member := &Member{}
@@ -52,6 +56,8 @@ func (g AccessGrant) App() *App {
 	}
 	return app
 }
+
+//** array model for base model --------------------------------------------
 
 // AccessGrants is array of AccessGrants
 type AccessGrants []AccessGrant

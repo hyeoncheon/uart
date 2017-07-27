@@ -1,5 +1,7 @@
 package models
 
+// TODO REVIEW REQUIRED
+
 import (
 	"encoding/json"
 	"time"
@@ -31,7 +33,17 @@ func (a App) String() string {
 	return a.Name
 }
 
-//// actions and relational functions below:
+// RelationalOwnerQuery returns query contains path from member to the model.
+// implement belonging
+func (a *App) RelationalOwnerQuery(memberID uuid.UUID) *pop.Query {
+	return DB.Q().
+		LeftJoin("roles", "roles.app_id = apps.id").
+		LeftJoin("role_maps", "role_maps.role_id = roles.id").
+		Where("role_maps.member_id = ?", memberID).
+		Where("roles.code = ?", RCAdmin)
+}
+
+//** actions, relational accessor and functions below:
 
 // Grant create an access grant for given member to the app
 func (a *App) Grant(tx *pop.Connection, member *Member) error {
@@ -130,7 +142,7 @@ func (a App) RequestsCount() int {
 	return count
 }
 
-//// Generic model operation functions below:
+//** Generic model operation functions below:
 
 // GetAppByCode search and returns an app instance by given code, or nil
 func GetAppByCode(code string) *App {
@@ -185,6 +197,8 @@ func createUARTApp(tx *pop.Connection) *App {
 	uart.AddRole(tx, "User", RCUser, "Normal User", 0, true)
 	return uart
 }
+
+//** array model for base model --------------------------------------------
 
 // Apps is array of App.
 type Apps []App

@@ -1,5 +1,7 @@
 package models
 
+// TODO REVIEW REQUIRED
+
 import (
 	"encoding/json"
 	"time"
@@ -29,6 +31,8 @@ func (c Credential) String() string {
 	return c.Provider + "/" + c.UserID
 }
 
+//** actions, relational accessor and functions below:
+
 // Owner find and return associated member instance
 func (c Credential) Owner() *Member {
 	member := &Member{}
@@ -43,6 +47,8 @@ func (c Credential) Owner() *Member {
 func (c Credential) OwnerID() uuid.UUID {
 	return c.Owner().ID
 }
+
+//** array model for base model --------------------------------------------
 
 // Credentials is an array of Credentials.
 type Credentials []Credential

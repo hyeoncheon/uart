@@ -13,5 +13,7 @@
 /debug
 /.vscode/
 /examples/client
+/dev.sh
+/references.md
 
 database.yml

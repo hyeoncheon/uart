@@ -1,5 +1,7 @@
 package models
 
+// TODO REVIEW REQUIRED
+
 import (
 	"encoding/json"
 	"errors"
@@ -33,7 +35,7 @@ func (m Member) String() string {
 	return m.Name + " (" + m.Email + ")"
 }
 
-//// actions and relational functions below:
+//** actions, relational accessor and functions below:
 
 // HasGrantFor checks if the member have granted for given app.
 // additionally it increase reference count as access count.
@@ -169,7 +171,7 @@ func (m Member) AccessGrantCount() int {
 	return count
 }
 
-//// Generic model operation functions below:
+//** Generic model operation functions below:
 
 // GetMember picks a member instance with given id.
 func GetMember(id interface{}) *Member {
@@ -245,6 +247,8 @@ func CreateMember(cred *Credential) (*Member, error) {
 	log.Infof("new member %v registered successfully.", member)
 	return member, nil
 }
+
+//** array model for base model --------------------------------------------
 
 // Members is an array of Members.
 type Members []Member

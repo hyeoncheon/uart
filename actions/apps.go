@@ -1,5 +1,7 @@
 package actions
 
+// TODO REVIEW REQUIRED
+
 import (
 	"net/http"
 
@@ -29,7 +31,8 @@ func (v AppsResource) List(c buffalo.Context) error {
 
 // Show gets the data for one App.
 func (v AppsResource) Show(c buffalo.Context) error {
-	_, app, err := safeSetAppAdmin(c)
+	app := &models.App{}
+	err := models.FindMy(c, currentMember(c), app, c.Param("app_id"))
 	if err != nil {
 		c.Flash().Add("danger", t(c, "you.have.no.right.for.this.app"))
 		return c.Redirect(http.StatusFound, "/apps")
@@ -80,7 +83,8 @@ func (v AppsResource) Create(c buffalo.Context) error {
 
 // Edit renders a edit formular for a app.
 func (v AppsResource) Edit(c buffalo.Context) error {
-	_, app, err := safeSetAppAdmin(c)
+	app := &models.App{}
+	err := models.FindMy(c, currentMember(c), app, c.Param("app_id"))
 	if err != nil {
 		return errors.WithStack(err)
 	}
@@ -90,7 +94,8 @@ func (v AppsResource) Edit(c buffalo.Context) error {
 
 // Update changes a app in the DB.
 func (v AppsResource) Update(c buffalo.Context) error {
-	tx, app, err := safeSetAppAdmin(c)
+	app := &models.App{}
+	err := models.FindMy(c, currentMember(c), app, c.Param("app_id"))
 	if err != nil {
 		c.Flash().Add("danger", t(c, "app.not.found.check.your.permission"))
 		return c.Redirect(http.StatusTemporaryRedirect, "/apps")
@@ -99,6 +104,7 @@ func (v AppsResource) Update(c buffalo.Context) error {
 	if err != nil {
 		return errors.WithStack(err)
 	}
+	tx := c.Value("tx").(*pop.Connection)
 	verrs, err := tx.ValidateAndUpdate(app)
 	if err != nil {
 		c.Flash().Add("danger", t(c, "oops.cannot.update.app"))
@@ -115,12 +121,14 @@ func (v AppsResource) Update(c buffalo.Context) error {
 
 // Destroy deletes a app from the DB.
 func (v AppsResource) Destroy(c buffalo.Context) error {
-	tx, app, err := safeSetAppAdmin(c)
+	app := &models.App{}
+	err := models.FindMy(c, currentMember(c), app, c.Param("app_id"))
 	if err != nil {
 		c.Flash().Add("danger", t(c, "app.not.found.check.your.permission"))
 		return c.Redirect(http.StatusFound, "/apps")
 	}
 
+	tx := c.Value("tx").(*pop.Connection)
 	adminMember := currentMember(c)
 	err = adminMember.RemoveRole(tx, app.GetRole(tx, models.RCAdmin))
 	if err != nil {
@@ -211,17 +219,19 @@ func (v AppsResource) Grant(c buffalo.Context) error {
 
 // Revoke serve /revoke/{app_id} to revoke access grant for the current member
 func (v AppsResource) Revoke(c buffalo.Context) error {
-	tx, app, err := safeSetApp(c)
+	tx := c.Value("tx").(*pop.Connection)
+	app := &models.App{}
+	err := models.PickOne(tx, app, c.Param("app_id"))
 	if err != nil {
 		c.Flash().Add("warning", t(c, "cannot.revoke.cannot.found.the.app"))
 		return c.Redirect(http.StatusTemporaryRedirect, "/membership/me")
 	}
-	member := currentMember(c)
 
+	member := currentMember(c)
 	// cleanup! force remove roles!
 	for _, role := range *member.AppRoles(*app) {
 		if role.Code == models.RCAdmin {
-			continue
+			continue //! DO NOT REMOVE ADMIN ROLE
 		}
 		err := member.RemoveRole(tx, &role)
 		if err != nil {
@@ -238,33 +248,4 @@ func (v AppsResource) Revoke(c buffalo.Context) error {
 		c.Flash().Add("success", t(c, "successfully.revoked"))
 	}
 	return c.Redirect(http.StatusTemporaryRedirect, "/membership/me")
-}
-
-// utilities
-func safeSetAppAdmin(c buffalo.Context) (*pop.Connection, *models.App, error) {
-	tx := c.Value("tx").(*pop.Connection)
-	app := &models.App{}
-	err := pop.Q(tx).
-		LeftJoin("roles", "roles.app_id = apps.id").
-		LeftJoin("role_maps", "role_maps.role_id = roles.id").
-		Where("role_maps.member_id = ?", currentMember(c).ID).
-		Where("roles.code = ?", models.RCAdmin).
-		Find(app, c.Param("app_id"))
-	if err != nil {
-		c.Logger().Error("cannot found app with your right: ", err)
-		err = errors.New("App Not Found")
-	}
-	return tx, app, err
-}
-
-func safeSetApp(c buffalo.Context) (*pop.Connection, *models.App, error) {
-	tx := c.Value("tx").(*pop.Connection)
-	app := &models.App{}
-	err := tx.BelongsToThrough(currentMember(c), &models.AccessGrants{}).
-		Find(app, c.Param("app_id"))
-	if err != nil {
-		c.Logger().Error("cannot found app with your right: ", err)
-		err = errors.New("App Not Found")
-	}
-	return tx, app, err
 }

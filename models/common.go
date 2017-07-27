@@ -1,16 +1,55 @@
 package models
 
+// TODO REVIEW REQUIRED
+
 import (
 	"encoding/json"
+	"errors"
 	"math/rand"
 	"strings"
 	"time"
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/markbates/pop"
+	"github.com/satori/go.uuid"
 
 	"github.com/hyeoncheon/uart/utils"
 )
+
+// Belonging Interface
+//
+type Belonging interface {
+	RelationalOwnerQuery(uuid.UUID) *pop.Query
+}
+
+// FindMy uses belonging's RelationQuery for finding path to the belonging
+// and returns member's own belonging.
+func FindMy(c buffalo.Context, m *Member, b Belonging, id interface{}) error {
+	var q *pop.Query
+	if c.Value("member_is_admin").(bool) {
+		securityLog.Debug("secu: belonging is accessed by admin")
+		q = DB.Q()
+	} else {
+		q = b.RelationalOwnerQuery(m.ID)
+	}
+	err := q.Find(b, id)
+	if err != nil {
+		log.Error("cannot found belonging", err)
+		err = errors.New("Not Found")
+	}
+	return err
+}
+
+// PickOne find and return single belonging regardless of access right
+func PickOne(tx *pop.Connection, b Belonging, id interface{}) error {
+	securityLog.Debug("WARNING: this fuction do not check access right!")
+	err := tx.Find(b, id)
+	if err != nil {
+		log.Error("cannot pick one: ", err)
+		err = errors.New("Not Found")
+	}
+	return err
+}
 
 // SearchParams is a structure for storing paginated query
 type SearchParams struct {

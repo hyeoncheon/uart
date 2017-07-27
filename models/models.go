@@ -1,5 +1,7 @@
 package models
 
+// TODO REVIEW REQUIRED
+
 import (
 	"github.com/gobuffalo/envy"
 	"github.com/markbates/pop"
@@ -9,6 +11,7 @@ import (
 // DB and others: shared variables for models
 var DB *pop.Connection
 var log = logrus.New().WithField("category", "model")
+var securityLog = log.WithField("category", "security")
 var isDev = false
 
 func init() {

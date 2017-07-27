@@ -1,5 +1,7 @@
 package models
 
+// TODO REVIEW REQUIRED
+
 import (
 	"encoding/json"
 	"time"
@@ -94,7 +96,7 @@ func (r *Role) ValidateUpdate(tx *pop.Connection) (*validate.Errors, error) {
 	return validate.NewErrors(), nil
 }
 
-//// Role Map
+//** Role Map
 
 // RoleMap is a mapping object for role and member.
 type RoleMap struct {
