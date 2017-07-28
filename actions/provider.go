@@ -7,7 +7,7 @@
 
 package actions
 
-// TODO REVIEW REQUIRED
+// TODO CHECK RFC AND IMPLEMENT AGAIN BUT NOT NOW
 
 import (
 	"net/http"
@@ -16,18 +16,26 @@ import (
 	"github.com/gobuffalo/buffalo"
 
 	"github.com/hyeoncheon/uart/models"
+	"github.com/hyeoncheon/uart/utils"
 )
 
 var svr *osin.Server
 var logger buffalo.Logger
 
+const (
+	privKeyFile = "files/jwt.private.pem"
+	pubKeyFile  = "files/jwt.public.pem"
+)
+
 func initProvider(l buffalo.Logger) {
 	logger = l
 
 	conf := osin.NewServerConfig()
+	conf.AccessExpiration = 60
 	svr = osin.NewServer(conf, newProvider())
+	svr.AccessTokenGen = utils.NewRS256AccessTokenGen(brandName, privKeyFile)
 
-	logger.Info("oauth2 provider initialized!")
+	logger.Info("oauth2 provider with jwt support initialized!")
 	return
 }
 
@@ -53,6 +61,8 @@ func authorizeHandler(c buffalo.Context) error {
 			c.Session().Set("origin", c.Request().RequestURI)
 			return c.Render(200, r.HTML("oauth2/grant.html"))
 		}
+
+		// TODO: implement scope handling
 		logger.Debugf("--- requested scopes: %v", ar.Scope)
 		ar.UserData = map[string]interface{}{
 			"user_id":      user.ID,
@@ -122,7 +132,7 @@ type Provider struct {
 
 func newProvider() *Provider {
 	stg := &Provider{
-		clients:   make(map[string]osin.Client), // for cache, later
+		clients:   make(map[string]osin.Client), // TODO: for cache, later
 		authorize: make(map[string]*osin.AuthorizeData),
 		access:    make(map[string]*osin.AccessData),
 		refresh:   make(map[string]string),
@@ -137,7 +147,18 @@ func (s *Provider) Clone() osin.Storage {
 
 // Close does nothing because there is no clone or additional resources.
 func (s *Provider) Close() {
-	// hey, garbage collector here!
+	for k, v := range s.access {
+		if v.IsExpired() {
+			logger.Debugf("delete expired ak for %v", v.Client.GetId()[0:8])
+			s.RemoveAccess(k)
+		}
+	}
+	for k, v := range s.authorize {
+		if v.IsExpired() {
+			logger.Debugf("rarely, delete expired auth_code %v", v.Code)
+			s.RemoveAuthorize(k)
+		}
+	}
 }
 
 // GetClient searches and returns osin.Client instance with clientID.
@@ -184,6 +205,8 @@ func (s *Provider) SaveAccess(data *osin.AccessData) error {
 	logger.Info("oauth2 provider.save access for ", data.AccessToken)
 	logger.Debug("---- userdata: ", data.UserData)
 	s.access[data.AccessToken] = data
+	// TODO: do not store refresh token until fully implemented
+	return nil
 	if data.RefreshToken != "" {
 		s.refresh[data.RefreshToken] = data.AccessToken
 	}

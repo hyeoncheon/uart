@@ -12,8 +12,9 @@
 
 /debug
 /.vscode/
-/examples/client
+/examples/**/client
 /dev.sh
 /references.md
 
 database.yml
+/files/*.pem

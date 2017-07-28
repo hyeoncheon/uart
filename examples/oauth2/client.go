@@ -8,6 +8,7 @@ import (
 	"os"
 	"time"
 
+	jwt "github.com/dgrijalva/jwt-go"
 	"golang.org/x/oauth2"
 )
 
@@ -35,6 +36,7 @@ func main() {
 	http.HandleFunc("/auth/callback", func(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		code := r.Form.Get("code")
+		fmt.Println("# callback request! -----------------------------------------")
 		fmt.Printf("phase #1: get authorization code: %v\n", code)
 
 		t, err := client.Exchange(context.Background(), code)
@@ -43,6 +45,43 @@ func main() {
 		}
 		fmt.Printf("phase #2: get access token: %v %v %v\n",
 			t.TokenType, t.AccessToken, t.RefreshToken)
+
+		// try to decode access token as it is jwt.
+		const pemfile = "../../files/jwt.public.pem"
+		jt, err := jwt.Parse(t.AccessToken, func(t *jwt.Token) (interface{}, error) {
+			if _, ok := t.Method.(*jwt.SigningMethodRSA); !ok {
+				return nil, err
+			}
+			k, err := ioutil.ReadFile(pemfile)
+			if err != nil {
+				return nil, err
+			}
+			return jwt.ParseRSAPublicKeyFromPEM(k)
+		})
+		if claims, ok := jt.Claims.(jwt.MapClaims); ok && jt.Valid {
+			if err := claims.Valid(); err == nil {
+				fmt.Println("\nok, token validated! see it!")
+				now := time.Now().Unix()
+				fmt.Println(" *- issuer: ", claims.VerifyIssuer("UART", true))
+				fmt.Println(" *- audience: ", claims.VerifyAudience(client.ClientID, true))
+				fmt.Println(" *- not expired: ", claims.VerifyExpiresAt(now, true))
+				fmt.Println(" *- issued at: ", claims.VerifyIssuedAt(now, true))
+				fmt.Println(" *- not before: ", claims.VerifyNotBefore(now, true))
+				fmt.Printf(" v- issued at: %v\n", time.Unix(int64(claims["iat"].(float64)), 0))
+				fmt.Printf(" v- expires at: %v\n", time.Unix(int64(claims["exp"].(float64)), 0))
+				fmt.Printf(" v- not before: %v\n", time.Unix(int64(claims["nbf"].(float64)), 0))
+			}
+			for k, v := range claims {
+				if len(k) > 3 {
+					fmt.Printf(" -- %s: %v (%T)\n", k, v, v)
+				}
+			}
+			fmt.Println("")
+		} else {
+			fmt.Println("")
+			fmt.Printf("the token is not valid jwt: %v\n", err)
+			fmt.Println("")
+		}
 
 		req, _ := http.NewRequest("GET", userinfo, nil)
 		req.Header.Set("Authorization", "Bearer "+t.AccessToken)
