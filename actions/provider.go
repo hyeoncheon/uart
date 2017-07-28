@@ -1,3 +1,10 @@
+//** OAuth2.0 authorization service provider code built on osin library.
+//
+//	It supports simple oauth2 authorization cycle with userinfo endpoint,
+//	and currently does not support jwt and oidc.
+//
+// osin library: https://github.com/RangelReale/osin
+
 package actions
 
 // TODO REVIEW REQUIRED
@@ -7,26 +14,27 @@ import (
 
 	"github.com/RangelReale/osin"
 	"github.com/gobuffalo/buffalo"
+
 	"github.com/hyeoncheon/uart/models"
-	"github.com/sirupsen/logrus"
 )
 
-var svr = osin.NewServer(providerConf(), newProvider())
-var logger = logrus.New().WithField("category", "provider")
+var svr *osin.Server
+var logger buffalo.Logger
 
-func providerConf() *osin.ServerConfig {
-	logger.Info("provider initialize...")
-	logger.Logger.Level = logrus.DebugLevel
+func initProvider(l buffalo.Logger) {
+	logger = l
 
 	conf := osin.NewServerConfig()
-	//conf.AllowGetAccessRequest = true
-	//conf.AllowClientSecretInParams = true
-	return conf
+	svr = osin.NewServer(conf, newProvider())
+
+	logger.Info("oauth2 provider initialized!")
+	return
 }
 
 func authorizeHandler(c buffalo.Context) error {
 	resp := svr.NewResponse()
 	defer resp.Close()
+	logger = c.Logger().WithField("category", "oauth2")
 	logger.Debug("oauth2 authorization started...")
 
 	if ar := svr.HandleAuthorizeRequest(resp, c.Request()); ar != nil {
@@ -45,7 +53,7 @@ func authorizeHandler(c buffalo.Context) error {
 			c.Session().Set("origin", c.Request().RequestURI)
 			return c.Render(200, r.HTML("oauth2/grant.html"))
 		}
-		logger.Debugf("--- state: %v, scopes: %v", ar.State, ar.Scope)
+		logger.Debugf("--- requested scopes: %v", ar.Scope)
 		ar.UserData = map[string]interface{}{
 			"user_id":      user.ID,
 			"name":         user.Name,
@@ -56,7 +64,7 @@ func authorizeHandler(c buffalo.Context) error {
 		}
 		svr.FinishAuthorizeRequest(resp, c.Request(), ar)
 	}
-	logger.Debugf("--- resp.output: %v", resp.Output)
+	logger.Debugf("authorization response: --- %v ---", resp.Output)
 
 	if resp.IsError && resp.InternalError != nil {
 		c.Logger().Error("internal error: ", resp.InternalError)
@@ -71,13 +79,14 @@ func authorizeHandler(c buffalo.Context) error {
 func tokenHandler(c buffalo.Context) error {
 	resp := svr.NewResponse()
 	defer resp.Close()
+	logger = c.Logger().WithField("category", "oauth2")
 	logger.Info("oauth2 access token requested...")
 
 	if ar := svr.HandleAccessRequest(resp, c.Request()); ar != nil {
 		ar.Authorized = true
 		svr.FinishAccessRequest(resp, c.Request(), ar)
 	}
-	logger.Debugf("--- resp.output: %v", resp.Output)
+	logger.Debugf("token response: --- %v ---", resp.Output)
 
 	if resp.IsError && resp.InternalError != nil {
 		c.Logger().Error("internal error: ", resp.InternalError)
@@ -92,12 +101,15 @@ func tokenHandler(c buffalo.Context) error {
 func userInfoHandler(c buffalo.Context) error {
 	resp := svr.NewResponse()
 	defer resp.Close()
+	logger = c.Logger().WithField("category", "oauth2")
 	if ir := svr.HandleInfoRequest(resp, c.Request()); ir != nil {
 		resp.Output = ir.AccessData.UserData.(map[string]interface{})
 	}
 	logger.Debugf("--- resp.output: %v", resp.Output)
 	return osin.OutputJSON(resp, c.Response(), c.Request())
 }
+
+//** Provider implementation ----------------------------------------------
 
 // Provider handles authentication statuses and connections.
 //
@@ -143,7 +155,7 @@ func (s *Provider) GetClient(clientID string) (osin.Client, error) {
 	return nil, osin.ErrNotFound
 }
 
-//// Functions for phase #1, authorize request ----------------------------
+//** Functions for phase #1, authorize request ----------------------------
 
 // SaveAuthorize stores authorization information into provider storage.
 // Called by FinishAuthorizeRequest
@@ -154,7 +166,7 @@ func (s *Provider) SaveAuthorize(data *osin.AuthorizeData) error {
 	return nil
 }
 
-//// Functions for phase #2, access token ---------------------------------
+//** Functions for phase #2, access token ---------------------------------
 
 // LoadAuthorize read and returns authorize information from provider storage.
 // Called by HandleAccessRequest
@@ -186,7 +198,7 @@ func (s *Provider) RemoveAuthorize(code string) error {
 	return nil
 }
 
-//// Functions for resource accessing -------------------------------------
+//** Functions for resource accessing -------------------------------------
 
 // LoadAccess read and returns access information from provider storage.
 // Called by HandleInfoRequest to validate access token

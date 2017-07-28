@@ -32,7 +32,7 @@ func (m Member) String() string {
 	if m.Email == "" {
 		return "Empty"
 	}
-	return m.Name + " (" + m.Email + ")"
+	return m.Name + " ." + m.ID.String()[0:6]
 }
 
 //** actions, relational accessor and functions below:
@@ -48,6 +48,8 @@ func (m Member) HasGrantFor(appID uuid.UUID) bool {
 		log.Error("error while getting grant apps.", err)
 		return false
 	}
+	// TODO: granted scope check and handling
+	log.Debug("granted scope: ", grant.Scope)
 	grant.AccessCount++
 	DB.Save(grant)
 	return true
@@ -62,13 +64,22 @@ func (m Member) HasRole(roleID uuid.UUID) bool {
 	return true
 }
 
+func (m Member) Grants() *AccessGrants {
+	grants := &AccessGrants{}
+	err := DB.BelongsTo(&m).Where("is_revoked = ?", false).All(grants)
+	if err != nil {
+		log.Warn("no grants found: ", err)
+	}
+	return grants
+}
+
 // GrantedApps returns the member's associcated granted apps
 func (m Member) GrantedApps() *Apps {
 	apps := &Apps{}
 	err := DB.BelongsToThrough(&m, &AccessGrants{}).
 		Where("is_revoked = ?", false).Order(membersDefaultSort).All(apps)
 	if err != nil {
-		log.Error("OOPS! cannot found associated apps:", err)
+		log.Warn("no associated apps found: ", err)
 	}
 	return apps
 }
@@ -104,13 +115,13 @@ func (m *Member) RemoveRole(tx *pop.Connection, r *Role) error {
 }
 
 // AppRoles returns associated roles of given app, assigned to the member.
-func (m Member) AppRoles(app App, flag ...bool) *Roles {
+func (m Member) AppRoles(appID uuid.UUID, flag ...bool) *Roles {
 	roles := &Roles{}
 	Q := DB.BelongsToThrough(&m, &RoleMap{})
 	if len(flag) > 0 {
 		Q = Q.Where("role_maps.is_active = ?", flag[0])
 	}
-	err := Q.Where("roles.app_id = ?", app.ID).All(roles)
+	err := Q.Where("roles.app_id = ?", appID).All(roles)
 	if err != nil {
 		log.Warn("cannot found associated roles: ", err)
 	}
@@ -125,7 +136,7 @@ func (m Member) GetAppRoleCodes(appCode string) []string {
 		log.Error("OOPS! cannot found app with given code!")
 		return ret
 	}
-	roles := m.AppRoles(*app, true)
+	roles := m.AppRoles(app.ID, true)
 	for _, r := range *roles {
 		ret = append(ret, r.Code)
 	}
@@ -232,7 +243,7 @@ func CreateMember(cred *Credential) (*Member, error) {
 			return err
 		}
 
-		err = uart.Grant(tx, member)
+		err = uart.Grant(tx, member, AppDefaultAdminScope)
 		if err != nil {
 			log.Errorf("OOPS! cannot grant %v to %v: %v", uart, member, err)
 			return err

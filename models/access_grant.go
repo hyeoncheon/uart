@@ -4,11 +4,13 @@ package models
 
 import (
 	"encoding/json"
+	"html/template"
 	"time"
 
 	"github.com/markbates/pop"
 	"github.com/markbates/validate"
 	"github.com/markbates/validate/validators"
+	"github.com/russross/blackfriday"
 	"github.com/satori/go.uuid"
 )
 
@@ -19,6 +21,7 @@ type AccessGrant struct {
 	UpdatedAt   time.Time `json:"updated_at" db:"updated_at"`
 	AppID       uuid.UUID `json:"app_id" db:"app_id"`
 	MemberID    uuid.UUID `json:"member_id" db:"member_id"`
+	Scope       string    `json:"scope" db:"scope"`
 	IsRevoked   bool      `json:"is_revoked" db:"is_revoked"`
 	ExpiresIn   time.Time `json:"expires_in" db:"expires_in"`
 	RevokedAt   time.Time `json:"revoked_at" db:"revoked_at"`
@@ -32,7 +35,20 @@ func (g AccessGrant) String() string {
 	if app == nil || mem == nil {
 		return "Broken Access Grant!"
 	}
-	return app.String() + " to " + mem.String()
+	return mem.String() + " granted " + app.String()
+}
+
+// Description returns formatted description of the access grant
+func (g AccessGrant) Description() template.HTML {
+	app := g.App()
+	mem := g.Member()
+	timeString := g.CreatedAt.Local().Format("06-01-02 15:04")
+	mdBytes := blackfriday.MarkdownBasic([]byte(
+		mem.Name + " granted scope `" + g.Scope +
+			"` to " + app.String() +
+			" at " + timeString,
+	))
+	return template.HTML(string(mdBytes))
 }
 
 //** actions, relational accessor and functions below:
@@ -40,7 +56,7 @@ func (g AccessGrant) String() string {
 // Member returns the associcated member instance
 func (g AccessGrant) Member() *Member {
 	member := &Member{}
-	err := DB.BelongsTo(&g).First(member)
+	err := DB.Find(member, g.MemberID)
 	if err != nil {
 		return nil
 	}
@@ -50,7 +66,7 @@ func (g AccessGrant) Member() *Member {
 // App returns the associated app instance
 func (g AccessGrant) App() *App {
 	app := &App{}
-	err := DB.BelongsTo(&g).First(app)
+	err := DB.Find(app, g.AppID)
 	if err != nil {
 		return nil
 	}

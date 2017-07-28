@@ -13,6 +13,13 @@ import (
 	"github.com/satori/go.uuid"
 )
 
+// default values
+const (
+	AppDefaultAdminScope = "all:all"
+	appDefaultIcon       = "/assets/images/dummy-app.png"
+	appsDefaultSort      = "name"
+)
+
 // App is model for application which can be authenticated with uart.
 type App struct {
 	ID          uuid.UUID `json:"id" db:"id"`
@@ -46,12 +53,13 @@ func (a *App) RelationalOwnerQuery(memberID uuid.UUID) *pop.Query {
 //** actions, relational accessor and functions below:
 
 // Grant create an access grant for given member to the app
-func (a *App) Grant(tx *pop.Connection, member *Member) error {
+func (a *App) Grant(tx *pop.Connection, member *Member, scope string) error {
 	log.Infof("access grant for app %v to member %v", a, member)
 	return tx.Create(&AccessGrant{
 		AppID:       a.ID,
 		MemberID:    member.ID,
 		AccessCount: 1,
+		Scope:       scope,
 	})
 }
 
@@ -209,8 +217,6 @@ func (a Apps) String() string {
 	return string(ja)
 }
 
-const appsDefaultSort = "name"
-
 // SearchParams implementation (Searchable)
 func (a Apps) SearchParams(c buffalo.Context) SearchParams {
 	sp := newSearchParams(c)
@@ -233,12 +239,10 @@ func (a Apps) QueryAndParams(c buffalo.Context) (*pop.Query, SearchParams) {
 	return q, sp
 }
 
-const defaultAppIcon = "/assets/images/dummy-app.png"
-
 // Validate gets run every time you call a "pop.Validate" method.
 func (a *App) Validate(tx *pop.Connection) (*validate.Errors, error) {
 	if a.AppIcon == "" {
-		a.AppIcon = defaultAppIcon
+		a.AppIcon = appDefaultIcon
 	}
 	return validate.Validate(
 		&validators.StringIsPresent{Field: a.Name, Name: "Name"},

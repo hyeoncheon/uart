@@ -1,6 +1,6 @@
 <div class="row wg phead">
 	<div class="col-md-3 col-xs-12 wg ptitle">
-		<h1><%=t("membership")%></h1>
+		<h1><%= member %></h1>
 	</div>
 	<div class="col-md-9 col-xs-12 wg pnav">
 		<span class="pull-right" data-toggle="popover" data-trigger="hover"
@@ -24,7 +24,8 @@
 				<%=t("my.authorized.apps")%>
 			</h2>
 			<div class="wg content-box">
-				<%= for (app) in apps { %><%
+				<%= for (grant) in grants { %><%
+				let app = grant.App() %><%
 partial("apps/appcard.html") %><%
 				} %>
 			</div>

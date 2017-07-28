@@ -6,16 +6,17 @@
 		<b><a href="<%= appPath({app_id: app.ID}) %>"><%= app.Name %></a></b>
 		<div class="wg meta">
 			<div><%= app.Description %></div>
+			<div><%= grant.Description() %></div>
 		</div>
 	</div>
 	<div class="wg content indented">
-		<% let rc = (len(member.AppRoles(app, true))+len(member.AppRoles(app, false))) %>
+		<% let rc = (len(member.AppRoles(app.ID, true))+len(member.AppRoles(app.ID, false))) %>
 		<% let is_active = true %>
-		<%= for (role) in member.AppRoles(app, true) { %><%
+		<%= for (role) in member.AppRoles(app.ID, true) { %><%
 partial("roles/roleline.html") %><%
 		} %>
 		<% let is_active = false %>
-		<%= for (role) in member.AppRoles(app, false) { %><%
+		<%= for (role) in member.AppRoles(app.ID, false) { %><%
 partial("roles/roleline.html") %><%
 		} %>
 	</div>

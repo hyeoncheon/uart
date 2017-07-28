@@ -126,5 +126,5 @@ func loggedIn(c buffalo.Context, member *models.Member) error {
 	if err != nil {
 		c.Logger().Error("SYSTEM ERROR: cannot save session! ", err)
 	}
-	return c.Redirect(http.StatusTemporaryRedirect, origin.(string))
+	return c.Redirect(http.StatusTemporaryRedirect, "%s", origin.(string))
 }

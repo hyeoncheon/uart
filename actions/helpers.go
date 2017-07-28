@@ -1,7 +1,5 @@
 package actions
 
-// TODO REVIEW REQUIRED
-
 import (
 	"fmt"
 	"html/template"

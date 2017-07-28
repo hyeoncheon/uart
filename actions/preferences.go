@@ -26,7 +26,7 @@ func membershipHandler(c buffalo.Context) error {
 	c.Set("member", member)
 	c.Set("credentials", member.Credentials())
 	c.Set("roles", member.Roles())
-	c.Set("apps", member.GrantedApps())
+	c.Set("grants", member.Grants())
 	return c.Render(http.StatusOK, r.HTML("membership.html"))
 }
 

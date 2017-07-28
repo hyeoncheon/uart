@@ -75,7 +75,7 @@ func (v AppsResource) Create(c buffalo.Context) error {
 	app.AddRole(tx, "User", models.RCUser, "Normal User", 0, true)
 	me := currentMember(c)
 	me.AddRole(tx, app.GetRole(tx, models.RCAdmin), true)
-	app.Grant(tx, me)
+	app.Grant(tx, me, models.AppDefaultAdminScope)
 
 	c.Flash().Add("success", t(c, "app.was.created.successfully"))
 	return c.Redirect(302, "/apps/%s", app.ID)
@@ -195,7 +195,7 @@ func (v AppsResource) Grant(c buffalo.Context) error {
 	member := currentMember(c)
 	tx := c.Value("tx").(*pop.Connection)
 
-	err := app.Grant(tx, member)
+	err := app.Grant(tx, member, c.Param("scope"))
 	if err != nil {
 		tx.TX.Rollback()
 		c.Logger().Errorf("cannot grant %v to %v: %v", app, member, err)
@@ -229,7 +229,7 @@ func (v AppsResource) Revoke(c buffalo.Context) error {
 
 	member := currentMember(c)
 	// cleanup! force remove roles!
-	for _, role := range *member.AppRoles(*app) {
+	for _, role := range *member.AppRoles(app.ID) {
 		if role.Code == models.RCAdmin {
 			continue //! DO NOT REMOVE ADMIN ROLE
 		}

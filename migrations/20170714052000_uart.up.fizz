@@ -71,6 +71,7 @@ create_table("access_grants", func(t) {
 	t.Column("id", "uuid", {"primary": true})
 	t.Column("app_id", "uuid", {})
 	t.Column("member_id", "uuid", {})
+	t.Column("scope", "string", {})
 	t.Column("is_revoked", "bool", {})
 	t.Column("expires_in", "timestamp", {})
 	t.Column("revoked_at", "timestamp", {})

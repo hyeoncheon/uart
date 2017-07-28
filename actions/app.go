@@ -68,6 +68,7 @@ func App() *buffalo.App {
 		app.ServeFiles("/assets", packr.NewBox("../public/assets"))
 
 		// authentication
+		initProvider(app.Logger)
 		auth := app.Group("/auth")
 		auth.GET("/{provider}", buffalo.WrapHandlerFunc(gothic.BeginAuthHandler))
 		auth.GET("/{provider}/callback", AuthCallback)
