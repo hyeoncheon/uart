@@ -75,7 +75,7 @@ func (v AppsResource) Create(c buffalo.Context) error {
 	app.AddRole(tx, "User", models.RCUser, "Normal User", 0, true)
 	me := currentMember(c)
 	me.AddRole(tx, app.GetRole(tx, models.RCAdmin), true)
-	app.Grant(tx, me, models.AppDefaultAdminScope)
+	me.Grant(tx, app, models.AppDefaultAdminScope)
 
 	c.Flash().Add("success", t(c, "app.was.created.successfully"))
 	return c.Redirect(302, "/apps/%s", app.ID)
@@ -138,7 +138,7 @@ func (v AppsResource) Destroy(c buffalo.Context) error {
 		return c.Redirect(http.StatusFound, "/apps")
 	}
 
-	err = app.Revoke(tx, adminMember)
+	err = adminMember.Revoke(tx, app)
 	if err != nil {
 		tx.TX.Rollback()
 		c.Logger().Errorf("cannot revoke access right for admin")
@@ -195,7 +195,7 @@ func (v AppsResource) Grant(c buffalo.Context) error {
 	member := currentMember(c)
 	tx := c.Value("tx").(*pop.Connection)
 
-	err := app.Grant(tx, member, c.Param("scope"))
+	err := member.Grant(tx, app, c.Param("scope"))
 	if err != nil {
 		tx.TX.Rollback()
 		c.Logger().Errorf("cannot grant %v to %v: %v", app, member, err)
@@ -205,14 +205,16 @@ func (v AppsResource) Grant(c buffalo.Context) error {
 	c.Logger().Infof("app %v granted to member %v", app, member)
 
 	uRole := app.GetRole(tx, models.RCUser)
-	err = member.AddRole(tx, uRole)
-	if err != nil {
-		tx.TX.Rollback()
-		c.Logger().Error("cannot add a role to user: ", err)
-		c.Flash().Add("danger", t(c, "oops.cannot.assign.a.role"))
-		return c.Redirect(http.StatusTemporaryRedirect, "%s", origin)
+	if !member.HasRole(uRole.ID) {
+		err = member.AddRole(tx, uRole)
+		if err != nil {
+			tx.TX.Rollback()
+			c.Logger().Error("cannot add a role to user: ", err)
+			c.Flash().Add("danger", t(c, "oops.cannot.assign.a.role"))
+			return c.Redirect(http.StatusTemporaryRedirect, "%s", origin)
+		}
+		c.Logger().Infof("role %v added to %v", uRole, member)
 	}
-	c.Logger().Infof("role %v added to %v", uRole, member)
 
 	return c.Redirect(http.StatusTemporaryRedirect, "%s", origin)
 }
@@ -239,7 +241,7 @@ func (v AppsResource) Revoke(c buffalo.Context) error {
 		}
 		c.Flash().Add("info", t(c, "all.remining.roles.also.removed"))
 	}
-	err = app.Revoke(tx, member)
+	err = member.Revoke(tx, app)
 	if err != nil {
 		tx.TX.Rollback()
 		c.Flash().Clear()

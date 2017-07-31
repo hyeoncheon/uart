@@ -9,9 +9,12 @@ import (
 
 	"github.com/markbates/pop"
 	"github.com/markbates/validate"
-	"github.com/markbates/validate/validators"
 	"github.com/russross/blackfriday"
 	"github.com/satori/go.uuid"
+)
+
+const (
+	grantsDefaultSort = "created_at desc"
 )
 
 // AccessGrant is the linkage between Member and App.
@@ -22,9 +25,6 @@ type AccessGrant struct {
 	AppID       uuid.UUID `json:"app_id" db:"app_id"`
 	MemberID    uuid.UUID `json:"member_id" db:"member_id"`
 	Scope       string    `json:"scope" db:"scope"`
-	IsRevoked   bool      `json:"is_revoked" db:"is_revoked"`
-	ExpiresIn   time.Time `json:"expires_in" db:"expires_in"`
-	RevokedAt   time.Time `json:"revoked_at" db:"revoked_at"`
 	AccessCount int       `json:"access_count" db:"access_count"`
 }
 
@@ -86,9 +86,7 @@ func (g AccessGrants) String() string {
 
 // Validate gets run every time you call a "pop.Validate" method.
 func (g *AccessGrant) Validate(tx *pop.Connection) (*validate.Errors, error) {
-	return validate.Validate(
-		&validators.TimeIsPresent{Field: g.ExpiresIn, Name: "ExpiresIn"},
-	), nil
+	return validate.Validate(), nil
 }
 
 // ValidateSave gets run every time you call "pop.ValidateSave" method.

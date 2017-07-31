@@ -5,6 +5,7 @@ package models
 import (
 	"encoding/json"
 	"errors"
+	"strings"
 	"time"
 
 	"github.com/gobuffalo/buffalo"
@@ -25,6 +26,7 @@ type Member struct {
 	Icon      string    `json:"icon" db:"icon"`
 	IsActive  bool      `json:"is_active" db:"is_active"`
 	Note      string    `json:"note" db:"note"`
+	APIKey    string    `json:"api_key" db:"api_key"`
 }
 
 // String returns pretty printable string of this model.
@@ -37,36 +39,67 @@ func (m Member) String() string {
 
 //** actions, relational accessor and functions below:
 
-// HasGrantFor checks if the member have granted for given app.
-// additionally it increase reference count as access count.
-func (m Member) HasGrantFor(appID uuid.UUID) bool {
+// Grant create an access grant for given member to the app
+func (m Member) Grant(tx *pop.Connection, app *App, scope string) error {
+	log.Infof("%v granting access right to app %v", m, app)
 	grant := &AccessGrant{}
-	err := DB.Where("member_id = ? AND app_id = ?", m.ID, appID).
-		Where("is_revoked = ?", false).
-		First(grant)
+	err := tx.BelongsTo(&m).Where("app_id = ?", app.ID).First(grant)
 	if err != nil {
-		log.Error("error while getting grant apps.", err)
+		log.Warnf("no grant found for %v to %v: %v", app, m, err)
+		return tx.Create(&AccessGrant{
+			AppID:       app.ID,
+			MemberID:    m.ID,
+			AccessCount: 1,
+			Scope:       scope,
+		})
+	}
+	for _, s := range strings.Split(scope, " ") {
+		if !strings.Contains(" "+grant.Scope+" ", " "+s+" ") {
+			grant.Scope = grant.Scope + " " + s
+		} //! bad but easy: just append each scopes as string
+	}
+	return tx.Save(grant)
+}
+
+// Revoke decouples the app and given member, returns database status
+// Revoke does not consider scope.
+func (m Member) Revoke(tx *pop.Connection, app *App) error {
+	log.Infof("revoke access to %v by %v", app.Name, m.Name)
+	grant := &AccessGrant{}
+	err := tx.BelongsTo(&m).Where("app_id = ?", app.ID).First(grant)
+	if err != nil {
+		log.Errorf("cannot found grant for app %v to %v: %v", app, m, err)
+		return errors.New("GrantNotFound")
+	}
+	return tx.Destroy(grant)
+}
+
+// Granted checks if the member have granted for given app.
+// additionally it increase reference count as access count.
+func (m Member) Granted(appID uuid.UUID, scope string) bool {
+	grant := &AccessGrant{}
+	err := DB.BelongsTo(&m).Where("app_id = ?", appID).First(grant)
+	if err != nil {
+		log.Warn("error while getting grant apps.", err)
 		return false
 	}
-	// TODO: granted scope check and handling
-	log.Debug("granted scope: ", grant.Scope)
+
+	// check each grants separately
+	for _, s := range strings.Split(scope, " ") {
+		if !strings.Contains(" "+grant.Scope+" ", " "+s+" ") {
+			log.Warnf("grant found but no scope %v. reject!", s)
+			return false
+		}
+	}
 	grant.AccessCount++
 	DB.Save(grant)
 	return true
 }
 
-// HasRole return true if the member has the role regardless of activated.
-func (m Member) HasRole(roleID uuid.UUID) bool {
-	err := DB.BelongsToThrough(&m, &RoleMap{}).Find(&Role{}, roleID)
-	if err != nil {
-		return false
-	}
-	return true
-}
-
+// Grants returns all grants of the member.
 func (m Member) Grants() *AccessGrants {
 	grants := &AccessGrants{}
-	err := DB.BelongsTo(&m).Where("is_revoked = ?", false).All(grants)
+	err := DB.BelongsTo(&m).Order(grantsDefaultSort).All(grants)
 	if err != nil {
 		log.Warn("no grants found: ", err)
 	}
@@ -76,12 +109,20 @@ func (m Member) Grants() *AccessGrants {
 // GrantedApps returns the member's associcated granted apps
 func (m Member) GrantedApps() *Apps {
 	apps := &Apps{}
-	err := DB.BelongsToThrough(&m, &AccessGrants{}).
-		Where("is_revoked = ?", false).Order(membersDefaultSort).All(apps)
+	err := DB.BelongsToThrough(&m, &AccessGrants{}).All(apps)
 	if err != nil {
 		log.Warn("no associated apps found: ", err)
 	}
 	return apps
+}
+
+// HasRole return true if the member has the role regardless of activated.
+func (m Member) HasRole(roleID uuid.UUID) bool {
+	err := DB.BelongsToThrough(&m, &RoleMap{}).Find(&Role{}, roleID)
+	if err != nil {
+		return false
+	}
+	return true
 }
 
 // AddRole create mapping object for the member.
@@ -140,7 +181,6 @@ func (m Member) GetAppRoleCodes(appCode string) []string {
 	for _, r := range *roles {
 		ret = append(ret, r.Code)
 	}
-	log.Debug("---- AppRoleCode ---- ", ret)
 	return ret
 }
 
@@ -243,7 +283,7 @@ func CreateMember(cred *Credential) (*Member, error) {
 			return err
 		}
 
-		err = uart.Grant(tx, member, AppDefaultAdminScope)
+		err = member.Grant(tx, uart, AppDefaultScope)
 		if err != nil {
 			log.Errorf("OOPS! cannot grant %v to %v: %v", uart, member, err)
 			return err

@@ -170,7 +170,7 @@ func (v RolesResource) Retire(c buffalo.Context) error {
 				c.Logger().Warnf("cannot found app with id '%v'", role.AppID)
 			} else {
 				c.Logger().Debugf("trying to revoke %v@%v", member, app)
-				err = app.Revoke(tx, member)
+				err = member.Revoke(tx, app)
 				if err != nil {
 					c.Logger().Warnf("cannot revoke %v@%v.", member, app)
 				} else {

@@ -16,6 +16,7 @@ import (
 // default values
 const (
 	AppDefaultAdminScope = "all:all"
+	AppDefaultScope      = "profile, auth:all"
 	appDefaultIcon       = "/assets/images/dummy-app.png"
 	appsDefaultSort      = "name"
 )
@@ -51,28 +52,6 @@ func (a *App) RelationalOwnerQuery(memberID uuid.UUID) *pop.Query {
 }
 
 //** actions, relational accessor and functions below:
-
-// Grant create an access grant for given member to the app
-func (a *App) Grant(tx *pop.Connection, member *Member, scope string) error {
-	log.Infof("access grant for app %v to member %v", a, member)
-	return tx.Create(&AccessGrant{
-		AppID:       a.ID,
-		MemberID:    member.ID,
-		AccessCount: 1,
-		Scope:       scope,
-	})
-}
-
-// Revoke decouples the app and given member, returns database status
-func (a *App) Revoke(tx *pop.Connection, member *Member) error {
-	log.Infof("revoke access to %v by %v", a.Name, member.Name)
-	grant := &AccessGrant{}
-	err := tx.BelongsTo(member).Where("app_id = ?", a.ID).First(grant)
-	if err != nil {
-		log.Errorf("cannot found grant for app %v to %v: %v", a, member, err)
-	}
-	return tx.Destroy(grant)
-}
 
 // AddRole create role for the app.
 func (a *App) AddRole(tx *pop.Connection, n, c, d string, r int, o bool) error {

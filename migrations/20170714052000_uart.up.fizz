@@ -6,6 +6,7 @@ create_table("members", func(t) {
 	t.Column("icon", "string", {"default": "/assets/image/shadow.png"})
 	t.Column("is_active", "bool", {})
 	t.Column("note", "text", {})
+	t.Column("api_key", "string", {})
 })
 
 create_table("credentials", func(t) {
@@ -72,9 +73,6 @@ create_table("access_grants", func(t) {
 	t.Column("app_id", "uuid", {})
 	t.Column("member_id", "uuid", {})
 	t.Column("scope", "string", {})
-	t.Column("is_revoked", "bool", {})
-	t.Column("expires_in", "timestamp", {})
-	t.Column("revoked_at", "timestamp", {})
 	t.Column("access_count", "integer", {})
 })
 add_index("access_grants", "app_id", {})

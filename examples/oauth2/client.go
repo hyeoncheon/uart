@@ -16,7 +16,7 @@ func main() {
 	client := &oauth2.Config{
 		ClientID:     os.Getenv("UART_CLIENT_ID"),
 		ClientSecret: os.Getenv("UART_SECRET_KEY"),
-		Scopes:       []string{"id", "name", "email", "roles"},
+		Scopes:       []string{"profile", "auth:all"},
 		RedirectURL:  "http://localhost:3090/auth/callback",
 		Endpoint: oauth2.Endpoint{
 			AuthURL:  "http://localhost:3000/oauth/authorize",
@@ -94,6 +94,7 @@ func main() {
 
 		data, _ := ioutil.ReadAll(resp.Body)
 		fmt.Printf("phase #3: get userinfo: \n%v\n", string(data))
+		w.Header().Set("Content-Type", "application/json")
 		w.Write(data)
 	})
 

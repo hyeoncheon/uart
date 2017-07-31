@@ -40,8 +40,8 @@ func contextHandler(next buffalo.Handler) buffalo.Handler {
 		}
 		c.Set("member_is_admin", false) // prevent nil
 		if roles, ok := c.Session().Get("member_roles").([]string); ok {
+			c.Logger().Debug("storing roles on context: ", roles)
 			for _, role := range roles {
-				c.Logger().Debug("role-----------", role)
 				c.Set("role_"+role, true)
 				if role == models.RCAdmin {
 					c.Set("member_is_admin", true)
