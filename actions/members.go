@@ -3,10 +3,14 @@ package actions
 // TODO REVIEW REQUIRED
 
 import (
+	"net/http"
+	"strings"
+
 	"github.com/gobuffalo/buffalo"
-	"github.com/hyeoncheon/uart/models"
 	"github.com/markbates/pop"
 	"github.com/pkg/errors"
+
+	"github.com/hyeoncheon/uart/models"
 )
 
 // MembersResource is the resource for the member model
@@ -118,14 +122,49 @@ func (v MembersResource) Update(c buffalo.Context) error {
 func (v MembersResource) Destroy(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	member := &models.Member{}
-	err := tx.Find(member, c.Param("member_id"))
-	if err != nil {
+	if err := tx.Find(member, c.Param("member_id")); err != nil {
 		return errors.WithStack(err)
 	}
-	err = tx.Destroy(member)
-	if err != nil {
-		return errors.WithStack(err)
+	adminRole := models.GetAppRole(models.ACUART, models.RCAdmin)
+	if member.HasRole(adminRole.ID) {
+		c.Flash().Add("danger", t(c, "disabling.an.admin.is.not.allowed"))
+		return c.Redirect(http.StatusFound, "/members")
 	}
-	c.Flash().Add("success", "Member was destroyed successfully")
+	//! REMOVE RELATED THING OR JUST DISABLE THEM...
+	for _, d := range *member.Credentials() {
+		if !strings.HasSuffix(d.UserID, "-DLTD") {
+			d.UserID = d.UserID + "-DLTD"
+		}
+		if err := tx.Save(&d); err != nil {
+			tx.TX.Rollback()
+			c.Flash().Add("danger", t(c, "cannot.inactivate.credential"))
+			return c.Redirect(http.StatusFound, "/members")
+		}
+	}
+	for _, g := range *member.Grants() {
+		if err := tx.Destroy(&g); err != nil {
+			tx.TX.Rollback()
+			c.Flash().Add("danger", t(c, "cannot.delete.access.grant"))
+			return c.Redirect(http.StatusFound, "/members")
+		}
+	}
+	for _, r := range *member.Roles() {
+		if err := member.RemoveRole(tx, &r); err != nil {
+			tx.TX.Rollback()
+			c.Flash().Add("danger", t(c, "cannot.remove.users.role"))
+			return c.Redirect(http.StatusFound, "/members")
+		}
+	}
+	member.IsActive = false
+	member.APIKey = ""
+	if !strings.HasPrefix(member.Name, "-Deleted") {
+		member.Name = member.Name + "-Deleted"
+	}
+	if err := tx.Save(member); err != nil {
+		tx.TX.Rollback()
+		c.Flash().Add("danger", t(c, "cannot.inactivate.member"))
+		return c.Redirect(http.StatusFound, "/members")
+	}
+	c.Flash().Add("success", t(c, "member.was.destroyed.successfully"))
 	return c.Redirect(302, "/members")
 }

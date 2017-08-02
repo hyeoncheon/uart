@@ -15,6 +15,7 @@ import (
 
 // default values
 const (
+	ACUART               = "uart"
 	AppDefaultAdminScope = "all:all"
 	AppDefaultScope      = "profile, auth:all"
 	appDefaultIcon       = "/assets/images/dummy-app.png"

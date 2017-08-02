@@ -69,6 +69,16 @@ func (r Role) MemberCount(isActive bool) int {
 	return count
 }
 
+//** Generic model operation functions below:
+
+// GetAppRole returns role instance found by given app code and role code.
+func GetAppRole(appCode, roleCode string) *Role {
+	if app := GetAppByCode(appCode); app != nil {
+		return app.GetRole(DB, roleCode)
+	}
+	return nil
+}
+
 // Roles is array of Role.
 type Roles []Role
 
