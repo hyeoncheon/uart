@@ -6,9 +6,13 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/gobuffalo/buffalo"
 	"github.com/markbates/pop"
 	"github.com/satori/go.uuid"
+)
+
+// common constants
+const (
+	DefaultSortCredentials = "created_at"
 )
 
 // Credential is the model for oauth2 information from 3rd party providers
@@ -25,6 +29,8 @@ type Credential struct {
 	IsAuthorized bool      `json:"is_authorized" db:"is_authorized"`
 	IsPrimary    bool      `json:"is_primary" db:"is_primary"`
 }
+
+//** rendering helpers for templates --------------------------------
 
 // String returns pretty printable string of this model.
 func (c Credential) String() string {
@@ -48,30 +54,49 @@ func (c Credential) OwnerID() uuid.UUID {
 	return c.Owner().ID
 }
 
-//** array model for base model --------------------------------------------
+//** implementations for interfaces ---------------------------------
+
+// QueryParams implements Belonging interface
+func (c *Credential) QueryParams() QueryParams {
+	return QueryParams{}
+}
+
+// QueryParams implements Belonging interface
+func (c *Credentials) QueryParams() QueryParams {
+	return QueryParams{
+		DefaultSort: DefaultSortMessages,
+	}
+}
+
+// OwnedBy implements Belonging interface
+func (c *Credential) OwnedBy(q *pop.Query, o Owner, f ...bool) *pop.Query {
+	return q
+}
+
+// OwnedBy implements Belonging interface
+func (c *Credentials) OwnedBy(q *pop.Query, o Owner, f ...bool) *pop.Query {
+	return q
+}
+
+// AccessibleBy implements Belonging interface
+func (c *Credential) AccessibleBy(q *pop.Query, o Owner, f ...bool) *pop.Query {
+	return q
+}
+
+// AccessibleBy implements Belonging interface
+func (c *Credentials) AccessibleBy(q *pop.Query, o Owner, f ...bool) *pop.Query {
+	return q
+}
+
+//** common database/crud functions ---------------------------------
+
+//** array model for base model -------------------------------------
 
 // Credentials is an array of Credentials.
 type Credentials []Credential
 
-// String is not required by pop and may be deleted
+// String returns json marshalled representation of Credentials
 func (cs Credentials) String() string {
 	jc, _ := json.Marshal(cs)
 	return string(jc)
-}
-
-const credentialsDefaultSort = "created_at"
-
-// SearchParams implementation (Searchable)
-func (cs Credentials) SearchParams(c buffalo.Context) SearchParams {
-	sp := newSearchParams(c)
-	sp.DefaultSort = credentialsDefaultSort
-	return sp
-}
-
-// QueryAndParams implementation (Searchable)
-func (cs Credentials) QueryAndParams(c buffalo.Context) (*pop.Query, SearchParams) {
-	sp := newSearchParams(c)
-	sp.DefaultSort = credentialsDefaultSort
-	q := DB.Q()
-	return q, sp
 }

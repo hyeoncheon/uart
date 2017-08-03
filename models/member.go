@@ -8,11 +8,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gobuffalo/buffalo"
 	"github.com/markbates/pop"
 	"github.com/markbates/validate"
 	"github.com/markbates/validate/validators"
 	"github.com/satori/go.uuid"
+)
+
+// common constants
+const (
+	DefaultSortMembers = "created_at"
 )
 
 // Member is the main model which presents the user.
@@ -222,7 +226,46 @@ func (m Member) AccessGrantCount() int {
 	return count
 }
 
-//** Generic model operation functions below:
+//** implementations for interfaces ---------------------------------
+
+// GetID implements Owner interface
+func (m *Member) GetID() interface{} {
+	return m.ID
+}
+
+// QueryParams implements Belonging interface
+func (m *Member) QueryParams() QueryParams {
+	return QueryParams{}
+}
+
+// QueryParams implements Belonging interface
+func (m *Members) QueryParams() QueryParams {
+	return QueryParams{
+		DefaultSort: DefaultSortMembers,
+	}
+}
+
+// OwnedBy implements Belonging interface
+func (m *Member) OwnedBy(q *pop.Query, o Owner, f ...bool) *pop.Query {
+	return q
+}
+
+// OwnedBy implements Belonging interface
+func (m *Members) OwnedBy(q *pop.Query, o Owner, f ...bool) *pop.Query {
+	return q
+}
+
+// AccessibleBy implements Belonging interface
+func (m *Member) AccessibleBy(q *pop.Query, o Owner, f ...bool) *pop.Query {
+	return q
+}
+
+// AccessibleBy implements Belonging interface
+func (m *Members) AccessibleBy(q *pop.Query, o Owner, f ...bool) *pop.Query {
+	return q
+}
+
+//** common database/crud functions ---------------------------------
 
 // GetMember picks a member instance with given id.
 func GetMember(id interface{}) *Member {
@@ -304,27 +347,10 @@ func CreateMember(cred *Credential) (*Member, error) {
 // Members is an array of Members.
 type Members []Member
 
-// String is not required by pop and may be deleted
+// String returns json marshalled representation of Members
 func (m Members) String() string {
 	jm, _ := json.Marshal(m)
 	return string(jm)
-}
-
-const membersDefaultSort = "created_at"
-
-// SearchParams implementation (Searchable)
-func (m Members) SearchParams(c buffalo.Context) SearchParams {
-	sp := newSearchParams(c)
-	sp.DefaultSort = membersDefaultSort
-	return sp
-}
-
-// QueryAndParams implementation (Searchable)
-func (m Members) QueryAndParams(c buffalo.Context) (*pop.Query, SearchParams) {
-	sp := newSearchParams(c)
-	sp.DefaultSort = membersDefaultSort
-	q := DB.Q()
-	return q, sp
 }
 
 // Validate gets run every time you call a "pop.Validate" method.

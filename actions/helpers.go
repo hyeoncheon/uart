@@ -1,11 +1,7 @@
 package actions
 
 import (
-	"fmt"
 	"html/template"
-	"net/url"
-
-	"github.com/hyeoncheon/uart/models"
 )
 
 func shortenHelper(s string, l int) string {
@@ -19,6 +15,7 @@ func imageForHelper(url, class string) template.HTML {
 	return template.HTML(`<img class="` + class + `" src="` + url + `">`)
 }
 
+/*
 func paginateHelper(sp models.SearchParams) template.HTML {
 	var str string
 	pagerLen := 11
@@ -96,6 +93,7 @@ func paginateHelper(sp models.SearchParams) template.HTML {
 	</ul>
 </nav>`)
 }
+*/
 
 func logoForHelper(name string) template.HTML {
 	fontName := map[string]string{

@@ -21,13 +21,15 @@ type MembersResource struct {
 // List gets all Members.
 // ADMIN PROTECTED
 func (v MembersResource) List(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
 	members := &models.Members{}
-	searchParams, err := models.All(c, members)
+	q := tx.PaginateFromParams(c.Params())
+	err := models.AllMy(q, dummyMember(c), members, false)
 	if err != nil {
 		return errors.WithStack(err)
 	}
 	c.Set("members", members)
-	c.Set("searchParams", searchParams)
+	c.Set("pagination", q.Paginator)
 	return c.Render(200, r.HTML("members/index.html"))
 }
 

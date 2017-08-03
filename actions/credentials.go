@@ -17,13 +17,15 @@ type CredentialsResource struct {
 // List gets all Credentials.
 // ADMIN PROTECTED
 func (v CredentialsResource) List(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
 	credentials := &models.Credentials{}
-	searchParams, err := models.All(c, credentials)
+	q := tx.PaginateFromParams(c.Params())
+	err := models.AllMy(q, dummyMember(c), credentials, false)
 	if err != nil {
 		return errors.WithStack(err)
 	}
 	c.Set("credentials", credentials)
-	c.Set("searchParams", searchParams)
+	c.Set("pagination", q.Paginator)
 	return c.Render(200, r.HTML("credentials/index.html"))
 }
 

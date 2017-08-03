@@ -42,7 +42,7 @@ func (v MessagesResource) List(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	messages := &models.Messages{}
 	q := tx.PaginateFromParams(c.Params())
-	err := models.AllMyHaving(q, dummyMember(c), messages, false)
+	err := models.AllMy(q, dummyMember(c), messages, false)
 	if err != nil {
 		return errors.WithStack(err)
 	}
@@ -55,7 +55,7 @@ func (v MessagesResource) List(c buffalo.Context) error {
 func (v MessagesResource) Show(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	message := &models.Message{}
-	err := models.FindMyHaving(tx.Q(), dummyMember(c), message, c.Param("message_id"))
+	err := models.FindMy(tx.Q(), dummyMember(c), message, c.Param("message_id"))
 	if err != nil {
 		return errors.WithStack(err)
 	}

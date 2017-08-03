@@ -6,36 +6,53 @@ import (
 	"github.com/markbates/pop"
 )
 
-type Dummy struct {
-	ID interface{}
+// Owner is an interface for model which have belongings
+type Owner interface {
+	GetID() interface{}
 }
 
 // QueryParams is structure contains query parameters
 type QueryParams struct {
 	DefaultSort string
 	Sort        string
+
+	FilterKey   string
+	FilterValue interface{}
 }
 
-// MyBelonging is an interface for model which have foreign reference.
-//! TODO: NEED NAME CHANGE
-type MyBelonging interface {
+// Belonging is an interface for model which have foreign reference.
+type Belonging interface {
 	QueryParams() QueryParams
-	OwnedBy(*pop.Query, interface{}, ...bool) *pop.Query
-	AccessibleBy(*pop.Query, interface{}, ...bool) *pop.Query
+	OwnedBy(*pop.Query, Owner, ...bool) *pop.Query
+	AccessibleBy(*pop.Query, Owner, ...bool) *pop.Query
 }
 
-// FindMyHaving find a single instance of belonging accessible by owner.
-func FindMyHaving(q *pop.Query, m *Member, b MyBelonging, id interface{}) error {
-	log.Debug("--------------------- FindMyHaving!")
+// FindMy find a single instance of belonging accessible by owner.
+func FindMy(q *pop.Query, m *Member, b Belonging, id interface{}) error {
+	log.Debug("--------------------- FindMy!")
 	q = b.AccessibleBy(q, m)
 	if err := q.Find(b, id); err != nil {
 		log.Errorf("cannot found having %v %v", reflect.TypeOf(b), id)
+		log.Errorf("query error: %v", err)
+		return err
 	}
 	return nil
 }
 
-// AllMyHaving collect all instances of belongings accessible by owner.
-func AllMyHaving(q *pop.Query, m *Member, b MyBelonging, all ...bool) error {
+// FindMyOwn find a single instance of belonging accessible by owner.
+func FindMyOwn(q *pop.Query, m *Member, b Belonging, id interface{}) error {
+	log.Debug("--------------------- FindMyOwn!")
+	q = b.OwnedBy(q, m)
+	if err := q.Find(b, id); err != nil {
+		log.Errorf("cannot found having %v %v", reflect.TypeOf(b), id)
+		log.Errorf("query error: %v", err)
+		return err
+	}
+	return nil
+}
+
+// AllMy collect all instances of belongings accessible by owner.
+func AllMy(q *pop.Query, m *Member, b Belonging, all ...bool) error {
 	dummy := &Member{ID: m.ID}
 	if len(all) == 1 {
 		q = b.AccessibleBy(q, dummy, all[0])
@@ -55,7 +72,7 @@ func AllMyHaving(q *pop.Query, m *Member, b MyBelonging, all ...bool) error {
 }
 
 // AllMyOwn collect all instances of belongings accessible by owner.
-func AllMyOwn(q *pop.Query, m *Member, b MyBelonging, all ...bool) error {
+func AllMyOwn(q *pop.Query, m *Member, b Belonging, all ...bool) error {
 	dummy := &Member{ID: m.ID}
 	if len(all) == 1 {
 		q = b.OwnedBy(q, dummy, all[0])

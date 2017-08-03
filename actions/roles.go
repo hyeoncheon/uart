@@ -96,6 +96,17 @@ func (v RolesResource) Accept(c buffalo.Context) error {
 		c.Logger().Errorf("OOPS! cannot found rolemap id %v: %v", rmID, err)
 		c.Flash().Add("danger", t(c, "oops.cannot.found.request"))
 	} else {
+		role := rolemap.Role()
+		if role.AppID.String() != appID {
+			c.Flash().Add("danger", t(c, "oops.manipulated.request"))
+			c.Logger().Errorf("app_id mismatch! probably manipulated request!")
+			goto END
+		}
+		err = models.FindMyOwn(tx.Q(), dummyMember(c), &models.App{}, appID)
+		if err != nil {
+			c.Flash().Add("danger", t(c, "you.have.no.right.for.this.app"))
+			goto END
+		}
 		rolemap.IsActive = true
 		err = tx.Save(rolemap)
 		if err != nil {
@@ -108,6 +119,8 @@ func (v RolesResource) Accept(c buffalo.Context) error {
 				"role request for %v accepted!", rolemap.Role())
 		}
 	}
+
+END:
 	return c.Redirect(http.StatusFound, "/apps/%s", appID)
 }
 

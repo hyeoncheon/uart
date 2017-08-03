@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/gobuffalo/buffalo"
 	"github.com/markbates/pop"
 	"github.com/markbates/validate"
 	"github.com/markbates/validate/validators"
@@ -19,7 +18,8 @@ const (
 	AppDefaultAdminScope = "all:all"
 	AppDefaultScope      = "profile, auth:all"
 	appDefaultIcon       = "/assets/images/dummy-app.png"
-	appsDefaultSort      = "name"
+	hyeoncheonIcon       = "/assets/images/hyeoncheon-icon.png"
+	DefaultSortApps      = "name"
 )
 
 // App is model for application which can be authenticated with uart.
@@ -37,19 +37,11 @@ type App struct {
 	AppIcon     string    `json:"app_icon" db:"app_icon"`
 }
 
+//** rendering helpers for templates --------------------------------
+
 // String returns pretty printable string of this model.
 func (a App) String() string {
 	return a.Name
-}
-
-// RelationalOwnerQuery returns query contains path from member to the model.
-// implement belonging
-func (a *App) RelationalOwnerQuery(memberID uuid.UUID) *pop.Query {
-	return DB.Q().
-		LeftJoin("roles", "roles.app_id = apps.id").
-		LeftJoin("role_maps", "role_maps.role_id = roles.id").
-		Where("role_maps.member_id = ?", memberID).
-		Where("roles.code = ?", RCAdmin)
 }
 
 //** actions, relational accessor and functions below:
@@ -130,7 +122,55 @@ func (a App) RequestsCount() int {
 	return count
 }
 
-//** Generic model operation functions below:
+//** implementations for interfaces ---------------------------------
+
+// QueryParams implements Belonging interface
+func (a *App) QueryParams() QueryParams {
+	return QueryParams{}
+}
+
+// QueryParams implements Belonging interface
+func (a *Apps) QueryParams() QueryParams {
+	return QueryParams{
+		DefaultSort: DefaultSortApps,
+	}
+}
+
+// OwnedBy implements Belonging interface
+func (a *App) OwnedBy(q *pop.Query, o Owner, f ...bool) *pop.Query {
+	return q.LeftJoin("roles", "roles.app_id = apps.id").
+		LeftJoin("role_maps", "role_maps.role_id = roles.id").
+		Where("roles.code = ?", RCAdmin).
+		Where("role_maps.member_id = ?", o.GetID()).
+		Where("role_maps.is_active = ?", true)
+}
+
+// OwnedBy implements Belonging interface
+func (a *Apps) OwnedBy(q *pop.Query, o Owner, f ...bool) *pop.Query {
+	return q.LeftJoin("roles", "roles.app_id = apps.id").
+		LeftJoin("role_maps", "role_maps.role_id = roles.id").
+		Where("roles.code = ?", RCAdmin).
+		Where("role_maps.member_id = ?", o.GetID()).
+		Where("role_maps.is_active = ?", true)
+}
+
+// AccessibleBy implements Belonging interface
+func (a *App) AccessibleBy(q *pop.Query, o Owner, f ...bool) *pop.Query {
+	return q.LeftJoin("roles", "roles.app_id = apps.id").
+		LeftJoin("role_maps", "role_maps.role_id = roles.id").
+		Where("role_maps.member_id = ?", o.GetID()).
+		Where("role_maps.is_active = ?", true)
+}
+
+// AccessibleBy implements Belonging interface
+func (a *Apps) AccessibleBy(q *pop.Query, o Owner, f ...bool) *pop.Query {
+	return q.LeftJoin("roles", "roles.app_id = apps.id").
+		LeftJoin("role_maps", "role_maps.role_id = roles.id").
+		Where("role_maps.member_id = ?", o.GetID()).
+		Where("role_maps.is_active = ?", true)
+}
+
+//** common database/crud functions ---------------------------------
 
 // GetAppByCode search and returns an app instance by given code, or nil
 func GetAppByCode(code string) *App {
@@ -168,8 +208,6 @@ func NewApp(name, code, desc, url, callback string, icon ...string) *App {
 	return app
 }
 
-const hyeoncheonIcon = "/assets/images/hyeoncheon-icon.png"
-
 // createUARTApp create UART app and return it or nil.
 func createUARTApp(tx *pop.Connection) *App {
 	uart := NewApp("UART", "uart", "UART: Identity Management System", "", "")
@@ -186,37 +224,15 @@ func createUARTApp(tx *pop.Connection) *App {
 	return uart
 }
 
-//** array model for base model --------------------------------------------
+//** array model for base model -------------------------------------
 
 // Apps is array of App.
 type Apps []App
 
-// String is not required by pop and may be deleted
+// String returns json marshalled representation of Apps
 func (a Apps) String() string {
 	ja, _ := json.Marshal(a)
 	return string(ja)
-}
-
-// SearchParams implementation (Searchable)
-func (a Apps) SearchParams(c buffalo.Context) SearchParams {
-	sp := newSearchParams(c)
-	sp.DefaultSort = appsDefaultSort
-	return sp
-}
-
-// QueryAndParams implementation (Searchable)
-func (a Apps) QueryAndParams(c buffalo.Context) (*pop.Query, SearchParams) {
-	sp := newSearchParams(c)
-	sp.DefaultSort = appsDefaultSort
-	q := DB.Q()
-	if !c.Value("member_is_admin").(bool) {
-		q = q.
-			LeftJoin("roles", "roles.app_id = apps.id").
-			LeftJoin("role_maps", "role_maps.role_id = roles.id").
-			Where("role_maps.member_id = ?", c.Value("member_id")).
-			Where("roles.code = ?", RCAdmin)
-	}
-	return q, sp
 }
 
 // Validate gets run every time you call a "pop.Validate" method.

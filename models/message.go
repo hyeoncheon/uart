@@ -112,7 +112,7 @@ func (m *Messages) QueryParams() QueryParams {
 }
 
 // OwnedBy implements Belonging interface
-func (m *Message) OwnedBy(q *pop.Query, o interface{}, f ...bool) *pop.Query {
+func (m *Message) OwnedBy(q *pop.Query, o Owner, f ...bool) *pop.Query {
 	if len(f) == 1 {
 		q = q.Where("message_maps.is_read = ?", f[0])
 	}
@@ -120,7 +120,7 @@ func (m *Message) OwnedBy(q *pop.Query, o interface{}, f ...bool) *pop.Query {
 }
 
 // OwnedBy implements Belonging interface
-func (m *Messages) OwnedBy(q *pop.Query, o interface{}, f ...bool) *pop.Query {
+func (m *Messages) OwnedBy(q *pop.Query, o Owner, f ...bool) *pop.Query {
 	if len(f) == 1 {
 		q = q.Where("message_maps.is_read = ?", f[0])
 	}
@@ -128,7 +128,7 @@ func (m *Messages) OwnedBy(q *pop.Query, o interface{}, f ...bool) *pop.Query {
 }
 
 // AccessibleBy implements Belonging interface
-func (m *Message) AccessibleBy(q *pop.Query, o interface{}, f ...bool) *pop.Query {
+func (m *Message) AccessibleBy(q *pop.Query, o Owner, f ...bool) *pop.Query {
 	if len(f) == 1 {
 		q = q.Where("message_maps.is_read = ?", f[0])
 	}
@@ -136,7 +136,7 @@ func (m *Message) AccessibleBy(q *pop.Query, o interface{}, f ...bool) *pop.Quer
 }
 
 // AccessibleBy implements Belonging interface
-func (m *Messages) AccessibleBy(q *pop.Query, o interface{}, f ...bool) *pop.Query {
+func (m *Messages) AccessibleBy(q *pop.Query, o Owner, f ...bool) *pop.Query {
 	if len(f) == 1 {
 		q = q.Where("message_maps.is_read = ?", f[0])
 	}
@@ -186,6 +186,8 @@ func NewMessage(tx *pop.Connection, sndrID interface{}, rcpts, bccs *Members, su
 	}
 	return message
 }
+
+//** array model for base model -------------------------------------
 
 // Messages is an array of Message
 type Messages []Message

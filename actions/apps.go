@@ -1,6 +1,7 @@
 package actions
 
 // TODO REVIEW REQUIRED
+//* Use Belonging Interface
 
 import (
 	"net/http"
@@ -19,23 +20,31 @@ type AppsResource struct {
 
 // List gets all Apps.
 func (v AppsResource) List(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
 	apps := &models.Apps{}
-	searchParams, err := models.All(c, apps)
+	q := tx.PaginateFromParams(c.Params())
+	var err error
+	if c.Value("member_is_admin").(bool) {
+		err = tx.Order(models.DefaultSortApps).All(apps)
+	} else {
+		err = models.AllMyOwn(q, dummyMember(c), apps, false)
+	}
 	if err != nil {
 		return errors.WithStack(err)
 	}
 	c.Set("apps", apps)
-	c.Set("searchParams", searchParams)
+	c.Set("pagination", q.Paginator)
 	return c.Render(200, r.HTML("apps/index.html"))
 }
 
 // Show gets the data for one App.
 func (v AppsResource) Show(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
 	app := &models.App{}
-	me := currentMember(c)
-	err := models.FindMy(c, me, app, c.Param("app_id"))
+	err := models.FindMyOwn(tx.Q(), dummyMember(c), app, c.Param("app_id"))
 	if err != nil {
 		c.Flash().Add("danger", t(c, "you.have.no.right.for.this.app"))
+		me := currentMember(c)
 		mLogErr(c, MsgFacSecu, "access violation: apps.show by %v", me)
 		return c.Redirect(http.StatusFound, "/apps")
 	}
@@ -75,7 +84,7 @@ func (v AppsResource) Create(c buffalo.Context) error {
 	// set default roles
 	app.AddRole(tx, "Admin", models.RCAdmin, "Administrator", 64, true)
 	app.AddRole(tx, "User", models.RCUser, "Normal User", 0, true)
-	me := currentMember(c)
+	me := currentMember(c) // for logging only
 	me.AddRole(tx, app.GetRole(tx, models.RCAdmin), true)
 	me.Grant(tx, app, models.AppDefaultAdminScope)
 
@@ -86,10 +95,12 @@ func (v AppsResource) Create(c buffalo.Context) error {
 
 // Edit renders a edit formular for a app.
 func (v AppsResource) Edit(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
 	app := &models.App{}
-	err := models.FindMy(c, currentMember(c), app, c.Param("app_id"))
+	err := models.FindMyOwn(tx.Q(), dummyMember(c), app, c.Param("app_id"))
 	if err != nil {
-		return errors.WithStack(err)
+		c.Flash().Add("danger", t(c, "app.not.found.check.your.permission"))
+		return c.Redirect(http.StatusFound, "/apps")
 	}
 	c.Set("app", app)
 	return c.Render(200, r.HTML("apps/edit.html"))
@@ -97,22 +108,23 @@ func (v AppsResource) Edit(c buffalo.Context) error {
 
 // Update changes a app in the DB.
 func (v AppsResource) Update(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
 	app := &models.App{}
-	me := currentMember(c)
-	err := models.FindMy(c, me, app, c.Param("app_id"))
+	me := currentMember(c) // for logging only
+	err := models.FindMyOwn(tx.Q(), me, app, c.Param("app_id"))
 	if err != nil {
 		c.Flash().Add("danger", t(c, "app.not.found.check.your.permission"))
-		return c.Redirect(http.StatusTemporaryRedirect, "/apps")
+		return c.Redirect(http.StatusFound, "/apps")
 	}
 	err = c.Bind(app)
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	tx := c.Value("tx").(*pop.Connection)
+
 	verrs, err := tx.ValidateAndUpdate(app)
 	if err != nil {
 		c.Flash().Add("danger", t(c, "oops.cannot.update.app"))
-		return c.Redirect(http.StatusTemporaryRedirect, "/apps")
+		return c.Redirect(http.StatusFound, "/apps")
 	}
 	if verrs.HasAny() {
 		c.Set("app", app)
@@ -126,15 +138,15 @@ func (v AppsResource) Update(c buffalo.Context) error {
 
 // Destroy deletes a app from the DB.
 func (v AppsResource) Destroy(c buffalo.Context) error {
+	tx := c.Value("tx").(*pop.Connection)
 	app := &models.App{}
-	err := models.FindMy(c, currentMember(c), app, c.Param("app_id"))
+	me := currentMember(c) // for logging only
+	err := models.FindMyOwn(tx.Q(), me, app, c.Param("app_id"))
 	if err != nil {
 		c.Flash().Add("danger", t(c, "app.not.found.check.your.permission"))
 		return c.Redirect(http.StatusFound, "/apps")
 	}
 
-	tx := c.Value("tx").(*pop.Connection)
-	me := currentMember(c)
 	err = me.RemoveRole(tx, app.GetRole(tx, models.RCAdmin))
 	if err != nil {
 		tx.TX.Rollback()
@@ -197,7 +209,7 @@ func (v AppsResource) Grant(c buffalo.Context) error {
 		c.Flash().Add("danger", t(c, "cannot.found.app"))
 		return c.Redirect(http.StatusTemporaryRedirect, "%s", origin)
 	}
-	member := currentMember(c)
+	member := currentMember(c) // for logging only
 	tx := c.Value("tx").(*pop.Connection)
 
 	err := member.Grant(tx, app, c.Param("scope"))
@@ -220,7 +232,6 @@ func (v AppsResource) Grant(c buffalo.Context) error {
 		}
 		admins := app.GetRole(tx, models.RCAdmin).Members(true)
 		rMsg(c, admins, "", "role %v requested by %v (grant)", uRole, member)
-		c.Logger().Infof("role %v added to %v", uRole, member)
 	}
 
 	return c.Redirect(http.StatusTemporaryRedirect, "%s", origin)
@@ -230,13 +241,13 @@ func (v AppsResource) Grant(c buffalo.Context) error {
 func (v AppsResource) Revoke(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	app := &models.App{}
-	err := models.PickOne(tx, app, c.Param("app_id"))
+	err := tx.Find(app, c.Param("app_id"))
 	if err != nil {
 		c.Flash().Add("warning", t(c, "cannot.revoke.cannot.found.the.app"))
 		return c.Redirect(http.StatusTemporaryRedirect, "/membership/me")
 	}
 
-	member := currentMember(c)
+	member := currentMember(c) // for logging only
 	// cleanup! force remove roles!
 	for _, role := range *member.AppRoles(app.ID) {
 		if role.Code == models.RCAdmin {
