@@ -39,5 +39,5 @@ func dummyMember(c buffalo.Context) *models.Member {
 	if id, ok := c.Value("member_id").(uuid.UUID); ok {
 		return &models.Member{ID: id}
 	}
-	return nil
+	return &models.Member{}
 }

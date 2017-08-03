@@ -39,6 +39,7 @@ func (v CredentialsResource) Destroy(c buffalo.Context) error {
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	c.Flash().Add("success", "Credential was destroyed successfully")
+	c.Flash().Add("success", "Credential was deleted successfully")
+	mLogWarn(c, MsgFacUser, "credential %v was deleted", credential)
 	return c.Redirect(302, "/credentials")
 }

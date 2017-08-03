@@ -10,6 +10,14 @@
 </div>
 
 <div class="row">
+	<%= if (member.ID.String() != member_id.String()) { %>
+	<div class="col-md-8 col-md-offset-2 col-xs-12">
+		<div class="alert alert-danger">
+			<%=t("this.profile.is.not.yours.do.not.make.any.action")%>
+		</div>
+	</div>
+	<% } %>
+
 	<%= if (!member.IsActive) { %>
 	<div class="col-md-8 col-md-offset-2 col-xs-12">
 		<div class="alert alert-danger">

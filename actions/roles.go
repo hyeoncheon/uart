@@ -35,6 +35,7 @@ func (v RolesResource) Create(c buffalo.Context) error {
 		return c.Render(422, r.HTML("roles/new.html"))
 	}
 	c.Flash().Add("success", t(c, "role.was.created.successfully"))
+	c.Logger().Infof("role %v created by %v", role, c.Value("member_id"))
 	return c.Redirect(302, "/apps/%s", role.AppID)
 }
 
@@ -60,6 +61,7 @@ func (v RolesResource) Update(c buffalo.Context) error {
 		return c.Render(422, r.HTML("roles/edit.html"))
 	}
 	c.Flash().Add("success", t(c, "role.was.updated.successfully"))
+	c.Logger().Infof("role %v updated by %v", role, c.Value("member_id"))
 	return c.Redirect(302, "/apps/%s", role.AppID)
 }
 
@@ -78,6 +80,7 @@ func (v RolesResource) Destroy(c buffalo.Context) error {
 
 	// TODO: cleanup rolemaps for this deleted role
 	c.Flash().Add("success", t(c, "role.was.destroyed.successfully"))
+	c.Logger().Infof("role %v deleted by %v", role, c.Value("member_id"))
 	return c.Redirect(302, "/apps/%s", role.AppID)
 }
 
@@ -100,6 +103,9 @@ func (v RolesResource) Accept(c buffalo.Context) error {
 			c.Flash().Add("danger", t(c, "oops.cannot.proceed.acception"))
 		} else {
 			c.Flash().Add("success", t(c, "request.accepted.successfully"))
+			member := rolemap.Member()
+			rMsg(c, &models.Members{*member}, "",
+				"role request for %v accepted!", rolemap.Role())
 		}
 	}
 	return c.Redirect(http.StatusFound, "/apps/%s", appID)
@@ -117,6 +123,7 @@ func (v RolesResource) Request(c buffalo.Context) error {
 	member := currentMember(c)
 	if !member.IsActive {
 		c.Flash().Add("danger", t(c, "eep.how.can.you.reach.here"))
+		mLogErr(c, MsgFacSecu, "access violation: inactive member %v", member)
 		return c.Redirect(http.StatusFound, "/membership/me")
 	}
 	for _, rID := range roleIDs {
@@ -137,6 +144,8 @@ func (v RolesResource) Request(c buffalo.Context) error {
 			break
 		}
 		c.Flash().Add("success", t(c, "role.request.finished.successfully"))
+		admins := role.App().GetRole(tx, models.RCAdmin).Members(true)
+		rMsg(c, admins, "", "role %v requested by %v", role, member)
 	}
 	return c.Redirect(http.StatusFound, "/membership/me")
 }
@@ -153,6 +162,7 @@ func (v RolesResource) Retire(c buffalo.Context) error {
 	member := currentMember(c)
 	if !member.IsActive {
 		c.Flash().Add("danger", t(c, "eep.how.can.you.reach.here"))
+		mLogErr(c, MsgFacSecu, "access violation: inactive member %v", member)
 		return c.Redirect(http.StatusFound, "/membership/me")
 	}
 	err = member.RemoveRole(tx, role)
@@ -163,7 +173,7 @@ func (v RolesResource) Retire(c buffalo.Context) error {
 		cnt, err := tx.BelongsTo(member).Where("app_id = ?", role.AppID).
 			Count(&models.RoleMap{})
 		if err == nil && cnt == 0 {
-			c.Logger().Debug("no assigned role remind. revoke automatically.")
+			c.Logger().Info("no assigned role remind. revoke automatically.")
 			app := &models.App{}
 			err := tx.Find(app, role.AppID)
 			if err != nil {
@@ -179,6 +189,7 @@ func (v RolesResource) Retire(c buffalo.Context) error {
 			}
 		}
 		c.Flash().Add("success", t(c, "role.removed.from.you.successfully"))
+		c.Logger().Infof("member %v removed role %v", member, role)
 	}
 	return c.Redirect(http.StatusTemporaryRedirect, "/membership/me")
 }

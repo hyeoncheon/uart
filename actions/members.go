@@ -114,6 +114,7 @@ func (v MembersResource) Update(c buffalo.Context) error {
 	}
 
 	c.Flash().Add("success", "Member was updated successfully")
+	mLogInfo(c, MsgFacUser, "member %v was updated", member)
 	return c.Redirect(302, "/members")
 }
 
@@ -165,6 +166,7 @@ func (v MembersResource) Destroy(c buffalo.Context) error {
 		c.Flash().Add("danger", t(c, "cannot.inactivate.member"))
 		return c.Redirect(http.StatusFound, "/members")
 	}
-	c.Flash().Add("success", t(c, "member.was.destroyed.successfully"))
+	c.Flash().Add("success", t(c, "member.was.inactivated.successfully"))
+	mLogNote(c, MsgFacUser, "member %v was inactivated", member)
 	return c.Redirect(302, "/members")
 }

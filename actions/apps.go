@@ -32,9 +32,11 @@ func (v AppsResource) List(c buffalo.Context) error {
 // Show gets the data for one App.
 func (v AppsResource) Show(c buffalo.Context) error {
 	app := &models.App{}
-	err := models.FindMy(c, currentMember(c), app, c.Param("app_id"))
+	me := currentMember(c)
+	err := models.FindMy(c, me, app, c.Param("app_id"))
 	if err != nil {
 		c.Flash().Add("danger", t(c, "you.have.no.right.for.this.app"))
+		mLogErr(c, MsgFacSecu, "access violation: apps.show by %v", me)
 		return c.Redirect(http.StatusFound, "/apps")
 	}
 	c.Set("app", *app)
@@ -78,6 +80,7 @@ func (v AppsResource) Create(c buffalo.Context) error {
 	me.Grant(tx, app, models.AppDefaultAdminScope)
 
 	c.Flash().Add("success", t(c, "app.was.created.successfully"))
+	mLogNote(c, MsgFacApp, "app %v was created by %v", app, me)
 	return c.Redirect(302, "/apps/%s", app.ID)
 }
 
@@ -95,7 +98,8 @@ func (v AppsResource) Edit(c buffalo.Context) error {
 // Update changes a app in the DB.
 func (v AppsResource) Update(c buffalo.Context) error {
 	app := &models.App{}
-	err := models.FindMy(c, currentMember(c), app, c.Param("app_id"))
+	me := currentMember(c)
+	err := models.FindMy(c, me, app, c.Param("app_id"))
 	if err != nil {
 		c.Flash().Add("danger", t(c, "app.not.found.check.your.permission"))
 		return c.Redirect(http.StatusTemporaryRedirect, "/apps")
@@ -116,6 +120,7 @@ func (v AppsResource) Update(c buffalo.Context) error {
 		return c.Render(422, r.HTML("apps/edit.html"))
 	}
 	c.Flash().Add("success", t(c, "app.was.updated.successfully"))
+	mLogNote(c, MsgFacApp, "app %v was updated by %v", app, me)
 	return c.Redirect(http.StatusFound, "/apps/%s", app.ID)
 }
 
@@ -129,8 +134,8 @@ func (v AppsResource) Destroy(c buffalo.Context) error {
 	}
 
 	tx := c.Value("tx").(*pop.Connection)
-	adminMember := currentMember(c)
-	err = adminMember.RemoveRole(tx, app.GetRole(tx, models.RCAdmin))
+	me := currentMember(c)
+	err = me.RemoveRole(tx, app.GetRole(tx, models.RCAdmin))
 	if err != nil {
 		tx.TX.Rollback()
 		c.Logger().Errorf("cannot remove admin role from member")
@@ -138,7 +143,7 @@ func (v AppsResource) Destroy(c buffalo.Context) error {
 		return c.Redirect(http.StatusFound, "/apps")
 	}
 
-	err = adminMember.Revoke(tx, app)
+	err = me.Revoke(tx, app)
 	if err != nil {
 		tx.TX.Rollback()
 		c.Logger().Errorf("cannot revoke access right for admin")
@@ -171,8 +176,8 @@ func (v AppsResource) Destroy(c buffalo.Context) error {
 		c.Flash().Add("danger", t(c, "oops.cannot.delete.app"))
 		return c.Redirect(http.StatusFound, "/apps")
 	}
-	c.Logger().Infof("app %v deleted completely", app)
 	c.Flash().Add("success", t(c, "app.was.deleted.successfully"))
+	mLogNote(c, MsgFacApp, "app %v was deleted by %v", app, me)
 	return c.Redirect(http.StatusFound, "/apps")
 }
 
@@ -213,6 +218,8 @@ func (v AppsResource) Grant(c buffalo.Context) error {
 			c.Flash().Add("danger", t(c, "oops.cannot.assign.a.role"))
 			return c.Redirect(http.StatusTemporaryRedirect, "%s", origin)
 		}
+		admins := app.GetRole(tx, models.RCAdmin).Members(true)
+		rMsg(c, admins, "", "role %v requested by %v (grant)", uRole, member)
 		c.Logger().Infof("role %v added to %v", uRole, member)
 	}
 

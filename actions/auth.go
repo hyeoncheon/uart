@@ -52,22 +52,27 @@ func AuthCallback(c buffalo.Context) error {
 	case 0:
 		member, err := createMember(c, user)
 		if err != nil {
-			// TODO admin alert, selective
+			mLogWarn(c, MsgFacAuth, "member creation failed for %v.%v",
+				user.Provider, user.UserID)
 			c.Flash().Add("danger", t(c, err.Error()))
 			return c.Redirect(http.StatusTemporaryRedirect, "/login")
 		}
-		// TODO admin notification
+		mLogNote(c, MsgFacUser, "new member %v registered!", member)
 		c.Flash().Add("success", t(c, "welcome.to.uart"))
 		return loggedIn(c, member)
 	case 1:
 		member := (*credentials)[0].Owner()
 		if member.Email == "" {
+			mLogWarn(c, MsgFacAuth,
+				"attempted to register with orphan credential %v",
+				(*credentials)[0])
 			c.Flash().Add("danger", t(c, "credential.exist.without.owner"))
 			return c.Redirect(http.StatusTemporaryRedirect, "/login")
 		}
 		c.Flash().Add("success", t(c, "welcome.back.i.missed.you"))
 		return loggedIn(c, member)
 	default:
+		mLogAlert(c, MsgFacAuth, "SYSTEM ERROR: duplicated credentials")
 		return c.Error(501, errors.New("SYSTEM ERROR: duplicated credentials"))
 	}
 }
@@ -108,12 +113,12 @@ func createMember(c buffalo.Context, user goth.User) (*models.Member, error) {
 
 func loggedIn(c buffalo.Context, member *models.Member) error {
 	c.Logger().Debug("--- member --- ", models.Marshal(member))
-	c.Logger().Infof("member %v logged in.", member)
+	mLogInfo(c, MsgFacAuth, "member %v logged in.", member)
 
 	session := c.Session()
 	origin := session.Get("origin")
 	session.Delete("origin")
-	c.Logger().Infof("origin of authentication is %v", origin)
+	c.Logger().Debugf("origin of authentication is %v", origin)
 	if origin == nil {
 		origin = "/"
 	}
