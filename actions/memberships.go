@@ -7,6 +7,7 @@ import (
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/pkg/errors"
+	"github.com/satori/go.uuid"
 
 	"github.com/hyeoncheon/uart/models"
 )
@@ -32,4 +33,11 @@ func membershipHandler(c buffalo.Context) error {
 
 func currentMember(c buffalo.Context) *models.Member {
 	return models.GetMember(c.Session().Get("member_id"))
+}
+
+func dummyMember(c buffalo.Context) *models.Member {
+	if id, ok := c.Value("member_id").(uuid.UUID); ok {
+		return &models.Member{ID: id}
+	}
+	return nil
 }

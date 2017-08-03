@@ -33,21 +33,24 @@
 				<a class="navbar-brand" href="/"><%= brand_name %></a>
 			</div>
 			<div class="collapse navbar-collapse" id="main-navbar-collapse">
-				<ul class="nav navbar-nav">
-					<%= if ((member_is_admin) || (role_appman)) { %>
-					<li><a href="/apps" class="navbar-link"><%=t("apps")%></a></li>
-					<% } %>
-					<%= if ((member_is_admin) || (role_user)) { %>
-					<li><a href="/docs" class="navbar-link"><%=t("docs")%></a></li>
-					<% } %>
-					<%= if (member_is_admin) { %>
+				<ul class="nav navbar-nav"><%=
+				if ((member_is_admin) || (role_appman)) { %>
+					<li><a href="<%= appsPath() %>" class="navbar-link"><%=
+						t("apps") %></a></li><% } %><%=
+				if ((member_is_admin) || (role_userman)) { %>
+					<li><a href="<%= membersPath() %>" class="navbar-link"><%=
+						t("members")%></a></li><% } %><%=
+				if ((member_is_admin) || (role_user)) { %>
+					<li><a href="<%= messagesPath() %>" class="navbar-link"><%=
+						t("messages")%></a></li>
+					<li><a href="/docs" class="navbar-link"><%=
+						t("docs")%></a></li><% } %>
+				<%= if (member_is_admin) { %>
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><%=t("admin")%> <span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li><a href="<%= membersPath() %>"><i aria-hidden="true" class="fa fa-address-card"></i> <%=t("members")%></a></li>
 							<li><a href="<%= credentialsPath() %>"><i aria-hidden="true" class="fa fa-id-badge"></i> <%=t("credentials")%></a></li>
 							<li role="separator" class="divider"></li>
-							<li><a href=""><i aria-hidden="true" class="fa fa-ticket"></i> <%=t("meta")%>:<%=t("tickets")%></a></li>
 						</ul>
 					</li>
 					<% } %>

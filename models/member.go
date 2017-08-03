@@ -32,7 +32,7 @@ type Member struct {
 // String returns pretty printable string of this model.
 func (m Member) String() string {
 	if m.Email == "" {
-		return "Empty"
+		return "Unknown"
 	}
 	return m.Name + " ." + m.ID.String()[0:6]
 }

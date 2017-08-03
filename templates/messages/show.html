@@ -1,0 +1,63 @@
+<div class="row wg phead">
+	<div class="col-md-3 col-xs-12 wg ptitle">
+		<h1><i class="fa fa-asterisk"></i> <%= t("message") %></h1>
+	</div>
+	<div class="col-md-9 col-xs-12 wg pnav">
+		<span class="pull-right" data-toggle="popover" data-trigger="hover"
+			data-placement="left" data-content="<%=t("message.details")
+			%>"><i class="fa fa-question-circle"></i></span>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-3 col-xs-12">
+	</div>
+
+	<div class="col-md-9 col-xs-12">
+		<p class="btn-group pull-right">
+		<a class="btn btn-xs btn-default" href="<%= messagesPath()
+			%>"><i class="fa fa-arrow-left"></i></a>
+		<a class="btn btn-xs btn-default" href="<%=
+			messageDismissPath({ message_id: message.ID })
+			%>"><%=t("dismiss")%></a>
+		<%= if (member_is_admin) {
+			%><a class="btn btn-xs btn-danger" href="<%=
+			messagePath({ message_id: message.ID })
+			%>" data-method="DELETE" data-confirm="<%=t("are.you.sure")
+			%>"><%=t("delete")%></a><% } %>
+		</p>
+
+		<div> <!-- message details ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+			<h3><%= message.Subject %></h3>
+			<table class="table table-striped table-condensed">
+				<tbody>
+				<tr>
+					<td><%=t("sender")%></td>
+					<td><%= message.Owner() %></td>
+				</tr>
+				<tr>
+					<td><%=t("date")%></td>
+					<td><%= timeYYMDHMS(message.CreatedAt) %></td>
+				</tr>
+				<tr>
+					<td><%=t("app")%></td>
+					<td><%= message.AppName() %></td>
+				</tr>
+				<tr>
+					<td><%=t("category")%></td>
+					<td><%= humanize(message.Facility) %>.<%= message.PriorityString() %></td>
+				</tr>
+				<tr>
+					<td><%=t("type")%></td>
+					<td><%= if (message.IsLog) { %>Log<% } else { %>Message<% } %></td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+		<div>
+			<h5><%= t("content") %></h5>
+			<div class="well"><%= message.Content %></div>
+		</div>
+	</div>
+</div>
+

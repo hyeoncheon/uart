@@ -68,7 +68,6 @@ func App() *buffalo.App {
 		app.ServeFiles("/assets", packr.NewBox("../public/assets"))
 
 		// authentication
-		initProvider(app.Logger)
 		auth := app.Group("/auth")
 		auth.GET("/{provider}", buffalo.WrapHandlerFunc(gothic.BeginAuthHandler))
 		auth.GET("/{provider}/callback", AuthCallback)
@@ -81,6 +80,7 @@ func App() *buffalo.App {
 		app.Use(contextHandler) // just after authentication
 
 		// oauth provider
+		initProvider(app.Logger)
 		oauth := app.Group("/oauth")
 		oauth.GET("/authorize", authorizeHandler)
 		oauth.POST("/token", tokenHandler)
@@ -103,6 +103,12 @@ func App() *buffalo.App {
 		g = app.Resource("/credentials", r)
 		g.Use(adminHandler)
 		g.Middleware.Skip(adminHandler, r.Destroy)
+
+		r = &MessagesResource{&buffalo.BaseResource{}}
+		g = app.Resource("/messages", r)
+		g.Use(adminHandler)
+		g.Middleware.Skip(adminHandler, r.List, r.Show)
+		app.GET("/messages/{message_id}/dismiss", r.(*MessagesResource).Dismiss)
 
 		// App Resources
 		r = &AppsResource{&buffalo.BaseResource{}}

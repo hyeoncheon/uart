@@ -1,0 +1,63 @@
+<div class="row wg phead">
+	<div class="col-md-3 col-xs-12 wg ptitle">
+		<h1><%=t("messages")%></h1>
+	</div>
+	<div class="col-md-9 col-xs-12 wg pnav">
+		<span class="pull-right" data-toggle="popover" data-trigger="hover"
+			data-placement="left" data-content="<%=t("all.registered.apps")
+			%>"><i class="fa fa-question-circle"></i></span>
+	</div>
+</div>
+
+<div class="row" style="margin-bottom: 10px;">
+	<div class="col-md-12">
+		<p class="pull-right">
+			<a class="btn btn-xs btn-default" href="<%= newMessagesPath()
+				%>"><%=t("new.message")%></a>
+		</p>
+	</div>
+</div>
+
+<table class="table table-striped table-condensed table-hover">
+	<thead>
+		<tr>
+			<th><%=t("date")%></th>
+			<th><%=t("subject")%></th>
+			<th><%=t("sender")%></th>
+			<th><%=t("app")%></th>
+			<th><%=t("category")%></th>
+			<th><%=t("type")%></th>
+			<th>&nbsp;</th>
+		</tr>
+	</thead>
+	<tbody>
+		<%= for (message) in messages { %><tr class="<%= if (!message.IsLog) {
+			%>clickable<% } %>">
+			<td><%= timeYYMDHMS(message.CreatedAt) %></td>
+			<td><%= if (!message.IsLog) {
+				%><a id="link" href="<%= messagePath({ message_id: message.ID })
+				%>"><%= message.Subject %></a><% } else {
+				%><%= message.Subject %><% } %></td>
+			<td><%= message.Owner() %></td>
+			<td><%= message.AppName() %></td>
+			<td><%= humanize(message.Facility) %>.<%= message.PriorityString() %></td>
+			<td><%= if (message.IsLog) { %>Log<% } else { %>Message<% } %></td>
+			<td class="unclickable">
+				<div class="pull-right btn-group">
+					<a class="btn btn-xs btn-default" href="<%=
+						messageDismissPath({ message_id: message.ID })
+						%>"><%=t("dismiss")%></a>
+					<%= if (member_is_admin) {
+						%><a class="btn btn-xs btn-danger" href="<%=
+						messagePath({ message_id: message.ID })
+						%>" data-method="DELETE" data-confirm="<%=t("are.you.sure")
+						%>"><%=t("delete")%></a><% } %>
+				</div>
+			</td>
+		</tr><% } %>
+	</tbody>
+</table>
+
+<div class="text-center">
+  <%= paginator(pagination) %>
+</div>

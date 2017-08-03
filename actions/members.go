@@ -157,7 +157,7 @@ func (v MembersResource) Destroy(c buffalo.Context) error {
 	}
 	member.IsActive = false
 	member.APIKey = ""
-	if !strings.HasPrefix(member.Name, "-Deleted") {
+	if !strings.HasSuffix(member.Name, "-Deleted") {
 		member.Name = member.Name + "-Deleted"
 	}
 	if err := tx.Save(member); err != nil {

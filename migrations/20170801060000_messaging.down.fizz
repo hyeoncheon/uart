@@ -1,0 +1,11 @@
+drop_index("messangers", "messangers_member_id_idx")
+drop_index("messangers", "messangers_priority_idx")
+drop_table("messangers")
+
+drop_index("messages", "messages_member_id_idx")
+drop_index("messages", "messages_priority_idx")
+drop_table("messages")
+
+drop_index("message_maps", "message_maps_member_id_idx")
+drop_index("message_maps", "message_maps_message_id_idx")
+drop_table("message_maps")
