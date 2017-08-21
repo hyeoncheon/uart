@@ -13,6 +13,7 @@ import (
 	"github.com/markbates/pop"
 	"github.com/pkg/errors"
 
+	"github.com/hyeoncheon/uart/jobs"
 	"github.com/hyeoncheon/uart/models"
 )
 
@@ -193,6 +194,11 @@ func appMsg(c buffalo.Context, r *models.Members, content, form string, args ...
 		tx.TX.Rollback()
 		return errors.New("cannot create new message")
 	}
+
+	for _, member := range *r {
+		jobs.QueueMailer(member.ID)
+	}
+
 	return nil
 }
 
@@ -219,6 +225,11 @@ func xMsg(c buffalo.Context, r *models.Members, app, fac string, prio int, mesg,
 		tx.TX.Rollback()
 		return errors.New("cannot create new formatted message")
 	}
+
+	for _, member := range *r {
+		jobs.QueueMailer(member.ID)
+	}
+
 	return nil
 }
 

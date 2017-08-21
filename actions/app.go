@@ -12,6 +12,7 @@ import (
 	"github.com/gorilla/sessions"
 	"github.com/markbates/goth/gothic"
 
+	"github.com/hyeoncheon/uart/jobs"
 	"github.com/hyeoncheon/uart/models"
 )
 
@@ -35,6 +36,10 @@ func App() *buffalo.App {
 			SessionName:  sessionName,
 			SessionStore: newSessionStore(ENV),
 		})
+
+		// register all taskers
+		jobs.RegisterAll(app)
+
 		// Automatically save the session if the underlying
 		// Handler does not return an error.
 		app.Use(middleware.SessionSaver)

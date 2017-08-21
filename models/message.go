@@ -48,6 +48,18 @@ var MsgPri = map[string]int{
 	"Debug": 7,
 }
 
+// MsgPriReverse is a map for code to name referencing of message priority
+var MsgPriReverse = map[int]string{
+	0: "Emerg",
+	1: "Alert",
+	2: "Crit",
+	3: "Err",
+	4: "Warn",
+	5: "Note",
+	6: "Info",
+	7: "Debug",
+}
+
 // Message is a structure for messaging/logging subsystem
 type Message struct {
 	ID        uuid.UUID `json:"id" db:"id"`
@@ -66,8 +78,7 @@ type Message struct {
 
 // String returns json marshalled representation of Messages
 func (m Message) String() string {
-	jm, _ := json.Marshal(m)
-	return string(jm)
+	return MsgPriReverse[m.Priority] + ":" + m.Subject
 }
 
 // PriorityString returns human readable string of the message's priority
