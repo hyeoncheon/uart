@@ -1,6 +1,6 @@
-# Membership status was {{if .IsActive}}Activated{{ else }}Locked{{end}}
+# Membership was {{if .IsActive}}Activated{{ else }}Locked{{end}} by Admin
 
-Your membership status was {{if .IsActive}}Activated{{ else }}Locked{{end}} at {{.UpdatedAt}}.
+Your membership was {{if .IsActive}}ACTIVATED{{ else }}LOCKED{{end}} at {{.UpdatedAt}} by administrator.
 
 * Name     : {{.Name}}
 * Email    : {{.Email}}

@@ -1,16 +1,14 @@
-# New Role requested by {{.String}}
+# Role "{{.Role.App.Name}}.{{.Role.Name}}" requested for {{.Member.Name}}
 
-New role requested by {{.Name}}.
+New role requested by {{.Member.String}}.
 
-* Name     : {{.Name}}
-* Email    : {{.Email}}
+### Member: {{.Member.String}}
+* Name        : {{.Member.Name}}
+* Email       : {{.Member.Email}}
 
-### Credentials
-{{range $role := .Roles}}
-* Role {{.String}}
-  * Role        : {{$role.Name}}
-  * Code        : {{$role.Code}}
-  * Description : {{$role.Description}}
-  * App         : {{$role.App.Name}}
+### Role: {{.Role.String}}
 
-{{end}}
+* App         : {{.Role.App.Name}}
+* Role        : {{.Role.Name}}
+* Code        : {{.Role.Code}}
+* Description : {{.Role.Description}}

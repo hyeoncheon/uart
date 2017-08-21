@@ -6,11 +6,9 @@ New member {{.Name}} registered at {{.CreatedAt}}.
 * Email    : {{.Email}}
 
 ### Credentials
-{{range $credential := .Credentials}}
-* {{.String}}
+{{range $credential := .Credentials}}* {{.String}}
   * Name    : {{$credential.Name}}
   * Email   : {{$credential.Email}}
   * Provider: {{$credential.Provider}}
   * UserID  : {{$credential.UserID}}
-
 {{end}}

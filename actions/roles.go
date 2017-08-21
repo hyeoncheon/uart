@@ -157,10 +157,25 @@ func (v RolesResource) Request(c buffalo.Context) error {
 			break
 		}
 		c.Flash().Add("success", t(c, "role.request.finished.successfully"))
+
 		admins := role.App().GetRole(tx, models.RCAdmin).Members(true)
-		noteMsg(c, admins, MsgFacUser, "new_role_requested", member)
+		rrd := RoleRequestData{Member: member, Role: role}
+		err = noteMsg(c, admins, MsgFacUser, "new_role_requested", rrd)
+		if err != nil {
+			c.Logger().Error("error ", err)
+		}
 	}
 	return c.Redirect(http.StatusFound, "/membership/me")
+}
+
+// RoleRequestData is inventory set for role request message
+type RoleRequestData struct {
+	Member *models.Member
+	Role   *models.Role
+}
+
+func (d RoleRequestData) String() string {
+	return d.Role.String() + " for " + d.Member.Name
 }
 
 // Retire remove the role of current user
