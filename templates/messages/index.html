@@ -22,18 +22,21 @@
 	<thead>
 		<tr>
 			<th><%=t("date")%></th>
+			<th>&nbsp;</th>
 			<th><%=t("subject")%></th>
 			<th><%=t("sender")%></th>
 			<th><%=t("app")%></th>
 			<th><%=t("category")%></th>
-			<th><%=t("type")%></th>
 			<th>&nbsp;</th>
 		</tr>
 	</thead>
 	<tbody>
 		<%= for (message) in messages { %><tr class="<%= if (!message.IsLog) {
 			%>clickable<% } %>">
-			<td><%= timeYYMDHMS(message.CreatedAt) %></td>
+			<td><%= timeMDHM(message.CreatedAt) %></td>
+			<td><%= if (message.IsLog) {
+				%><i class="fa fa-sticky-note-o"></i><% } else {
+				%><i class="fa fa-envelope"></i><% } %></td>
 			<td><%= if (!message.IsLog) {
 				%><a id="link" href="<%= messagePath({ message_id: message.ID })
 				%>"><%= message.Subject %></a><% } else {
@@ -41,7 +44,6 @@
 			<td><%= message.Owner() %></td>
 			<td><%= message.AppName() %></td>
 			<td><%= humanize(message.Facility) %>.<%= message.PriorityString() %></td>
-			<td><%= if (message.IsLog) { %>Log<% } else { %>Message<% } %></td>
 			<td class="unclickable">
 				<div class="pull-right btn-group">
 					<a class="btn btn-xs btn-default" href="<%=

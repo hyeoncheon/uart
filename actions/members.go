@@ -84,10 +84,14 @@ func (v MembersResource) Update(c buffalo.Context) error {
 	if err != nil {
 		return errors.WithStack(err)
 	}
+	status_old := member.IsActive
+
 	err = c.Bind(member)
 	if err != nil {
 		return errors.WithStack(err)
 	}
+	status_new := member.IsActive
+
 	verrs, err := tx.ValidateAndUpdate(member)
 	if err != nil {
 		return errors.WithStack(err)
@@ -114,6 +118,11 @@ func (v MembersResource) Update(c buffalo.Context) error {
 		}
 		c.Flash().Add("info", t(c, "uart.role.also.update"))
 	}
+	if status_old != status_new {
+		err := noteMsg(c, &models.Members{*member}, MsgFacUser,
+			"member_status_changed", member)
+		c.Logger().Debug("imessaging error: ", err)
+	}
 
 	c.Flash().Add("success", "Member was updated successfully")
 	mLogInfo(c, MsgFacUser, "member %v was updated", member)
@@ -133,12 +142,25 @@ func (v MembersResource) Destroy(c buffalo.Context) error {
 		c.Flash().Add("danger", t(c, "disabling.an.admin.is.not.allowed"))
 		return c.Redirect(http.StatusFound, "/members")
 	}
+
+	permanent := false
+	if strings.HasSuffix(member.Name, "-Deleted") {
+		c.Logger().Warn("caution! permanent deletion mode selected!")
+		permanent = true
+	}
+	var err error
+
 	//! REMOVE RELATED THING OR JUST DISABLE THEM...
 	for _, d := range *member.Credentials() {
 		if !strings.HasSuffix(d.UserID, "-DLTD") {
 			d.UserID = d.UserID + "-DLTD"
 		}
-		if err := tx.Save(&d); err != nil {
+		if permanent {
+			err = tx.Destroy(&d)
+		} else {
+			err = tx.Save(&d)
+		}
+		if err != nil {
 			tx.TX.Rollback()
 			c.Flash().Add("danger", t(c, "cannot.inactivate.credential"))
 			return c.Redirect(http.StatusFound, "/members")
@@ -163,7 +185,12 @@ func (v MembersResource) Destroy(c buffalo.Context) error {
 	if !strings.HasSuffix(member.Name, "-Deleted") {
 		member.Name = member.Name + "-Deleted"
 	}
-	if err := tx.Save(member); err != nil {
+	if permanent {
+		err = tx.Destroy(member)
+	} else {
+		err = tx.Save(member)
+	}
+	if err != nil {
 		tx.TX.Rollback()
 		c.Flash().Add("danger", t(c, "cannot.inactivate.member"))
 		return c.Redirect(http.StatusFound, "/members")

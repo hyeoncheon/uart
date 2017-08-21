@@ -115,7 +115,7 @@ func (v RolesResource) Accept(c buffalo.Context) error {
 		} else {
 			c.Flash().Add("success", t(c, "request.accepted.successfully"))
 			member := rolemap.Member()
-			rMsg(c, &models.Members{*member}, "",
+			appMsg(c, &models.Members{*member}, "",
 				"role request for %v accepted!", rolemap.Role())
 		}
 	}
@@ -158,7 +158,7 @@ func (v RolesResource) Request(c buffalo.Context) error {
 		}
 		c.Flash().Add("success", t(c, "role.request.finished.successfully"))
 		admins := role.App().GetRole(tx, models.RCAdmin).Members(true)
-		rMsg(c, admins, "", "role %v requested by %v", role, member)
+		noteMsg(c, admins, MsgFacUser, "new_role_requested", member)
 	}
 	return c.Redirect(http.StatusFound, "/membership/me")
 }

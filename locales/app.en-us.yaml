@@ -54,6 +54,8 @@
   translation: "Set member status and notes"
 - id: show.and.edit.your.settings
   translation: "Show and edit your settings"
+- id: this.profile.is.not.yours.do.not.make.any.action
+  translation: "This profile is not yours. Do not make any action!"
 - id: you.are.currently.locked.or.new
   translation: "You are currently locked or new. Most features are not available until upgrade your status. Please contact administrators."
 
@@ -116,8 +118,16 @@
   translation: "Grants"
 - id: cannot.delete.the.app.user.exists
   translation: "Cannot delete the app. Active user exists"
+- id: cannot.delete.access.grant
+  translation: "Cannot delete access grant."
 - id: cannot.found.app
   translation: "Cannot found app"
+- id: cannot.inactivate.credential
+  translation: "Cannot inactivate credential"
+- id: cannot.inactivate.member
+  translation: "Cannot inactivate member"
+- id: cannot.remove.users.role
+  translation: "Cannot remove users role"
 - id: cannot.remove.admin.role.from.you
   translation: "Cannot remove admin role from you"
 - id: cannot.remove.this.role.from.you
@@ -132,6 +142,18 @@
   translation: "OOPS! Cannot grant!"
 - id: role.removed.from.you.successfully
   translation: "The role removed from you successfully!"
+- id: disabling.an.admin.is.not.allowed
+  translation: "Disabling an admin is not allowed"
+- id: member.was.inactivated.successfully
+  translation: "Member was inactivated successfully"
+
+# Messaging
+- id: message.details
+  translation: "Message Details"
+- id: new.message
+  translation: "New Message"
+- id: message.dismissed
+  translation: "Message dismissed"
 
 # Role and membership
 - id: active.members
@@ -200,14 +222,22 @@
   translation: "Admin"
 - id: cancel
   translation: "Cancel"
+- id: category
+  translation: "Category"
 - id: close
   translation: "Close"
 - id: code
   translation: "Code"
 - id: codes
   translation: "Codes"
+- id: content
+  translation: "Content"
+- id: date
+  translation: "Date"
 - id: delete
   translation: "Delete"
+- id: dismiss
+  translation: "Dismiss"
 - id: edit
   translation: "Edit"
 - id: email
@@ -218,6 +248,10 @@
   translation: "Member"
 - id: members
   translation: "Members"
+- id: message
+  translation: "Message"
+- id: messages
+  translation: "Messages"
 - id: meta
   translation: "Meta"
 - id: name
@@ -242,10 +276,16 @@
   translation: "Roles"
 - id: save
   translation: "Save"
+- id: sender
+  translation: "Sender"
 - id: since
   translation: "Since"
 - id: status
   translation: "Status"
+- id: subject
+  translation: "Subject"
+- id: type
+  translation: "Type"
 - id: update
   translation: "Update"
 - id: user.id
@@ -255,3 +295,5 @@
 
 - id: you.dont.have.permission
   translation: "You don't have permission for this action!"
+- id: oops.manipulated.request
+  translation: "OOPS! Manipulated Request! Who are you?"

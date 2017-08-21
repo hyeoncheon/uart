@@ -42,6 +42,9 @@ func (v AppsResource) Show(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	app := &models.App{}
 	err := models.FindMyOwn(tx.Q(), dummyMember(c), app, c.Param("app_id"))
+	if c.Value("member_is_admin").(bool) {
+		err = tx.Find(app, c.Param("app_id"))
+	}
 	if err != nil {
 		c.Flash().Add("danger", t(c, "you.have.no.right.for.this.app"))
 		me := currentMember(c)
@@ -98,6 +101,9 @@ func (v AppsResource) Edit(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	app := &models.App{}
 	err := models.FindMyOwn(tx.Q(), dummyMember(c), app, c.Param("app_id"))
+	if c.Value("member_is_admin").(bool) {
+		err = tx.Find(app, c.Param("app_id"))
+	}
 	if err != nil {
 		c.Flash().Add("danger", t(c, "app.not.found.check.your.permission"))
 		return c.Redirect(http.StatusFound, "/apps")
@@ -112,6 +118,9 @@ func (v AppsResource) Update(c buffalo.Context) error {
 	app := &models.App{}
 	me := currentMember(c) // for logging only
 	err := models.FindMyOwn(tx.Q(), me, app, c.Param("app_id"))
+	if c.Value("member_is_admin").(bool) {
+		err = tx.Find(app, c.Param("app_id"))
+	}
 	if err != nil {
 		c.Flash().Add("danger", t(c, "app.not.found.check.your.permission"))
 		return c.Redirect(http.StatusFound, "/apps")
@@ -231,7 +240,7 @@ func (v AppsResource) Grant(c buffalo.Context) error {
 			return c.Redirect(http.StatusTemporaryRedirect, "%s", origin)
 		}
 		admins := app.GetRole(tx, models.RCAdmin).Members(true)
-		rMsg(c, admins, "", "role %v requested by %v (grant)", uRole, member)
+		appMsg(c, admins, "", "role %v requested by %v (grant)", uRole, member)
 	}
 
 	return c.Redirect(http.StatusTemporaryRedirect, "%s", origin)

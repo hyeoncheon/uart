@@ -57,7 +57,8 @@ func AuthCallback(c buffalo.Context) error {
 			c.Flash().Add("danger", t(c, err.Error()))
 			return c.Redirect(http.StatusTemporaryRedirect, "/login")
 		}
-		mLogNote(c, MsgFacUser, "new member %v registered!", member)
+		x := models.GetAppRole(models.ACUART, models.RCAdmin).Members(true)
+		noteMsg(c, x, MsgFacUser, "new_member_registered", member)
 		c.Flash().Add("success", t(c, "welcome.to.uart"))
 		return loggedIn(c, member)
 	case 1:

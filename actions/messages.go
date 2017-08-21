@@ -4,9 +4,12 @@ package actions
 //* Use Belonging Interface
 
 import (
+	"bytes"
 	"fmt"
+	"text/template"
 
 	"github.com/gobuffalo/buffalo"
+	"github.com/markbates/inflect"
 	"github.com/markbates/pop"
 	"github.com/pkg/errors"
 
@@ -135,6 +138,7 @@ func (v MessagesResource) Destroy(c buffalo.Context) error {
 
 //** utilities
 
+// mLog* replaces default, simple Logger.* functions with message.
 func mLogInfo(c buffalo.Context, fac, form string, args ...interface{}) error {
 	c.Logger().WithField("category", fac).Infof(form, args...)
 	return mLog(c, MsgPriInfo, fac, form, args...)
@@ -160,6 +164,7 @@ func mLogAlert(c buffalo.Context, fac, form string, args ...interface{}) error {
 	return mLog(c, MsgPriAlert, fac, form, args...)
 }
 
+// mLog create simple, common log message for UART system administrators
 func mLog(c buffalo.Context, p int, fac, form string, args ...interface{}) error {
 	tx := c.Value("tx").(*pop.Connection)
 	mesg := fmt.Sprintf(form, args...)
@@ -176,7 +181,8 @@ func mLog(c buffalo.Context, p int, fac, form string, args ...interface{}) error
 	return nil
 }
 
-func rMsg(c buffalo.Context, r *models.Members, content, form string, args ...interface{}) error {
+// appMsg log and create a message for application admins (not system level)
+func appMsg(c buffalo.Context, r *models.Members, content, form string, args ...interface{}) error {
 	c.Logger().WithField("category", MsgFacApp).Infof(form, args...)
 	tx := c.Value("tx").(*pop.Connection)
 	mesg := fmt.Sprintf(form, args...)
@@ -188,4 +194,49 @@ func rMsg(c buffalo.Context, r *models.Members, content, form string, args ...in
 		return errors.New("cannot create new message")
 	}
 	return nil
+}
+
+// for template based messages
+//
+// xMsg create template based message.
+func xMsg(c buffalo.Context, r *models.Members, app, fac string, prio int, mesg, tpl string, data interface{}) error {
+	tmpl, err := template.ParseFiles("messages/" + tpl + ".tpl")
+	if err != nil {
+		return err
+	}
+	buf := &bytes.Buffer{}
+	if err := tmpl.Execute(buf, data); err != nil {
+		return err
+	}
+	content := buf.String()
+	c.Logger().Debugf("------ message content:\n%v\n------", content)
+
+	tx := c.Value("tx").(*pop.Connection)
+	m := models.NewMessage(tx, dummyMember(c).ID, r, nil, mesg, content,
+		app, fac, prio, false)
+	if m == nil {
+		c.Logger().Error("cannot create new formatted message")
+		tx.TX.Rollback()
+		return errors.New("cannot create new formatted message")
+	}
+	return nil
+}
+
+// Inventory used as template inventory for messaging subsystem
+type Inventory interface {
+	String() string
+}
+
+// noteMsg logs and creates info level message with template
+func noteMsg(c buffalo.Context, r *models.Members, fac, tpl string, data Inventory) error {
+	mesg := inflect.Titleize(tpl) + ": " + data.String()
+	c.Logger().WithField("category", fac).Info(mesg)
+	return xMsg(c, r, models.ACUART, fac, MsgPriNote, mesg, tpl, data)
+}
+
+// alertMsg logs and creates warning level message with template
+func alertMsg(c buffalo.Context, r *models.Members, fac, tpl string, data Inventory) error {
+	mesg := inflect.Titleize(tpl) + ": " + data.String()
+	c.Logger().WithField("category", fac).Warn(mesg)
+	return xMsg(c, r, models.ACUART, fac, MsgPriAlert, mesg, tpl, data)
 }
