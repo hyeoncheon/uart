@@ -1,4 +1,9 @@
+<%= f.InputTag("Name") %>
+<%= f.InputTag("Email") %>
+<%= f.InputTag("Icon") %>
 <div class="form-group">
+	<label>Status</label>
+	<div class="widget-group">
 	<div class="radio-inline abc-radio abc-radio-info">
 		<input name="IsActive" id="memActiveT" type="radio"<%=
 			if (member.IsActive) { %> checked="true"<% }
@@ -9,7 +14,6 @@
 			if (!member.IsActive) { %> checked="true"<% }
 			%> value="false"><label for="memActiveF">Locked</label>
 	</div>
+	</div>
 </div>
-
 <%= f.TextArea("Note", {rows: 5}) %>
-<button id="member-edit" class="btn btn-success" role="submit"><%=t("save")%></button>

@@ -226,6 +226,40 @@ func (m Member) AccessGrantCount() int {
 	return count
 }
 
+// Messangers returns messangers belonging to the member.
+func (m *Member) Messangers() *Messangers {
+	messangers := &Messangers{}
+	err := DB.BelongsTo(m).Order(messangersDefaultSort).All(messangers)
+	if err != nil {
+		log.Warnf("cannot found messangers", err)
+	}
+	return messangers
+}
+
+// PrimaryAlert returns primary messanger of the member.
+func (m *Member) PrimaryAlert() *Messanger {
+	messanger := &Messanger{}
+	err := DB.BelongsTo(m).
+		Where("priority = ?", MessangerPriority["Alert"]).
+		Where("is_primary = ?", true).First(messanger)
+	if err != nil {
+		log.Warnf("cannot found primary messanger", err)
+	}
+	return messanger
+}
+
+// PrimaryNotifier returns primary messanger of the member.
+func (m *Member) PrimaryNotifier() *Messanger {
+	messanger := &Messanger{}
+	err := DB.BelongsTo(m).
+		Where("priority = ?", MessangerPriority["Notification"]).
+		Where("is_primary = ?", true).First(messanger)
+	if err != nil {
+		log.Warnf("cannot found primary messanger", err)
+	}
+	return messanger
+}
+
 //** implementations for interfaces ---------------------------------
 
 // GetID implements Owner interface

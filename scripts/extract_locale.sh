@@ -4,7 +4,7 @@
 langs="en-us ko-kr"
 
 for lang in $langs; do
-  echo -e "\n\nLANG: $lang"
+  echo "\n\nLANG: $lang"
 
   find templates -type f |xargs cat \
   |sed 's/t("/\nt("/g' \
@@ -15,7 +15,7 @@ for lang in $langs; do
     grep -q "^$id\$" locales/*.$lang.yaml || echo "$line"
   done | sort -u | sed 's/X/\n/'
 
-  grep '"\w*\(\.\w*\)*\.\w*"' `find actions -type f` \
+  grep 't(.*"\w*\(\.\w*\)*\.\w*"' `find actions -type f` \
   |grep -v "\.html" \
   |sed 's/.*"\(\w*\(\.\w*\)*\.\w*\)".*/- id: \1Xtranslation: "\1"/' \
   |while read line; do

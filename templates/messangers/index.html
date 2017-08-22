@@ -1,0 +1,47 @@
+<div class="row wg phead">
+	<div class="col-md-3 col-xs-12 wg ptitle">
+		<h1><%=t("messangers")%></h1>
+	</div>
+	<div class="col-md-9 col-xs-12 wg pnav">
+		<span class="pull-right" data-toggle="popover" data-trigger="hover"
+			data-placement="left" data-content="<%=t("all.registered.messangers")
+			%>"><i class="fa fa-question-circle"></i></span>
+	</div>
+</div>
+
+<table class="table table-striped table-condensed table-hover">
+	<thead>
+		<tr>
+			<th><%=t("member")%></th>
+			<th><%=t("priority")%></th>
+			<th><%=t("method")%></th>
+			<th><%=t("value")%></th>
+			<th><%=t("created.at")%></th>
+			<th>&nbsp;</th>
+		</tr>
+	</thead>
+	<tbody>
+		<%= for (messanger) in messangers { %><tr>
+			<td><%= messanger.MemberID %></td>
+			<td><%= messanger.Priority %></td>
+			<td><%= messanger.Method %></td>
+			<td><%= messanger.Value %></td>
+			<td><%= timeYYMD(messanger.CreatedAt) %></td>
+			<td>
+				<div class="pull-right btn-group">
+					<a class="btn btn-xs btn-warning" href="<%=
+						editMessangerPath({ messanger_id: messanger.ID })
+						%>"><%=t("edit")%></a>
+					<a class="btn btn-xs btn-danger" href="<%=
+						messangerPath({ messanger_id: messanger.ID }) %>"
+						data-method="DELETE" data-confirm="<%=t("are.you.sure")
+						%>"><%=t("delete")%></a>
+				</div>
+			</td>
+		</tr><% } %>
+	</tbody>
+</table>
+
+<div class="text-center">
+	<%= paginator(pagination) %>
+</div>

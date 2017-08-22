@@ -76,7 +76,7 @@ type Message struct {
 
 //** rendering helpers for templates --------------------------------
 
-// String returns json marshalled representation of Messages
+// String returns representation of Messages
 func (m Message) String() string {
 	return MsgPriReverse[m.Priority] + ":" + m.Subject
 }
@@ -200,7 +200,7 @@ func NewMessage(tx *pop.Connection, sndrID interface{}, rcpts, bccs *Members, su
 
 //** array model for base model -------------------------------------
 
-// Messages is an array of Message
+// Messages is an array of Messages
 type Messages []Message
 
 // String returns json marshalled representation of Messages

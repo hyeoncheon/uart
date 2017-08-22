@@ -34,14 +34,14 @@ func (v MembersResource) List(c buffalo.Context) error {
 }
 
 // New renders the formular for creating a new Member.
-// TODO implement mail based local authentication based on this.
+// TODO: implement mail based local authentication based on this.
 func (v MembersResource) New(c buffalo.Context) error {
 	c.Set("member", &models.Member{})
 	return c.Render(200, r.HTML("members/new.html"))
 }
 
 // Create adds a Member to the DB.
-// TODO implement mail based local authentication based on this.
+// TODO: implement mail based local authentication based on this.
 func (v MembersResource) Create(c buffalo.Context) error {
 	member := &models.Member{}
 	err := c.Bind(member)
@@ -77,6 +77,7 @@ func (v MembersResource) Edit(c buffalo.Context) error {
 
 // Update changes a member in the DB.
 // ADMIN PROTECTED
+// TODO: update member's permissions immediately
 func (v MembersResource) Update(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	member := &models.Member{}
@@ -84,13 +85,13 @@ func (v MembersResource) Update(c buffalo.Context) error {
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	status_old := member.IsActive
+	statusOld := member.IsActive
 
 	err = c.Bind(member)
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	status_new := member.IsActive
+	statusNew := member.IsActive
 
 	verrs, err := tx.ValidateAndUpdate(member)
 	if err != nil {
@@ -118,7 +119,7 @@ func (v MembersResource) Update(c buffalo.Context) error {
 		}
 		c.Flash().Add("info", t(c, "uart.role.also.update"))
 	}
-	if status_old != status_new {
+	if statusOld != statusNew {
 		err := noteMsg(c, &models.Members{*member}, MsgFacUser,
 			"member_status_changed", member)
 		c.Logger().Debug("imessaging error: ", err)

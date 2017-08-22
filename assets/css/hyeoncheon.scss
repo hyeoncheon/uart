@@ -35,6 +35,7 @@ body > .container:not(.page-trailer) {
 @media screen and (max-width: 767px) {
 	.container {
 		margin: 0 10px;
+		width: 100%;
 	}
 }
 
@@ -133,6 +134,7 @@ body > .container:not(.page-trailer) {
 	& > .wg.extra {
 		clear: both;
 		color: #888;
+		font-size: 0.8em;
 		border-top: 1px solid #eee;
 		padding-top: 5px;
 		margin-top: 4px;
@@ -267,11 +269,17 @@ form.horizontal {
 		label {
 			width: 23%;
 			text-align: right;
+			vertical-align: top;
 		}
-		input {
+		input, textarea, select {
 			display: inline-block;
 			margin-left: 2%;
 			width: 75%;
+		}
+		div.widget-group {
+			display: inline-block;
+			margin-left: 2%;
+			width: 70%;
 		}
 		span.help-block {
 			width: 75%;
@@ -299,7 +307,7 @@ form.horizontal {
 
 // port from semantic-ui
 p:last-child {
-  margin-bottom: 0;
+	margin-bottom: 0;
 }
 
 // override default styles

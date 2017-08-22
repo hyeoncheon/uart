@@ -1,22 +1,22 @@
 <div class="row wg phead">
 	<div class="col-md-3 col-xs-12 wg ptitle">
-		<h1><%=t("edit")%> <%= member.Name %></h1>
+		<h1><%=t("new.messanger")%></h1>
 	</div>
 	<div class="col-md-9 col-xs-12 wg pnav">
 		<span class="pull-right" data-toggle="popover" data-trigger="hover"
-			data-placement="left" data-content="<%=t("set.member.status.and.notes")
+			data-placement="left" data-content="<%=t("add.new.messanger.here")
 			%>"><i class="fa fa-question-circle"></i></span>
 	</div>
 </div>
 
 <div class="row">
-	<div class="col-md-10 col-md-offset-1 col-xs-12">
-	<%= form_for(member, {action: memberPath({ member_id: member.ID }),
-		method: "PUT", class: "horizontal"}) { %>
-	<%= partial("members/form.html") %>
+	<div class="col-md-8 col-md-offset-2">
+	<%= form_for(messanger, {action: messangersPath(), method: "POST",
+		class: "horizontal"}) { %>
+	<%= partial("messangers/form.html") %>
 	<div class="buttons">
 		<button class="btn btn-success" role="submit"><%=t("save")%></button>
-		<a class="btn btn-warning" href="<%= membersPath()
+		<a class="btn btn-warning" href="<%= membershipMePath()
 			%>" data-confirm="<%=t("are.you.sure")%>"><%=t("cancel")%></a>
 	</div>
 	<% } %>

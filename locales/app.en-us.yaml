@@ -155,6 +155,46 @@
 - id: message.dismissed
   translation: "Message dismissed"
 
+# Messanger
+- id: add.new.messanger.here
+  translation: "Add new messanger here"
+- id: add.new.messanger
+  translation: "Add New Messanger"
+- id: all.registered.messangers
+  translation: "All registered messangers"
+- id: created.at
+  translation: "Created at"
+- id: edit.messanger.information
+  translation: "Edit messanger information"
+- id: edit.messanger
+  translation: "Edit Messanger"
+- id: messangers
+  translation: "Messangers"
+- id: modal.message.add.your.favorite.messanger
+  translation: "Add your favorite messanger"
+- id: modal.message.edit.your.messanger.information
+  translation: "Edit your messanger information"
+- id: new.messanger
+  translation: "New Messanger"
+- id: set.as.primary
+  translation: "Set as primary"
+- id: deleting.a.primary.is.not.allowed
+  translation: "Deleting a primary is not allowed"
+- id: eep.messanger.not.found
+  translation: "EEP! Messanger not found"
+- id: messanger.was.created.successfully
+  translation: "Messanger was created successfully"
+- id: messanger.was.deleted.successfully
+  translation: "Messanger was deleted successfully"
+- id: messanger.was.updated.successfully
+  translation: "Messanger was updated successfully"
+- id: oops.cannot.delete.messanger
+  translation: "OOPS! Cannot delete messanger"
+- id: oops.cannot.save.others
+  translation: "OOPS! Cannot save others"
+- id: oops.cannot.update.messanger
+  translation: "OOPS! Cannot update messanger"
+
 # Role and membership
 - id: active.members
   translation: "Active Members"
@@ -254,6 +294,8 @@
   translation: "Messages"
 - id: meta
   translation: "Meta"
+- id: method
+  translation: "Method"
 - id: name
   translation: "Name"
 - id: names
@@ -264,6 +306,8 @@
   translation: "Owner"
 - id: owners
   translation: "Owners"
+- id: priority
+  translation: "Priority"
 - id: provider
   translation: "Provider"
 - id: rank
@@ -290,6 +334,8 @@
   translation: "Update"
 - id: user.id
   translation: "User ID"
+- id: value
+  translation: "Value"
 - id: are.you.sure
   translation: "Are you sure? This action cannot be reversed."
 
@@ -297,3 +343,4 @@
   translation: "You don't have permission for this action!"
 - id: oops.manipulated.request
   translation: "OOPS! Manipulated Request! Who are you?"
+

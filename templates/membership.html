@@ -42,6 +42,21 @@ partial("apps/appcard.html") %><%
 	</div><div class="col-md-6 col-xs-12"> <!-- ---------------------------- -->
 		<div class="wg chapter">
 			<h2 class="wg underline head">
+				<%=t("messangers")%>
+				<span class="pull-right"><a class="btn btn-sm btn-default<%=
+					if (!member.IsActive) { %> disabled<% }
+					%>" data-toggle="modal" data-target="#newMessanger"><%=
+					t("add.new.messanger")%></a></span>
+			</h2>
+			<div class="wg content-box">
+				<%= for (messanger) in messangers { %><%=
+partial("messangers/messangercard.html") %><%
+				} %>
+			</div>
+		</div>
+
+		<div class="wg chapter">
+			<h2 class="wg underline head">
 				<%=t("teams")%>
 				<span class="pull-right"><a class="btn btn-sm btn-default disabled"><%=
 						t("create.new.team")%></a></span>
@@ -66,3 +81,26 @@ partial("credentials/creditcard.html") %><%
 	</div>
 </div>
 
+<!-- Modal for Role -->
+<div class="modal fade" id="newMessanger" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title"><%=t("add.new.messanger")%></h4>
+			</div>
+			<%= form_for(messanger, {action: messangersPath(), method: "POST"}) { %>
+			<div class="modal-body">
+				<p>
+				<%=t("modal.message.add.your.favorite.messanger")%>
+				</p>
+				<%= partial("messangers/form.html") %>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-warning" data-dismiss="modal" aria-label="Close"><%=t("close")%></button>
+				<button class="btn btn-success" style="width: 120px" role="submit"><%=t("add")%></button>
+			</div>
+			<% } %>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
