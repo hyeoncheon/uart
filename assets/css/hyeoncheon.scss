@@ -297,4 +297,9 @@ form.horizontal {
 	width: 1em;
 }
 
+// port from semantic-ui
+p:last-child {
+  margin-bottom: 0;
+}
+
 // override default styles
