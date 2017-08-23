@@ -227,14 +227,30 @@ func (m Member) AccessGrantCount() int {
 }
 
 // Messangers returns messangers belonging to the member.
-func (m *Member) Messangers() *Messangers {
+func (m *Member) Messangers(args ...int) *Messangers {
 	messangers := &Messangers{}
-	err := DB.BelongsTo(m).Order(messangersDefaultSort).All(messangers)
+	q := DB.BelongsTo(m).Order(messangersDefaultSort)
+	if len(args) > 0 {
+		q.Where("priority = ?", args[0])
+	}
+	err := q.All(messangers)
 	if err != nil {
 		log.Warnf("cannot found messangers", err)
 	}
 	return messangers
 }
+
+/*
+// Alerters returns messanger for alert of the member.
+func (m *Member) Alerters() *Messangers {
+	return m.Messangers(MsgPriAlert)
+}
+
+// Notifiers returns messanger for notification of the member.
+func (m *Member) Notifiers() *Messangers {
+	return m.Messangers(MsgPriNote)
+}
+*/
 
 // PrimaryAlert returns primary messanger of the member.
 func (m *Member) PrimaryAlert() *Messanger {

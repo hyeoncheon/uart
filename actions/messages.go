@@ -196,7 +196,7 @@ func appMsg(c buffalo.Context, r *models.Members, content, form string, args ...
 	}
 
 	for _, member := range *r {
-		jobs.QueueMailer(member.ID)
+		jobs.QueueMessaging(member.ID)
 	}
 
 	return nil
@@ -227,7 +227,7 @@ func xMsg(c buffalo.Context, r *models.Members, app, fac string, prio int, mesg,
 	}
 
 	for _, member := range *r {
-		jobs.QueueMailer(member.ID)
+		jobs.QueueMessaging(member.ID)
 	}
 
 	return nil

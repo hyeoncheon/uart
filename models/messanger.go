@@ -4,6 +4,7 @@ package models
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/markbates/pop"
@@ -44,8 +45,8 @@ type Messanger struct {
 
 // String returns json marshalled representation of messanger
 func (m Messanger) String() string {
-	jm, _ := json.Marshal(m)
-	return string(jm)
+	attr := fmt.Sprintf(" (%v/%v)", MsgPriReverse[m.Priority], m.IsPrimary)
+	return m.Method + " to " + m.Value + attr
 }
 
 //** implementations for interfaces ---------------------------------
