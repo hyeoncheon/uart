@@ -8,12 +8,11 @@ import (
 
 func t(c buffalo.Context, str string) string {
 	s, err := T.Translate(c, str)
-	if err == nil {
-		if s == str {
-			c.Logger().WithField("category", "i18n").
-				Warnf("FIXME untranslated text found: %v", str)
-		}
-		return s
+	if err != nil {
+		return str
 	}
-	return str
+	if s == str {
+		c.Logger().WithField("category", "i18n").Warnf("UNTRANSLATED: %v", str)
+	}
+	return s
 }

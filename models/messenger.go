@@ -13,24 +13,24 @@ import (
 	"github.com/satori/go.uuid"
 )
 
-// MessangerPriority is a map for priority string to code.
-var MessangerPriority = map[string]int{
+// MessengerPriority is a map for priority string to code.
+var MessengerPriority = map[string]int{
 	"Alert":        1,
 	"Notification": 5,
 	"Disabled":     8,
 }
 
-// MessangerMethod is a map for method name to code string.
-var MessangerMethod = map[string]string{
+// MessengerMethod is a map for method name to code string.
+var MessengerMethod = map[string]string{
 	"Email": "mail",
 }
 
 const (
-	messangersDefaultSort = "priority, is_primary desc, created_at desc"
+	messengersDefaultSort = "priority, is_primary desc, created_at desc"
 )
 
-// Messanger is a structure for messaging methods
-type Messanger struct {
+// Messenger is a structure for messaging methods
+type Messenger struct {
 	ID        uuid.UUID `json:"id" db:"id"`
 	CreatedAt time.Time `json:"created_at" db:"created_at"`
 	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
@@ -43,8 +43,8 @@ type Messanger struct {
 
 //** rendering helpers for templates --------------------------------
 
-// String returns json marshalled representation of messanger
-func (m Messanger) String() string {
+// String returns json marshalled representation of messenger
+func (m Messenger) String() string {
 	attr := fmt.Sprintf(" (%v/%v)", MsgPriReverse[m.Priority], m.IsPrimary)
 	return m.Method + " to " + m.Value + attr
 }
@@ -52,17 +52,17 @@ func (m Messanger) String() string {
 //** implementations for interfaces ---------------------------------
 
 // QueryParams implements Belonging interface
-func (m *Messanger) QueryParams() QueryParams {
+func (m *Messenger) QueryParams() QueryParams {
 	return QueryParams{}
 }
 
 // OwnedBy implements Belonging interface
-func (m *Messanger) OwnedBy(q *pop.Query, o Owner, f ...bool) *pop.Query {
+func (m *Messenger) OwnedBy(q *pop.Query, o Owner, f ...bool) *pop.Query {
 	return q.BelongsTo(o)
 }
 
 // AccessibleBy implements Belonging interface
-func (m *Messanger) AccessibleBy(q *pop.Query, o Owner, f ...bool) *pop.Query {
+func (m *Messenger) AccessibleBy(q *pop.Query, o Owner, f ...bool) *pop.Query {
 	return q.BelongsTo(o)
 }
 
@@ -70,17 +70,17 @@ func (m *Messanger) AccessibleBy(q *pop.Query, o Owner, f ...bool) *pop.Query {
 
 //** array model for base model -------------------------------------
 
-// Messangers is an array of Messangers
-type Messangers []Messanger
+// Messengers is an array of Messengers
+type Messengers []Messenger
 
 // String is not required by pop and may be deleted
-func (m Messangers) String() string {
+func (m Messengers) String() string {
 	jm, _ := json.Marshal(m)
 	return string(jm)
 }
 
 // Validate gets run every time you call a "pop.Validate" method.
-func (m *Messanger) Validate(tx *pop.Connection) (*validate.Errors, error) {
+func (m *Messenger) Validate(tx *pop.Connection) (*validate.Errors, error) {
 	return validate.Validate(
 		&validators.IntIsPresent{Field: m.Priority, Name: "Priority"},
 		&validators.StringIsPresent{Field: m.Method, Name: "Method"},
@@ -89,11 +89,11 @@ func (m *Messanger) Validate(tx *pop.Connection) (*validate.Errors, error) {
 }
 
 // ValidateSave gets run every time you call "pop.ValidateSave" method.
-func (m *Messanger) ValidateSave(tx *pop.Connection) (*validate.Errors, error) {
+func (m *Messenger) ValidateSave(tx *pop.Connection) (*validate.Errors, error) {
 	return validate.NewErrors(), nil
 }
 
 // ValidateUpdate gets run every time you call "pop.ValidateUpdate" method.
-func (m *Messanger) ValidateUpdate(tx *pop.Connection) (*validate.Errors, error) {
+func (m *Messenger) ValidateUpdate(tx *pop.Connection) (*validate.Errors, error) {
 	return validate.NewErrors(), nil
 }

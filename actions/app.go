@@ -116,12 +116,12 @@ func App() *buffalo.App {
 		g.Middleware.Skip(adminHandler, r.List, r.Show)
 		app.GET("/messages/{message_id}/dismiss", r.(*MessagesResource).Dismiss)
 
-		r = &MessangersResource{&buffalo.BaseResource{}}
-		g = app.Resource("/messangers", r)
+		r = &MessengersResource{&buffalo.BaseResource{}}
+		g = app.Resource("/messengers", r)
 		g.Use(adminHandler)
 		g.Middleware.Skip(adminHandler, r.Create, r.Destroy, r.Update)
-		g.GET("/{messanger_id}/setprimary", r.(*MessangersResource).SetPrimary)
-		g.Middleware.Skip(adminHandler, r.(*MessangersResource).SetPrimary)
+		g.GET("/{messenger_id}/setprimary", r.(*MessengersResource).SetPrimary)
+		g.Middleware.Skip(adminHandler, r.(*MessengersResource).SetPrimary)
 
 		r = &MessagingLogsResource{&buffalo.BaseResource{}}
 		g = app.Resource("/messaging_logs", r)

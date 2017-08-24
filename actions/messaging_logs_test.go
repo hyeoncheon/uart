@@ -1,4 +1,4 @@
-package actions
+package actions_test
 
 func (as *ActionSuite) Test_MessagingLogsResource_List() {
 	as.Fail("Not Implemented!")

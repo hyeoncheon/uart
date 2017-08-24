@@ -1,10 +1,10 @@
 <div class="row wg phead">
 	<div class="col-md-3 col-xs-12 wg ptitle">
-		<h1><%=t("messangers")%></h1>
+		<h1><%=t("messengers")%></h1>
 	</div>
 	<div class="col-md-9 col-xs-12 wg pnav">
 		<span class="pull-right" data-toggle="popover" data-trigger="hover"
-			data-placement="left" data-content="<%=t("all.registered.messangers")
+			data-placement="left" data-content="<%=t("all.registered.messengers")
 			%>"><i class="fa fa-question-circle"></i></span>
 	</div>
 </div>
@@ -21,16 +21,16 @@
 		</tr>
 	</thead>
 	<tbody>
-		<%= for (messanger) in messangers { %><tr>
-			<td><%= messanger.MemberID %></td>
-			<td><%= messanger.Priority %></td>
-			<td><%= messanger.Method %></td>
-			<td><%= messanger.Value %></td>
-			<td><%= timeYYMD(messanger.CreatedAt) %></td>
+		<%= for (messenger) in messengers { %><tr>
+			<td><%= messenger.MemberID %></td>
+			<td><%= messenger.Priority %></td>
+			<td><%= messenger.Method %></td>
+			<td><%= messenger.Value %></td>
+			<td><%= timeYYMD(messenger.CreatedAt) %></td>
 			<td>
 				<div class="pull-right btn-group">
 					<a class="btn btn-xs btn-danger" href="<%=
-						messangerPath({ messanger_id: messanger.ID }) %>"
+						messengerPath({ messenger_id: messenger.ID }) %>"
 						data-method="DELETE" data-confirm="<%=t("are.you.sure")
 						%>"><%=t("delete")%></a>
 				</div>

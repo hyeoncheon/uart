@@ -22,7 +22,7 @@ const (
 	signature       = `UART, an Hyeoncheon Project`
 )
 
-type shooter func(models.Messanger, *models.MessagingLog, *models.Messages) error
+type shooter func(models.Messenger, *models.MessagingLog, *models.Messages) error
 
 var mailSender string
 var shooters = map[string]shooter{
@@ -86,8 +86,8 @@ func messagingHandler(args worker.Args) error {
 			continue
 		}
 
-		messangers := me.Messangers(priority)
-		for _, m := range *messangers {
+		messengers := me.Messengers(priority)
+		for _, m := range *messengers {
 			messagingLog := &models.MessagingLog{
 				Status:  "none",
 				Method:  m.Method,
@@ -127,10 +127,10 @@ func messagingHandler(args worker.Args) error {
 //** Messaging Handler for Email method (currently by mailgun)
 
 // mailer is a message shooter for mail method.
-func mailer(messanger models.Messanger, log *models.MessagingLog, messages *models.Messages) error {
-	logger.Debug("sending a mail to ", messanger)
+func mailer(messenger models.Messenger, log *models.MessagingLog, messages *models.Messages) error {
+	logger.Debug("sending a mail to ", messenger)
 	fm := (*messages)[0]
-	m := prepareMail(fm.Subject, fm.Content, "", mailSender, messanger.Value)
+	m := prepareMail(fm.Subject, fm.Content, "", mailSender, messenger.Value)
 	if len(*messages) > 1 {
 		m.text = "You have messages!\n------\n"
 	} else {

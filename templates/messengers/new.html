@@ -1,19 +1,19 @@
 <div class="row wg phead">
 	<div class="col-md-3 col-xs-12 wg ptitle">
-		<h1><%=t("new.messanger")%></h1>
+		<h1><%=t("new.messenger")%></h1>
 	</div>
 	<div class="col-md-9 col-xs-12 wg pnav">
 		<span class="pull-right" data-toggle="popover" data-trigger="hover"
-			data-placement="left" data-content="<%=t("add.new.messanger.here")
+			data-placement="left" data-content="<%=t("add.new.messenger.here")
 			%>"><i class="fa fa-question-circle"></i></span>
 	</div>
 </div>
 
 <div class="row">
 	<div class="col-md-8 col-md-offset-2">
-	<%= form_for(messanger, {action: messangersPath(), method: "POST",
+	<%= form_for(messenger, {action: messengersPath(), method: "POST",
 		class: "horizontal"}) { %>
-	<%= partial("messangers/form.html") %>
+	<%= partial("messengers/form.html") %>
 	<div class="buttons">
 		<button class="btn btn-success" role="submit"><%=t("save")%></button>
 		<a class="btn btn-warning" href="<%= membershipMePath()

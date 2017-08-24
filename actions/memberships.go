@@ -28,10 +28,10 @@ func membershipHandler(c buffalo.Context) error {
 	c.Set("credentials", member.Credentials())
 	c.Set("roles", member.Roles())
 	c.Set("grants", member.Grants())
-	c.Set("messangers", member.Messangers())
-	c.Set("messanger", &models.Messanger{})
-	c.Set("m_priority", models.MessangerPriority)
-	c.Set("m_method", models.MessangerMethod)
+	c.Set("messengers", member.Messengers())
+	c.Set("messenger", &models.Messenger{})
+	c.Set("m_priority", models.MessengerPriority)
+	c.Set("m_method", models.MessengerMethod)
 	return c.Render(http.StatusOK, r.HTML("membership.html"))
 }
 

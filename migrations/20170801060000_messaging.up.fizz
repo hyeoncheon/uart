@@ -1,4 +1,4 @@
-create_table("messangers", func(t) {
+create_table("messengers", func(t) {
 	t.Column("id", "uuid", {"primary": true})
 	t.Column("member_id", "uuid", {})
 	t.Column("priority", "integer", {})
@@ -6,8 +6,8 @@ create_table("messangers", func(t) {
 	t.Column("value", "string", {})
 	t.Column("is_primary", "bool", {})
 })
-add_index("messangers", "member_id", {})
-add_index("messangers", "priority", {})
+add_index("messengers", "member_id", {})
+add_index("messengers", "priority", {})
 
 create_table("messages", func(t) {
 	t.Column("id", "uuid", {"primary": true})

@@ -25,7 +25,7 @@ func (h Handler) String() string {
 	return h.Name + " " + strconv.Itoa(h.Success) + "/" + strconv.Itoa(h.Running)
 }
 
-// Handlers is a handler registry (originaly a dummy type for holding methods)
+// Handlers is a handler registry (originally a dummy type for holding methods)
 type Handlers map[string]*Handler
 
 var handlers = Handlers{}

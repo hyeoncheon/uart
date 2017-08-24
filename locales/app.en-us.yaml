@@ -155,45 +155,45 @@
 - id: message.dismissed
   translation: "Message dismissed"
 
-# Messanger
-- id: add.new.messanger.here
-  translation: "Add new messanger here"
-- id: add.new.messanger
-  translation: "Add New Messanger"
-- id: all.registered.messangers
-  translation: "All registered messangers"
+# Messenger
+- id: add.new.messenger.here
+  translation: "Add new messenger here"
+- id: add.new.messenger
+  translation: "Add New Messenger"
+- id: all.registered.messengers
+  translation: "All registered messengers"
 - id: created.at
   translation: "Created at"
-- id: edit.messanger.information
-  translation: "Edit messanger information"
-- id: edit.messanger
-  translation: "Edit Messanger"
-- id: messangers
-  translation: "Messangers"
-- id: modal.message.add.your.favorite.messanger
-  translation: "Add your favorite messanger"
-- id: modal.message.edit.your.messanger.information
-  translation: "Edit your messanger information"
-- id: new.messanger
-  translation: "New Messanger"
+- id: edit.messenger.information
+  translation: "Edit messenger information"
+- id: edit.messenger
+  translation: "Edit Messenger"
+- id: messengers
+  translation: "Messengers"
+- id: modal.message.add.your.favorite.messenger
+  translation: "Add your favorite messenger"
+- id: modal.message.edit.your.messenger.information
+  translation: "Edit your messenger information"
+- id: new.messenger
+  translation: "New Messenger"
 - id: set.as.primary
   translation: "Set as primary"
 - id: deleting.a.primary.is.not.allowed
   translation: "Deleting a primary is not allowed"
-- id: eep.messanger.not.found
-  translation: "EEP! Messanger not found"
-- id: messanger.was.created.successfully
-  translation: "Messanger was created successfully"
-- id: messanger.was.deleted.successfully
-  translation: "Messanger was deleted successfully"
-- id: messanger.was.updated.successfully
-  translation: "Messanger was updated successfully"
-- id: oops.cannot.delete.messanger
-  translation: "OOPS! Cannot delete messanger"
+- id: eep.messenger.not.found
+  translation: "EEP! Messenger not found"
+- id: messenger.was.created.successfully
+  translation: "Messenger was created successfully"
+- id: messenger.was.deleted.successfully
+  translation: "Messenger was deleted successfully"
+- id: messenger.was.updated.successfully
+  translation: "Messenger was updated successfully"
+- id: oops.cannot.delete.messenger
+  translation: "OOPS! Cannot delete messenger"
 - id: oops.cannot.save.others
   translation: "OOPS! Cannot save others"
-- id: oops.cannot.update.messanger
-  translation: "OOPS! Cannot update messanger"
+- id: oops.cannot.update.messenger
+  translation: "OOPS! Cannot update messenger"
 
 # Role and membership
 - id: active.members

@@ -85,7 +85,8 @@ func main() {
 
 		req, _ := http.NewRequest("GET", userinfo, nil)
 		req.Header.Set("Authorization", "Bearer "+t.AccessToken)
-		ctx, _ := context.WithTimeout(context.TODO(), 200*time.Millisecond)
+		ctx, cancel := context.WithTimeout(context.TODO(), 200*time.Millisecond)
+		defer cancel()
 		resp, err := http.DefaultClient.Do(req.WithContext(ctx))
 		if err != nil {
 			fmt.Printf("userinfo error: %v\n", err)

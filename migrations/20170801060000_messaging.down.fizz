@@ -1,6 +1,6 @@
-drop_index("messangers", "messangers_member_id_idx")
-drop_index("messangers", "messangers_priority_idx")
-drop_table("messangers")
+drop_index("messengers", "messengers_member_id_idx")
+drop_index("messengers", "messengers_priority_idx")
+drop_table("messengers")
 
 drop_index("messages", "messages_member_id_idx")
 drop_index("messages", "messages_priority_idx")

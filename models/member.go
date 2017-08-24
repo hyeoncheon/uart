@@ -254,54 +254,54 @@ func (m *Member) MessageMarkAsSent(id uuid.UUID) error {
 	return nil
 }
 
-// Messangers returns messangers belonging to the member.
-func (m *Member) Messangers(args ...int) *Messangers {
-	messangers := &Messangers{}
-	q := DB.BelongsTo(m).Order(messangersDefaultSort)
+// Messengers returns messengers belonging to the member.
+func (m *Member) Messengers(args ...int) *Messengers {
+	messengers := &Messengers{}
+	q := DB.BelongsTo(m).Order(messengersDefaultSort)
 	if len(args) > 0 {
 		q.Where("priority = ?", args[0])
 	}
-	err := q.All(messangers)
+	err := q.All(messengers)
 	if err != nil {
-		log.Warnf("cannot found messangers", err)
+		log.Warnf("cannot found messengers", err)
 	}
-	return messangers
+	return messengers
 }
 
 /*
-// Alerters returns messanger for alert of the member.
-func (m *Member) Alerters() *Messangers {
-	return m.Messangers(MsgPriAlert)
+// Alerters returns messenger for alert of the member.
+func (m *Member) Alerters() *Messengers {
+	return m.Messengers(MsgPriAlert)
 }
 
-// Notifiers returns messanger for notification of the member.
-func (m *Member) Notifiers() *Messangers {
-	return m.Messangers(MsgPriNote)
+// Notifiers returns messenger for notification of the member.
+func (m *Member) Notifiers() *Messengers {
+	return m.Messengers(MsgPriNote)
 }
 */
 
-// PrimaryAlert returns primary messanger of the member.
-func (m *Member) PrimaryAlert() *Messanger {
-	messanger := &Messanger{}
+// PrimaryAlert returns primary messenger of the member.
+func (m *Member) PrimaryAlert() *Messenger {
+	messenger := &Messenger{}
 	err := DB.BelongsTo(m).
-		Where("priority = ?", MessangerPriority["Alert"]).
-		Where("is_primary = ?", true).First(messanger)
+		Where("priority = ?", MessengerPriority["Alert"]).
+		Where("is_primary = ?", true).First(messenger)
 	if err != nil {
-		log.Warn("cannot found primary messanger ", err)
+		log.Warn("cannot found primary messenger ", err)
 	}
-	return messanger
+	return messenger
 }
 
-// PrimaryNotifier returns primary messanger of the member.
-func (m *Member) PrimaryNotifier() *Messanger {
-	messanger := &Messanger{}
+// PrimaryNotifier returns primary messenger of the member.
+func (m *Member) PrimaryNotifier() *Messenger {
+	messenger := &Messenger{}
 	err := DB.BelongsTo(m).
-		Where("priority = ?", MessangerPriority["Notification"]).
-		Where("is_primary = ?", true).First(messanger)
+		Where("priority = ?", MessengerPriority["Notification"]).
+		Where("is_primary = ?", true).First(messenger)
 	if err != nil {
-		log.Warnf("cannot found primary messanger", err)
+		log.Warnf("cannot found primary messenger", err)
 	}
-	return messanger
+	return messenger
 }
 
 //** implementations for interfaces ---------------------------------

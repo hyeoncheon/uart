@@ -135,11 +135,14 @@ type Provider struct {
 	refresh   map[string]string
 }
 
+// AppClient is struct for storing client information
+// It implements osin.Client by osin.DefaultClient and store app additionally.
 type AppClient struct {
 	*osin.DefaultClient
 	app *models.App
 }
 
+// GetApp returns app model of the client.
 func (c *AppClient) GetApp() *models.App {
 	return c.app
 }
@@ -221,8 +224,7 @@ func (s *Provider) SaveAccess(data *osin.AccessData) error {
 	logger.Debug("save access for ", data.AuthorizeData.Code[0:9])
 	s.access[data.AccessToken] = data
 	// TODO: do not store refresh token until fully implemented
-	return nil
-	if data.RefreshToken != "" {
+	if false && data.RefreshToken != "" {
 		s.refresh[data.RefreshToken] = data.AccessToken
 	}
 	return nil

@@ -109,7 +109,7 @@ func createMember(c buffalo.Context, user goth.User) (*models.Member, error) {
 	if err != nil {
 		err = errors.New(t(c, "oops.cannot.register.a.member"))
 	}
-	setDefaultMessangers(c, member)
+	setDefaultMessengers(c, member)
 	return member, err
 }
 
