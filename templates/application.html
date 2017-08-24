@@ -7,7 +7,7 @@
 	<title><%= brand_name %></title>
 	<link rel="stylesheet" href="/assets/application.css" type="text/css" media="all" />
 	<link rel="stylesheet" href="/assets/themes/<%= theme %>/theme.css" type="text/css" media="all" />
-	<link rel="shortcut icon" href="/assets/images/favicon.png">
+	<link rel="shortcut icon" href="/assets/images/hyeoncheon-icon.png">
 	<meta name="csrf-param" content="authenticity_token" />
 	<meta name="csrf-token" content="<%= authenticity_token %>" />
 
@@ -49,6 +49,7 @@
 						<ul class="dropdown-menu">
 							<li><a href="<%= credentialsPath() %>"><i aria-hidden="true" class="fa fa-id-badge"></i> <%=t("credentials")%></a></li>
 							<li><a href="<%= messangersPath() %>"><i aria-hidden="true" class="fa fa-podcast"></i> <%=t("messangers")%></a></li>
+							<li><a href="<%= messagingLogsPath() %>"><i aria-hidden="true" class="fa fa-file-text-o"></i> <%=t("messagings")%></a></li>
 							<li role="separator" class="divider"></li>
 						</ul>
 					</li>

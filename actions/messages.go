@@ -15,6 +15,7 @@ import (
 
 	"github.com/hyeoncheon/uart/jobs"
 	"github.com/hyeoncheon/uart/models"
+	"github.com/hyeoncheon/uart/utils"
 )
 
 // constants for messaging/logging subsystem
@@ -169,9 +170,7 @@ func mLogAlert(c buffalo.Context, fac, form string, args ...interface{}) error {
 func mLog(c buffalo.Context, p int, fac, form string, args ...interface{}) error {
 	tx := c.Value("tx").(*pop.Connection)
 	mesg := fmt.Sprintf(form, args...)
-	app := models.GetAppByCode(models.ACUART)
-	role := app.GetRole(tx, models.RCAdmin)
-	rcpts := role.Members(true)
+	rcpts := utils.UARTAdmins(tx)
 	m := models.NewMessage(tx, dummyMember(c).ID, rcpts, nil, mesg, "",
 		models.ACUART, fac, p, true)
 	if m == nil {

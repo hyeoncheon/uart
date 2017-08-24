@@ -32,3 +32,15 @@ create_table("message_maps", func(t) {
 })
 add_index("message_maps", "member_id", {})
 add_index("message_maps", "message_id", {})
+
+create_table("messaging_logs", func(t) {
+	t.Column("id", "uuid", {"primary": true})
+	t.Column("status", "string", {})
+	t.Column("queue_id", "string", {"null": true})
+	t.Column("response", "string", {"null": true})
+	t.Column("method", "string", {})
+	t.Column("sent_for", "string", {})
+	t.Column("sent_to", "string", {})
+	t.Column("subject", "string", {"null": true})
+	t.Column("notes", "text", {"null": true})
+})

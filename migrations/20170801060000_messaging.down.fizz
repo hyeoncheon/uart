@@ -9,3 +9,5 @@ drop_table("messages")
 drop_index("message_maps", "message_maps_member_id_idx")
 drop_index("message_maps", "message_maps_message_id_idx")
 drop_table("message_maps")
+
+drop_table("messaging_logs")

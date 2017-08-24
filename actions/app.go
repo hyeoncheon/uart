@@ -39,6 +39,7 @@ func App() *buffalo.App {
 
 		// register all taskers
 		jobs.RegisterAll(app)
+		models.Logger(app.Logger)
 
 		// Automatically save the session if the underlying
 		// Handler does not return an error.
@@ -121,6 +122,10 @@ func App() *buffalo.App {
 		g.Middleware.Skip(adminHandler, r.Create, r.Destroy, r.Update)
 		g.GET("/{messanger_id}/setprimary", r.(*MessangersResource).SetPrimary)
 		g.Middleware.Skip(adminHandler, r.(*MessangersResource).SetPrimary)
+
+		r = &MessagingLogsResource{&buffalo.BaseResource{}}
+		g = app.Resource("/messaging_logs", r)
+		g.Use(adminHandler)
 
 		// App Resources
 		r = &AppsResource{&buffalo.BaseResource{}}

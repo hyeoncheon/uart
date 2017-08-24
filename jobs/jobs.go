@@ -29,11 +29,13 @@ func (h Handler) String() string {
 type Handlers map[string]*Handler
 
 var handlers = Handlers{}
+var env string
 var w worker.Worker
 var logger buffalo.Logger
 
 // RegisterAll register all workers
 func RegisterAll(app *buffalo.App) {
+	env = app.Env
 	w = app.Worker
 	logger = app.Logger.WithField("category", "worker")
 

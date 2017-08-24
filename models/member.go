@@ -41,6 +41,11 @@ func (m Member) String() string {
 	return m.Name + " ." + m.ID.String()[0:6]
 }
 
+// IsNil return true if the member's ID is nil. otherwise return true.
+func (m *Member) IsNil() bool {
+	return m.ID == uuid.Nil
+}
+
 //** actions, relational accessor and functions below:
 
 // Grant create an access grant for given member to the app
@@ -226,6 +231,29 @@ func (m Member) AccessGrantCount() int {
 	return count
 }
 
+// * related to messaging subsystem
+
+// MessageMarkAsSent marks given message's message map for the member.
+func (m *Member) MessageMarkAsSent(id uuid.UUID) error {
+	link := MessageMaps{}
+	DB.
+		Where("member_id = ?", m.ID).
+		Where("message_id = ?", id).
+		All(&link)
+	switch len(link) {
+	case 1:
+		link[0].IsSent = true
+		DB.Save(&link[0])
+	case 0:
+		log.Errorf("OOPS! mark-as-read request for %v:%v but link not exists!", m, id)
+		return errors.New("link not found")
+	default:
+		log.Errorf("OOPS! more than one message link! IS_IT_POSSIBLE? %v:%v", m, id)
+		return errors.New("so many links")
+	}
+	return nil
+}
+
 // Messangers returns messangers belonging to the member.
 func (m *Member) Messangers(args ...int) *Messangers {
 	messangers := &Messangers{}
@@ -259,7 +287,7 @@ func (m *Member) PrimaryAlert() *Messanger {
 		Where("priority = ?", MessangerPriority["Alert"]).
 		Where("is_primary = ?", true).First(messanger)
 	if err != nil {
-		log.Warnf("cannot found primary messanger", err)
+		log.Warn("cannot found primary messanger ", err)
 	}
 	return messanger
 }
@@ -320,10 +348,12 @@ func (m *Members) AccessibleBy(q *pop.Query, o Owner, f ...bool) *pop.Query {
 // GetMember picks a member instance with given id.
 func GetMember(id interface{}) *Member {
 	m := &Member{}
+	if UUID, ok := id.(uuid.UUID); ok && UUID == uuid.Nil {
+		return m //// to prevent database access.
+	}
 	err := DB.Find(m, id)
 	if err != nil {
 		log.Error("cannot found member with id: ", id)
-		return nil
 	}
 	return m
 }
