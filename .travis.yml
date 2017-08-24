@@ -9,8 +9,11 @@ env:
 before_script:
   - mysql -e 'CREATE DATABASE uart_test;'
   - mkdir -p $TRAVIS_BUILD_DIR/public/assets
+  - go get -u github.com/gobuffalo/buffalo/buffalo
+  - npm install --no-progress
 
 go_import_path: github.com/hyeoncheon/uart
 
 script:
-  - go build
+  - buffalo build --static
+
