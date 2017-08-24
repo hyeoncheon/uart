@@ -102,11 +102,19 @@ func (m Message) AppName() string {
 // Owner returns associated member instance (owner of the message)
 func (m Message) Owner() *Member {
 	member := GetMember(m.MemberID)
-	if member == nil {
-		return &Member{}
-	}
 	return member
 }
+
+// MemberMap returns message map for the message and given member.
+// This method will be called directly from template(index, show)
+func (m Message) MemberMap(memberID interface{}) *MessageMap {
+	messageMap := &MessageMap{}
+	DB.Where("member_id = ? and message_id = ?", memberID, m.ID).
+		First(messageMap)
+	return messageMap
+}
+
+//** relational accessor and functions ------------------------------
 
 //** implementations for interfaces ---------------------------------
 

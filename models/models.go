@@ -3,14 +3,15 @@ package models
 // TODO REVIEW REQUIRED
 
 import (
+	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/envy"
 	"github.com/markbates/pop"
-	"github.com/sirupsen/logrus"
 )
 
 // DB and others: shared variables for models
 var DB *pop.Connection
-var log = logrus.New().WithField("category", "model")
+
+var log = buffalo.NewLogger("Debug").WithField("category", "models")
 var securityLog = log.WithField("category", "security")
 var isDev = false
 
@@ -24,8 +25,13 @@ func init() {
 	pop.Debug = env == "development"
 
 	if env == "development" {
-		log.Logger.Level = logrus.DebugLevel
 		isDev = true
-		log.Info("models initialized with log level ", log.Logger.Level)
+		log.Info("models initialized in development mode")
 	}
+}
+
+// Logger set logger for models.
+func Logger(logger buffalo.Logger) {
+	log = logger.WithField("category", "models")
+	log.Info("models initialized")
 }

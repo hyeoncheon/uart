@@ -51,6 +51,13 @@
 					<td><%=t("type")%></td>
 					<td><%= if (message.IsLog) { %>Log<% } else { %>Message<% } %></td>
 				</tr>
+				<% let map = message.MemberMap(member_id) %>
+				<tr>
+					<td><%=t("status")%></td>
+					<td><%= if (map.IsSent) { %>Sent<% } else { %>Queued<% } %>, <%=
+						if (map.IsRead) { %>Listed<% } else { %>Dissmissed<% } %><%=
+						if (map.IsBCC) { %>, BCC<% } %></td>
+				</tr>
 				</tbody>
 			</table>
 		</div>

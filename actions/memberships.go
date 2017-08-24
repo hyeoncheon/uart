@@ -19,7 +19,7 @@ func membershipHandler(c buffalo.Context) error {
 	} else {
 		member = currentMember(c)
 	}
-	if member == nil {
+	if member.IsNil() {
 		c.Logger().Error("OOPS! member not found.")
 		return c.Error(http.StatusNotFound, errors.New("Member Not Found"))
 	}

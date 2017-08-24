@@ -29,9 +29,6 @@
 			<td><%= timeYYMD(messanger.CreatedAt) %></td>
 			<td>
 				<div class="pull-right btn-group">
-					<a class="btn btn-xs btn-warning" href="<%=
-						editMessangerPath({ messanger_id: messanger.ID })
-						%>"><%=t("edit")%></a>
 					<a class="btn btn-xs btn-danger" href="<%=
 						messangerPath({ messanger_id: messanger.ID }) %>"
 						data-method="DELETE" data-confirm="<%=t("are.you.sure")

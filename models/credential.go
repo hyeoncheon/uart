@@ -96,7 +96,7 @@ func (c *Credentials) AccessibleBy(q *pop.Query, o Owner, f ...bool) *pop.Query 
 type Credentials []Credential
 
 // String returns json marshalled representation of Credentials
-func (cs Credentials) String() string {
-	jc, _ := json.Marshal(cs)
+func (c Credentials) String() string {
+	jc, _ := json.Marshal(c)
 	return string(jc)
 }
