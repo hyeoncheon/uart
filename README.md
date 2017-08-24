@@ -1,5 +1,7 @@
 # UART, Universal / User Authorization, Roles and Team Provider Service
 
+[![Build Status](https://travis-ci.org/hyeoncheon/uart.svg?branch=master)](https://travis-ci.org/hyeoncheon/uart)
+
 UART is Universal User Authorizaion and Role/Team management service software.
 
 UART was developed to succeed the existing SiSO project, the original SSO

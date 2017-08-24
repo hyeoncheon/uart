@@ -1,14 +1,16 @@
 language: go
-env:
-- GO_ENV=test
-
-before_script:
-  - psql -c 'create database uart_test;' -U postgres
-	- mysql -e 'CREATE DATABASE uart_test;'
-  - mkdir -p $TRAVIS_BUILD_DIR/public/assets
 
 go:
-  - 1.7.x
-  - master
+  - 1.8.x
+
+env:
+  - GO_ENV=test
+
+before_script:
+  - mysql -e 'CREATE DATABASE uart_test;'
+  - mkdir -p $TRAVIS_BUILD_DIR/public/assets
 
 go_import_path: github.com/hyeoncheon/uart
+
+script:
+  - go build
