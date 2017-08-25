@@ -2,6 +2,8 @@ package actions
 
 import (
 	"log"
+	"os"
+	"path"
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/buffalo/middleware"
@@ -36,6 +38,9 @@ func App() *buffalo.App {
 			SessionName:  sessionName,
 			SessionStore: newSessionStore(ENV),
 		})
+
+		pname := os.Args[0]
+		app.Logger.Infof("UART executed as %v (%v)...", path.Base(pname), pname)
 
 		// register all taskers
 		jobs.RegisterAll(app)

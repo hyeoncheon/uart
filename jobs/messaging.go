@@ -36,17 +36,19 @@ func (h *Handler) RegisterMessaging() error {
 	mailSender = os.Getenv("MAIL_SENDER")
 	logger.Infof("messaging: set %v as mail sender", mailSender)
 
-	adms := utils.UARTAdmins(models.DB)
-	for _, adm := range *adms {
-		a := adm.PrimaryAlert().Value
-		if a == "" {
-			logger.Warnf("OOPS! super admin %v has no alerters!", adm)
-			continue
-		}
-		m := prepareMail("Starting UART", startMessage, "", mailSender, a)
-		_, _, err := shootMailgun(m)
-		if err != nil {
-			logger.Fatal("cannot initialize mailer: ", err)
+	if env == "production" {
+		adms := utils.UARTAdmins(models.DB)
+		for _, adm := range *adms {
+			a := adm.PrimaryAlert().Value
+			if a == "" {
+				logger.Warnf("OOPS! super admin %v has no alerters!", adm)
+				continue
+			}
+			m := prepareMail("Starting UART", startMessage, "", mailSender, a)
+			_, _, err := shootMailgun(m)
+			if err != nil {
+				logger.Fatal("cannot initialize mailer: ", err)
+			}
 		}
 	}
 
