@@ -1,6 +1,9 @@
 engines:
   fixme:
     enabled: true
+    checks:
+      TODO:
+        enabled: false
   gofmt:
     enabled: true
   golint:
@@ -15,6 +18,7 @@ exclude_paths:
   - logs/*
   - public/*
   - templates/*
+  - assets/vendor/**
 ratings:
   paths:
     - "**.go"

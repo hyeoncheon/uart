@@ -10,7 +10,6 @@
 	<link rel="shortcut icon" href="/assets/images/hyeoncheon-icon.png">
 	<meta name="csrf-param" content="authenticity_token" />
 	<meta name="csrf-token" content="<%= authenticity_token %>" />
-
 	<script src="/assets/application.js" type="text/javascript" charset="utf-8"></script>
 </head>
 <body>
@@ -43,8 +42,7 @@
 						t("messages")%></a></li>
 					<li><a href="/docs" class="navbar-link"><%=
 						t("docs")%></a></li><% } %>
-				<%= if (member_is_admin) { %>
-					<li class="dropdown">
+					<%= if (member_is_admin) { %><li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><%=t("admin")%> <span class="caret"></span></a>
 						<ul class="dropdown-menu">
 							<li><a href="<%= credentialsPath() %>"><i aria-hidden="true" class="fa fa-id-badge"></i> <%=t("credentials")%></a></li>
@@ -53,29 +51,29 @@
 							<li role="separator" class="divider"></li>
 						</ul>
 					</li>
-					<% } %>
-				</ul>
-				<ul class="nav navbar-nav navbar-right" id="member-menu">
-					<%= if (member_id) { %>
+				<% } %></ul>
+				<ul class="nav navbar-nav navbar-right" id="member-menu"><%=
+					if (member_id) { %>
 					<li><img class="wg rounded icon32" src="<%= member_icon %>"></li>
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><%= member_name %> <span class="caret"></span></a>
 						<ul class="dropdown-menu">
-							<li><span><i aria-hidden="true" class="fa fa-id-card"></i> <%= member_name %></span></li>
-							<li><span><i aria-hidden="true" class="fa"></i> <%= member_mail %></span></li>
-							<%= if (member_is_admin) { %>
-							<li><span><i aria-hidden="true" class="fa fa-star-o"></i> Administrator</span></li>
-							<% } %>
+							<li><span><i aria-hidden="true" class="fa fa-id-card"></i> <%=
+									member_name %></span></li>
+							<li><span><i aria-hidden="true" class="fa"></i> <%=
+									member_mail %></span></li><%= if (member_is_admin) { %>
+							<li><span><i aria-hidden="true" class="fa fa-star-o"></i> Administrator</span></li><% } %>
 							<li role="separator" class="divider"></li>
-							<li><a href="<%= membershipMePath() %>"><i aria-hidden="true" class="fa fa-address-card"></i> <%=t("membership")%></a></li>
+							<li><a href="<%= membershipMePath()
+									%>"><i aria-hidden="true" class="fa fa-address-card"></i> <%=
+									t("membership")%></a></li>
 							<li role="separator" class="divider"></li>
 							<li><a href="/logout"><i aria-hidden="true" class="fa fa-sign-out"></i> <%=t("logout")%></a></li>
 						</ul>
 					</li>
-					<% } else { %>
+				<% } else { %>
 					<li><a href="/login" class="navbar-link"><%=t("login")%></a></li>
-					<% } %>
-				</ul>
+				<% } %></ul>
 			</div>
 		</div>
 	</nav>
