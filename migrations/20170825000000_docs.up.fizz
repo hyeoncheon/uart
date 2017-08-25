@@ -1,0 +1,13 @@
+create_table("docs", func(t) {
+	t.Column("id", "uuid", {"primary": true})
+	t.Column("member_id", "uuid", {})
+	t.Column("type", "string", {})
+	t.Column("category", "string", {})
+	t.Column("subject", "string", {})
+	t.Column("slug", "string", {})
+	t.Column("title", "string", {})
+	t.Column("content", "text", {})
+	t.Column("is_published", "bool", {})
+})
+add_index("docs", "member_id", {})
+add_index("docs", "slug", {})

@@ -1,0 +1,3 @@
+drop_index("docs", "docs_slug_idx")
+drop_index("docs", "docs_member_id_idx")
+drop_table("docs")

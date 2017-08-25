@@ -1,0 +1,68 @@
+<div class="row">
+	<div class="col-md-10 col-md-offset-1 document">
+		<h1><i class="fa fa-book"></i> <%= doc.Title %></h1>
+		<div class="meta">
+			<div class="wg meta pull-left">
+				<%=t("subject")%>: <%= doc.Category %> / <%= doc.Subject %>
+				<%=t("type")%>: <%= doc.Type %>
+			</div>
+			<div class="wg meta pull-right">
+				<%= timeYYMD(doc.CreatedAt) %> by <%= doc.AuthorName() %>
+			</div>
+		</div>
+
+		<div class="content"> <!-- document content ~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+			<%= if (member_is_admin) { %><div class="pull-right hidden-print">
+				<%= if (!doc.IsPublished) {
+					%><a class="btn btn-xs btn-primary" href="<%=
+					docPublishPath({ doc_id: doc.ID }) %>" data-confirm="<%=
+					t("are.you.sure")%>">Publish</a><% } else { %>Published<% } %>
+				<div class="btn-group">
+				<a class="btn btn-xs btn-default" href="<%=
+					docsPath() %>"><i class="fa fa-arrow-left"></i></a>
+				<a class="btn btn-xs btn-default" href="<%=
+					editDocPath({ doc_id: doc.ID }) %>"><%=t("edit")%></a>
+				<a class="btn btn-xs btn-danger" href="<%=
+					docPath({ doc_id: doc.ID }) %>" data-method="DELETE" data-confirm="<%=
+					t("are.you.sure") %>"><%=t("delete")%></a>
+				</div>
+			</div><% } %>
+			<div>
+				<%= markdown(doc.Content) %>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style>
+.document {
+}
+.document > .meta {
+	display: table;
+	width: 100%;
+	background: rgba(192,192,192, 0.2);
+	border-radius: 5px;
+	padding: 5px 10px;
+	font-size: 0.9em;
+	color: #999;
+	margin-bottom: 1em;
+}
+.document > .content {
+	clear: both;
+}
+
+@media print {
+	body > .container,
+	body > .page-tailer > .container {
+		margin-left: 0 !important;
+		margin-right: 0 !important;
+		width: 100% !important;
+	}
+	.document {
+		margin: 0 !important;
+	}
+}
+</style>
+
+<script src="/assets/vendor/highlightjs/highlight.pack.js"></script>
+<link rel="stylesheet" href="/assets/vendor/highlightjs/style.github.css">

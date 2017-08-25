@@ -1,0 +1,52 @@
+<div class="row wg phead">
+	<div class="col-md-3 col-xs-12 wg ptitle">
+		<h1><%=t("documentations")%></h1>
+	</div>
+	<div class="col-md-9 col-xs-12 wg pnav">
+		<span class="pull-right" data-toggle="popover" data-trigger="hover"
+			data-placement="left" data-content="<%=t("all.documentations")
+			%>"><i class="fa fa-question-circle"></i></span>
+	</div>
+</div>
+
+<%= if (member_is_admin) { %>
+<div class="row" style="margin-bottom: 10px;">
+	<div class="col-md-12">
+		<p class="pull-right">
+			<a class="btn btn-xs btn-default" href="<%= newDocsPath()
+				%>"><%=t("new.doc")%></a>
+		</p>
+	</div>
+</div>
+<% } %>
+
+<div class="row documentations">
+	<div>
+		<ul><%=
+	for (d) in docs { %><%=
+		if (d.NewCategory != "") { %>
+		</ul>
+	</div>
+	<div class="col-md-6 category-box">
+		<h2><%= d.Category %></h2>
+		<ul><% } %><%=
+		if (d.NewSubject != "") { %>
+		</ul>
+		<h4><%= d.Subject %></h4>
+		<ul type="square"><% } %>
+		<li><a href="<%= docPath({ doc_id: d.Slug }) %>" class=""><%=
+			d.Title %></a> <span class="text-muted"><%=
+			d.Type %>, <%= timeYYMD(d.UpdatedAt) %></span><%=
+			if (member_is_admin) { %> <span class="btn-group"><%=
+				if (!d.IsPublished) { %><a class="btn btn-xs btn-primary" href="<%=
+				docPublishPath({ doc_id: d.ID }) %>" data-confirm="<%=
+				t("are.you.sure")%>">Publish</a><% } %>
+			<a class="btn btn-xs btn-warning" href="<%=
+				editDocPath({ doc_id: d.ID }) %>">E</a>
+			<a class="btn btn-xs btn-danger" href="<%=
+				docPath({ doc_id: d.ID }) %>" data-method="DELETE" data-confirm="<%=
+				t("are.you.sure")%>">D</a>
+			</span><% } %></li><% } %>
+		</ul>
+	</div>
+</div>

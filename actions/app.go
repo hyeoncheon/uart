@@ -110,6 +110,12 @@ func App() *buffalo.App {
 		g.Use(adminHandler)
 		g.Middleware.Skip(adminHandler, r.Destroy)
 
+		r = &DocsResource{&buffalo.BaseResource{}}
+		g = app.Resource("/docs", r)
+		g.Use(adminHandler)
+		g.Middleware.Skip(adminHandler, r.List, r.Show)
+		g.GET("/{doc_id}/publish", r.(*DocsResource).Publish)
+
 		r = &MessagesResource{&buffalo.BaseResource{}}
 		g = app.Resource("/messages", r)
 		g.Use(adminHandler)
