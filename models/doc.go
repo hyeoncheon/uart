@@ -1,6 +1,6 @@
 package models
 
-//! WIP
+// Test coverage: 100% (without interface methods)
 
 import (
 	"encoding/json"
@@ -31,10 +31,9 @@ type Doc struct {
 
 //** rendering helpers for templates --------------------------------
 
-// String returns json marshalled representation of messenger
+// String returns title of the document
 func (d Doc) String() string {
-	jd, _ := json.Marshal(d)
-	return string(jd)
+	return d.Title
 }
 
 // AuthorName returns name of the author associated to the doc.

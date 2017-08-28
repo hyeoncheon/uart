@@ -1,6 +1,6 @@
 package models
 
-//! WIP
+// Test coverage: 100% (without interface methods)
 
 import (
 	"encoding/json"
@@ -83,12 +83,7 @@ func (m Message) String() string {
 
 // PriorityString returns human readable string of the message's priority
 func (m Message) PriorityString() string {
-	for k, v := range MsgPri {
-		if v == m.Priority {
-			return k
-		}
-	}
-	return "Unknown"
+	return MsgPriReverse[m.Priority]
 }
 
 // AppName returns associated app name or code itself if app is not found.

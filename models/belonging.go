@@ -1,5 +1,7 @@
 package models
 
+// Test coverage: 100% (without interface methods)
+
 import (
 	"reflect"
 

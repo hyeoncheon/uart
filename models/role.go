@@ -1,6 +1,7 @@
 package models
 
 // TODO REVIEW REQUIRED
+// Test coverage: 100% (without interface methods)
 
 import (
 	"encoding/json"

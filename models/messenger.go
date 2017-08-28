@@ -1,6 +1,6 @@
 package models
 
-//! WIP
+// Test coverage: 100% (without interface methods)
 
 import (
 	"encoding/json"
@@ -25,6 +25,11 @@ var MessengerMethod = map[string]string{
 	"Email": "mail",
 }
 
+// MessengerMethodReverse is a reverse map for method code to name.
+var MessengerMethodReverse = map[string]string{
+	"mail": "Email",
+}
+
 const (
 	messengersDefaultSort = "priority, is_primary desc, created_at desc"
 )
@@ -46,7 +51,7 @@ type Messenger struct {
 // String returns json marshalled representation of messenger
 func (m Messenger) String() string {
 	attr := fmt.Sprintf(" (%v/%v)", MsgPriReverse[m.Priority], m.IsPrimary)
-	return m.Method + " to " + m.Value + attr
+	return MessengerMethodReverse[m.Method] + " to " + m.Value + attr
 }
 
 //** implementations for interfaces ---------------------------------

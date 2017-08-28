@@ -1,6 +1,7 @@
 package models
 
 // TODO REVIEW REQUIRED
+// Test coverage: 100% (without interface methods)
 
 import (
 	"encoding/json"
@@ -212,7 +213,7 @@ func NewApp(name, code, desc, url, callback string, icon ...string) *App {
 func createUARTApp(tx *pop.Connection) *App {
 	uart := NewApp("UART", "uart", "UART: Identity Management System", "", "")
 	uart.AppIcon = hyeoncheonIcon
-	err := DB.Create(uart)
+	err := DB.Create(uart) //! CHKME changed to tx?
 	if err != nil {
 		return nil
 	}

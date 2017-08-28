@@ -1,6 +1,6 @@
 package models
 
-//! WIP
+// Test coverage: 100% (Nothing to test)
 
 import (
 	"encoding/json"

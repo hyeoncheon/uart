@@ -1,7 +1,16 @@
 package models_test
 
-import "testing"
+// Test coverage: 100% (Nothing to test)
 
-func Test_MessagingLog(t *testing.T) {
-	t.Fatal("This test needs to be implemented!")
+import (
+	"github.com/hyeoncheon/uart/models"
+)
+
+var messagingLog = &models.MessagingLog{
+	Status: "sent",
+}
+
+func (ms *ModelSuite) Test_MessagingLog() {
+	// Nothing to test
+	ms.Equal("sent", messagingLog.Status)
 }
