@@ -7,13 +7,18 @@ env:
   - GO_ENV=test
 
 before_script:
-  - mysql -e 'CREATE DATABASE uart_test;'
   - mkdir -p $TRAVIS_BUILD_DIR/public/assets
-  - go get -u github.com/gobuffalo/buffalo/buffalo
+  - go get github.com/gobuffalo/buffalo/buffalo
+  - go get github.com/mattn/goveralls
   - npm install --no-progress
+  - cp database.yml.travis database.yml
+  # `mysql ...` instead of `buffalo db create`. work-around for empty password.
+  - mysql -e 'CREATE DATABASE hc_uart_test;'
+  - buffalo db migrate -e test
+  - sh ./scripts/keygen.sh
 
 go_import_path: github.com/hyeoncheon/uart
 
 script:
   - buffalo build --static
-
+  - UART_HOME=`pwd` goveralls -service=travis-ci
