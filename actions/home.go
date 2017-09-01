@@ -1,6 +1,7 @@
 package actions
 
 // TODO REVIEW REQUIRED
+// Test coverage: 100%
 
 import (
 	"net/http"
@@ -16,6 +17,7 @@ func HomeHandler(c buffalo.Context) error {
 
 // LoginHandler renders login page
 func LoginHandler(c buffalo.Context) error {
+	// TODO: Handle already logged in
 	return c.Render(http.StatusOK, r.HTML("login.html"))
 }
 
@@ -25,7 +27,9 @@ func LogoutHandler(c buffalo.Context) error {
 	for _, p := range []string{"gplus", "facebook", "github"} {
 		s, err := app.SessionStore.Get(c.Request(), p+"_gothic_session")
 		if err == nil {
-			s.Options.MaxAge = -1
+			if s.Options != nil {
+				s.Options.MaxAge = -1
+			}
 			s.Values = make(map[interface{}]interface{})
 			s.Save(c.Request(), c.Response())
 		}
@@ -34,5 +38,5 @@ func LogoutHandler(c buffalo.Context) error {
 	session.Clear()
 	session.Save()
 	c.Flash().Add("success", t(c, "you.have.been.successfully.logged.out"))
-	return c.Redirect(http.StatusTemporaryRedirect, "/")
+	return c.Redirect(http.StatusSeeOther, "/")
 }

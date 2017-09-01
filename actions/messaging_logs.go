@@ -1,6 +1,10 @@
 package actions
 
+//* Test coverage: 100%
+
 import (
+	"net/http"
+
 	"github.com/gobuffalo/buffalo"
 	"github.com/hyeoncheon/uart/models"
 	"github.com/markbates/pop"
@@ -24,7 +28,7 @@ func (v MessagingLogsResource) List(c buffalo.Context) error {
 	}
 	c.Set("messagingLogs", messagingLogs)
 	c.Set("pagination", q.Paginator)
-	return c.Render(200, r.HTML("messaging_logs/index.html"))
+	return c.Render(http.StatusOK, r.HTML("messaging_logs/index.html"))
 }
 
 // Destroy deletes a messaging_log from the DB. DELETE /messaging_logs/{messaging_log_id}
@@ -41,5 +45,5 @@ func (v MessagingLogsResource) Destroy(c buffalo.Context) error {
 		return errors.WithStack(err)
 	}
 	c.Flash().Add("success", "MessagingLog was destroyed successfully")
-	return c.Redirect(302, "/messaging_logs")
+	return c.Redirect(http.StatusSeeOther, "/messaging_logs")
 }

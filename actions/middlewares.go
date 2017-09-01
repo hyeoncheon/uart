@@ -7,9 +7,30 @@ import (
 	"strings"
 
 	"github.com/gobuffalo/buffalo"
+	uuid "github.com/satori/go.uuid"
 
 	"github.com/hyeoncheon/uart/models"
 )
+
+// LoginAsTester is helper middleware for testing (simulate authcallback)
+func LoginAsTester(next buffalo.Handler) buffalo.Handler {
+	return func(c buffalo.Context) error {
+		if ENV == "test" {
+			member := &models.Member{}
+			models.DB.Order("updated_at desc").First(member)
+			if ENV == "test" && member.ID != uuid.Nil {
+				c.Logger().Info("### ------ LoginAsTester: ", member)
+				c.Session().Set("member_id", member.ID)
+				c.Session().Set("member_name", member.Name)
+				c.Session().Set("member_mail", member.Email)
+				c.Session().Set("member_icon", member.Icon)
+				c.Session().Set("member_roles", member.GetAppRoleCodes(models.ACUART))
+				c.Flash().Add("danger", "TEST AUTHENTICATED")
+			}
+		}
+		return next(c)
+	}
+}
 
 // AuthenticateHandler protect all application pages from unauthorized access.
 func AuthenticateHandler(next buffalo.Handler) buffalo.Handler {
@@ -19,7 +40,7 @@ func AuthenticateHandler(next buffalo.Handler) buffalo.Handler {
 			c.Session().Set("origin", c.Request().RequestURI)
 			c.Logger().Warn("unauthorized access to ", c.Request().RequestURI)
 			c.Flash().Add("danger", t(c, "login.required"))
-			return c.Redirect(http.StatusTemporaryRedirect, "/login")
+			return c.Redirect(http.StatusFound, "/login")
 		}
 		return next(c)
 	}
@@ -58,7 +79,7 @@ func adminHandler(next buffalo.Handler) buffalo.Handler {
 	return func(c buffalo.Context) error {
 		if val, ok := c.Value("member_is_admin").(bool); !ok || !val {
 			c.Flash().Add("danger", t(c, "staff.only"))
-			return c.Redirect(http.StatusTemporaryRedirect, "/")
+			return c.Redirect(http.StatusFound, "/")
 		}
 		c.Set("theme", "admin")
 		return next(c)
@@ -78,7 +99,7 @@ func roleBasedLockHandler(next buffalo.Handler) buffalo.Handler {
 					c.Logger().Warnf("%v has no permission for %v",
 						currentMember(c), pos)
 					c.Flash().Add("danger", t(c, "you.dont.have.permission"))
-					return c.Redirect(http.StatusTemporaryRedirect, "/")
+					return c.Redirect(http.StatusFound, "/")
 				}
 				c.Logger().Infof("user aquires permission %v for %v.", p, pos)
 			}

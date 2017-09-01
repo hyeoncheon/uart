@@ -10,7 +10,9 @@ package actions
 // TODO CHECK RFC AND IMPLEMENT AGAIN BUT NOT NOW
 
 import (
+	"fmt"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/RangelReale/osin"
@@ -34,7 +36,13 @@ func initProvider(l buffalo.Logger) {
 	conf := osin.NewServerConfig()
 	conf.AccessExpiration = 60
 	svr = osin.NewServer(conf, newProvider())
-	svr.AccessTokenGen = utils.NewRS256AccessTokenGen(brandName, privKeyFile)
+	keyFile := uartHome + "/" + privKeyFile
+	if _, err := os.Stat(keyFile); err != nil {
+		logger.Error("Abort! cannot found key file: $UART_HOME/", privKeyFile)
+		fmt.Println("Abort! cannot found key file: $UART_HOME/" + privKeyFile)
+		os.Exit(1)
+	}
+	svr.AccessTokenGen = utils.NewRS256AccessTokenGen(brandName, keyFile)
 
 	logger.Info("oauth2 provider with jwt support initialized!")
 	return

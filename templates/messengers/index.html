@@ -16,6 +16,7 @@
 			<th><%=t("priority")%></th>
 			<th><%=t("method")%></th>
 			<th><%=t("value")%></th>
+			<th><%=t("primary")%></th>
 			<th><%=t("created.at")%></th>
 			<th>&nbsp;</th>
 		</tr>
@@ -26,6 +27,7 @@
 			<td><%= messenger.Priority %></td>
 			<td><%= messenger.Method %></td>
 			<td><%= messenger.Value %></td>
+			<td><%= if (messenger.IsPrimary) { %>Yes<% } else { %>No<% } %></td>
 			<td><%= timeYYMD(messenger.CreatedAt) %></td>
 			<td>
 				<div class="pull-right btn-group">

@@ -2,6 +2,7 @@ package actions
 
 // TODO REVIEW REQUIRED
 //* Use Belonging Interface
+//* Test coverage: 100% but need to be improved
 
 import (
 	"net/http"
@@ -34,7 +35,7 @@ func (v AppsResource) List(c buffalo.Context) error {
 	}
 	c.Set("apps", apps)
 	c.Set("pagination", q.Paginator)
-	return c.Render(200, r.HTML("apps/index.html"))
+	return c.Render(http.StatusOK, r.HTML("apps/index.html"))
 }
 
 // Show gets the data for one App.
@@ -49,19 +50,19 @@ func (v AppsResource) Show(c buffalo.Context) error {
 		c.Flash().Add("danger", t(c, "you.have.no.right.for.this.app"))
 		me := currentMember(c)
 		mLogErr(c, MsgFacSecu, "access violation: apps.show by %v", me)
-		return c.Redirect(http.StatusFound, "/apps")
+		return c.Redirect(http.StatusFound, "/")
 	}
 	c.Set("app", *app)
 	c.Set("roles", app.GetRoles())
 	c.Set("role", &models.Role{AppID: app.ID})
 	c.Set("requests", app.Requests())
-	return c.Render(200, r.HTML("apps/show.html"))
+	return c.Render(http.StatusOK, r.HTML("apps/show.html"))
 }
 
 // New renders the formular for creating a new App.
 func (v AppsResource) New(c buffalo.Context) error {
 	c.Set("app", &models.App{})
-	return c.Render(200, r.HTML("apps/new.html"))
+	return c.Render(http.StatusOK, r.HTML("apps/new.html"))
 }
 
 // Create adds a App to the DB.
@@ -93,7 +94,7 @@ func (v AppsResource) Create(c buffalo.Context) error {
 
 	c.Flash().Add("success", t(c, "app.was.created.successfully"))
 	mLogNote(c, MsgFacApp, "app %v was created by %v", app, me)
-	return c.Redirect(302, "/apps/%s", app.ID)
+	return c.Redirect(http.StatusSeeOther, "/apps/%s", app.ID)
 }
 
 // Edit renders a edit formular for a app.
@@ -106,10 +107,10 @@ func (v AppsResource) Edit(c buffalo.Context) error {
 	}
 	if err != nil {
 		c.Flash().Add("danger", t(c, "app.not.found.check.your.permission"))
-		return c.Redirect(http.StatusFound, "/apps")
+		return c.Redirect(http.StatusFound, "/")
 	}
 	c.Set("app", app)
-	return c.Render(200, r.HTML("apps/edit.html"))
+	return c.Render(http.StatusOK, r.HTML("apps/edit.html"))
 }
 
 // Update changes a app in the DB.
@@ -123,7 +124,7 @@ func (v AppsResource) Update(c buffalo.Context) error {
 	}
 	if err != nil {
 		c.Flash().Add("danger", t(c, "app.not.found.check.your.permission"))
-		return c.Redirect(http.StatusFound, "/apps")
+		return c.Redirect(http.StatusFound, "/")
 	}
 	err = c.Bind(app)
 	if err != nil {
@@ -142,7 +143,7 @@ func (v AppsResource) Update(c buffalo.Context) error {
 	}
 	c.Flash().Add("success", t(c, "app.was.updated.successfully"))
 	mLogNote(c, MsgFacApp, "app %v was updated by %v", app, me)
-	return c.Redirect(http.StatusFound, "/apps/%s", app.ID)
+	return c.Redirect(http.StatusSeeOther, "/apps/%s", app.ID)
 }
 
 // Destroy deletes a app from the DB.
@@ -153,7 +154,7 @@ func (v AppsResource) Destroy(c buffalo.Context) error {
 	err := models.FindMyOwn(tx.Q(), me, app, c.Param("app_id"))
 	if err != nil {
 		c.Flash().Add("danger", t(c, "app.not.found.check.your.permission"))
-		return c.Redirect(http.StatusFound, "/apps")
+		return c.Redirect(http.StatusFound, "/")
 	}
 
 	err = me.RemoveRole(tx, app.GetRole(tx, models.RCAdmin))
@@ -199,11 +200,12 @@ func (v AppsResource) Destroy(c buffalo.Context) error {
 	}
 	c.Flash().Add("success", t(c, "app.was.deleted.successfully"))
 	mLogNote(c, MsgFacApp, "app %v was deleted by %v", app, me)
-	return c.Redirect(http.StatusFound, "/apps")
+	return c.Redirect(http.StatusSeeOther, "/apps")
 }
 
 // Grant adds a grant for the app to current member and set guest role.
 func (v AppsResource) Grant(c buffalo.Context) error {
+	// TODO: how to test this?
 	// escape route first.
 	origin := "/"
 	if orig, ok := c.Session().Get("origin").(string); ok {
@@ -253,7 +255,7 @@ func (v AppsResource) Revoke(c buffalo.Context) error {
 	err := tx.Find(app, c.Param("app_id"))
 	if err != nil {
 		c.Flash().Add("warning", t(c, "cannot.revoke.cannot.found.the.app"))
-		return c.Redirect(http.StatusTemporaryRedirect, "/membership/me")
+		return c.Redirect(http.StatusFound, "/")
 	}
 
 	member := currentMember(c) // for logging only
@@ -273,8 +275,8 @@ func (v AppsResource) Revoke(c buffalo.Context) error {
 		tx.TX.Rollback()
 		c.Flash().Clear()
 		c.Flash().Add("danger", t(c, "cannot.revoke.your.access.right"))
-	} else {
-		c.Flash().Add("success", t(c, "successfully.revoked"))
+		return c.Redirect(http.StatusFound, "/membership/me")
 	}
-	return c.Redirect(http.StatusTemporaryRedirect, "/membership/me")
+	c.Flash().Add("success", t(c, "successfully.revoked"))
+	return c.Redirect(http.StatusSeeOther, "/membership/me")
 }

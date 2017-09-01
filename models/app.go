@@ -64,7 +64,7 @@ func (a *App) GetRole(tx *pop.Connection, code string) *Role {
 	r := &Role{}
 	err := tx.BelongsTo(a).Where("code = ?", code).First(r)
 	if err != nil {
-		return nil
+		log.Warnf("cannot found role with code %v of app %v", code, a)
 	}
 	return r
 }

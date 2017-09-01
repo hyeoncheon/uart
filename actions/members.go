@@ -1,6 +1,7 @@
 package actions
 
 // TODO REVIEW REQUIRED
+// Test coverage: 100%
 
 import (
 	"net/http"
@@ -19,7 +20,7 @@ type MembersResource struct {
 }
 
 // List gets all Members.
-// ADMIN PROTECTED
+//! ADMIN PROTECTED
 func (v MembersResource) List(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	members := &models.Members{}
@@ -30,9 +31,10 @@ func (v MembersResource) List(c buffalo.Context) error {
 	}
 	c.Set("members", members)
 	c.Set("pagination", q.Paginator)
-	return c.Render(200, r.HTML("members/index.html"))
+	return c.Render(http.StatusOK, r.HTML("members/index.html"))
 }
 
+/*
 // New renders the formular for creating a new Member.
 // TODO: implement mail based local authentication based on this.
 func (v MembersResource) New(c buffalo.Context) error {
@@ -61,9 +63,10 @@ func (v MembersResource) Create(c buffalo.Context) error {
 	c.Flash().Add("success", "Member was created successfully")
 	return c.Redirect(302, "/members/%s", member.ID)
 }
+*/
 
 // Edit renders a edit formular for a member.
-// ADMIN PROTECTED
+//! ADMIN PROTECTED
 func (v MembersResource) Edit(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	member := &models.Member{}
@@ -72,11 +75,11 @@ func (v MembersResource) Edit(c buffalo.Context) error {
 		return errors.WithStack(err)
 	}
 	c.Set("member", member)
-	return c.Render(200, r.HTML("members/edit.html"))
+	return c.Render(http.StatusOK, r.HTML("members/edit.html"))
 }
 
 // Update changes a member in the DB.
-// ADMIN PROTECTED
+//! ADMIN PROTECTED
 // TODO: update member's permissions immediately
 func (v MembersResource) Update(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
@@ -127,11 +130,11 @@ func (v MembersResource) Update(c buffalo.Context) error {
 
 	c.Flash().Add("success", "Member was updated successfully")
 	mLogInfo(c, MsgFacUser, "member %v was updated", member)
-	return c.Redirect(302, "/members")
+	return c.Redirect(http.StatusSeeOther, "/members")
 }
 
 // Destroy deletes a member from the DB.
-// ADMIN PROTECTED
+//! ADMIN PROTECTED
 func (v MembersResource) Destroy(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	member := &models.Member{}
@@ -198,5 +201,5 @@ func (v MembersResource) Destroy(c buffalo.Context) error {
 	}
 	c.Flash().Add("success", t(c, "member.was.inactivated.successfully"))
 	mLogNote(c, MsgFacUser, "member %v was inactivated", member)
-	return c.Redirect(302, "/members")
+	return c.Redirect(http.StatusSeeOther, "/members")
 }

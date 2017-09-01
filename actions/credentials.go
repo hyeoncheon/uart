@@ -1,8 +1,11 @@
 package actions
 
 // TODO REVIEW REQUIRED
+//* Test coverage: 100%
 
 import (
+	"net/http"
+
 	"github.com/gobuffalo/buffalo"
 	"github.com/hyeoncheon/uart/models"
 	"github.com/markbates/pop"
@@ -15,7 +18,7 @@ type CredentialsResource struct {
 }
 
 // List gets all Credentials.
-// ADMIN PROTECTED
+//! ADMIN PROTECTED
 func (v CredentialsResource) List(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	credentials := &models.Credentials{}
@@ -26,7 +29,7 @@ func (v CredentialsResource) List(c buffalo.Context) error {
 	}
 	c.Set("credentials", credentials)
 	c.Set("pagination", q.Paginator)
-	return c.Render(200, r.HTML("credentials/index.html"))
+	return c.Render(http.StatusOK, r.HTML("credentials/index.html"))
 }
 
 // Destroy deletes a credential from the DB.
@@ -37,11 +40,18 @@ func (v CredentialsResource) Destroy(c buffalo.Context) error {
 	if err != nil {
 		return errors.WithStack(err)
 	}
+
+	if credential.MemberID == c.Value("member_id") {
+		c.Logger().Warn("credential deletion blocked for ", dummyMember(c))
+		c.Flash().Add("warning", "self deletion is not supported now")
+		return c.Redirect(http.StatusFound, "/")
+	}
+
 	err = tx.Destroy(credential)
 	if err != nil {
 		return errors.WithStack(err)
 	}
 	c.Flash().Add("success", "Credential was deleted successfully")
 	mLogWarn(c, MsgFacUser, "credential %v was deleted", credential)
-	return c.Redirect(302, "/credentials")
+	return c.Redirect(http.StatusSeeOther, "/credentials")
 }

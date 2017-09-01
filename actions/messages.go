@@ -2,10 +2,12 @@ package actions
 
 //! WIP
 //* Use Belonging Interface
+//* Test coverage: Exported Handlers
 
 import (
 	"bytes"
 	"fmt"
+	"net/http"
 	"text/template"
 
 	"github.com/gobuffalo/buffalo"
@@ -53,7 +55,7 @@ func (v MessagesResource) List(c buffalo.Context) error {
 	}
 	c.Set("messages", messages)
 	c.Set("pagination", q.Paginator)
-	return c.Render(200, r.HTML("messages/index.html"))
+	return c.Render(http.StatusOK, r.HTML("messages/index.html"))
 }
 
 // Show gets the data for one Message. GET /messages/{message_id}
@@ -62,10 +64,12 @@ func (v MessagesResource) Show(c buffalo.Context) error {
 	message := &models.Message{}
 	err := models.FindMy(tx.Q(), dummyMember(c), message, c.Param("message_id"))
 	if err != nil {
-		return errors.WithStack(err)
+		c.Flash().Add("danger", t(c, "eep.message.not.found"))
+		mLogErr(c, MsgFacSecu, "access violation: message by %v", currentMember(c))
+		return c.Redirect(http.StatusFound, "/")
 	}
 	c.Set("message", message)
-	return c.Render(200, r.HTML("messages/show.html"))
+	return c.Render(http.StatusOK, r.HTML("messages/show.html"))
 }
 
 // New renders the formular for creating a new Message. GET /messages/new
@@ -118,7 +122,7 @@ func (v MessagesResource) Dismiss(c buffalo.Context) error {
 		return errors.WithStack(err)
 	}
 	c.Flash().Add("success", t(c, "message.dismissed"))
-	return c.Redirect(302, "/messages")
+	return c.Redirect(http.StatusSeeOther, "/messages")
 }
 
 // Destroy deletes a message from the DB. DELETE /messages/{message_id}
@@ -135,7 +139,7 @@ func (v MessagesResource) Destroy(c buffalo.Context) error {
 		return errors.WithStack(err)
 	}
 	c.Flash().Add("success", "Message was destroyed successfully")
-	return c.Redirect(302, "/messages")
+	return c.Redirect(http.StatusSeeOther, "/messages")
 }
 
 //** utilities
@@ -205,12 +209,14 @@ func appMsg(c buffalo.Context, r *models.Members, content, form string, args ...
 //
 // xMsg create template based message.
 func xMsg(c buffalo.Context, r *models.Members, app, fac string, prio int, mesg, tpl string, data interface{}) error {
-	tmpl, err := template.ParseFiles("messages/" + tpl + ".tpl")
+	tmpl, err := template.ParseFiles(uartHome + "/messages/" + tpl + ".tpl")
 	if err != nil {
+		c.Logger().WithField("color", "RED").Error("TEMPLATE: PARSE ERROR")
 		return err
 	}
 	buf := &bytes.Buffer{}
 	if err := tmpl.Execute(buf, data); err != nil {
+		c.Logger().WithField("color", "YELLOW").Error("TEMPLATE: EXEC ERROR")
 		return err
 	}
 	content := buf.String()

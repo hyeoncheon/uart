@@ -1,6 +1,7 @@
 package actions
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"path"
@@ -24,6 +25,8 @@ var (
 	ENV         = envy.Get("GO_ENV", "development")
 	brandName   = envy.Get("BRAND_NAME", "UART")
 	sessionName = envy.Get("SESSION_NAME", "_uart_session")
+	pname       string
+	uartHome    = envy.Get("UART_HOME", "")
 	app         *buffalo.App
 	T           *i18n.Translator
 )
@@ -39,8 +42,18 @@ func App() *buffalo.App {
 			SessionStore: newSessionStore(ENV),
 		})
 
-		pname := os.Args[0]
-		app.Logger.Infof("UART executed as %v (%v)...", path.Base(pname), pname)
+		pname = path.Base(os.Args[0])
+		app.Logger.Infof("UART executed as %v (in %v mode)...", pname, ENV)
+		if uartHome == "" {
+			uartHome, _ = os.Getwd()
+		}
+		app.Logger.Info("UART Home is ", uartHome)
+
+		if _, err := os.Stat(uartHome + "/messages/"); err != nil {
+			app.Logger.Error("Abort! message template directory not found!")
+			fmt.Println("Abort! message template directory not found!")
+			os.Exit(1)
+		}
 
 		// register all taskers
 		jobs.RegisterAll(app)
@@ -50,7 +63,7 @@ func App() *buffalo.App {
 		// Handler does not return an error.
 		app.Use(middleware.SessionSaver)
 
-		if ENV == "development" {
+		if ENV != "production" {
 			app.Use(middleware.ParameterLogger)
 		}
 
@@ -82,6 +95,10 @@ func App() *buffalo.App {
 		auth := app.Group("/auth")
 		auth.GET("/{provider}", buffalo.WrapHandlerFunc(gothic.BeginAuthHandler))
 		auth.GET("/{provider}/callback", AuthCallback)
+
+		if ENV == "test" {
+			app.Use(LoginAsTester)
+		}
 
 		app.Use(AuthenticateHandler)
 		app.Middleware.Skip(AuthenticateHandler, HomeHandler)
@@ -148,9 +165,9 @@ func App() *buffalo.App {
 		r = &RolesResource{&buffalo.BaseResource{}}
 		g = app.Resource("/roles", r)
 		g.Use(roleBasedLockHandler)
-		app.POST("/request", r.(*RolesResource).Request)
-		app.GET("/accept/{app_id}/{rolemap_id}", r.(*RolesResource).Accept)
-		app.GET("/retire/{role_id}", r.(*RolesResource).Retire)
+		g.GET("/accept/{app_id}/{rolemap_id}", r.(*RolesResource).Accept)
+		app.POST("/request/roles", r.(*RolesResource).Request)
+		app.GET("/request/roles/{role_id}/retire", r.(*RolesResource).Retire)
 	}
 
 	return app

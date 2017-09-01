@@ -2,6 +2,7 @@ package actions
 
 //! WIP
 //* Use Belonging Interface
+// Test coverage: 100%
 
 import (
 	"net/http"
@@ -48,25 +49,33 @@ func (v DocsResource) List(c buffalo.Context) error {
 	}
 
 	c.Set("docs", docs)
-	return c.Render(200, r.HTML("docs/index.html"))
+	return c.Render(http.StatusOK, r.HTML("docs/index.html"))
 }
 
 // Show gets the data for one Doc. GET /docs/{doc_id}
 func (v DocsResource) Show(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	doc := &models.Doc{}
-	err := tx.Find(doc, c.Param("doc_id"))
+	q := tx.Q()
+	if false == c.Value("member_is_admin").(bool) {
+		q = q.Where("is_published = ?", true)
+	}
+	err := q.Find(doc, c.Param("doc_id"))
 	if err != nil {
-		err = tx.Where("slug = ?", c.Param("doc_id")).First(doc)
+		q := tx.Q()
+		if false == c.Value("member_is_admin").(bool) {
+			q = q.Where("is_published = ?", true)
+		}
+		err = q.Where("slug = ?", c.Param("doc_id")).First(doc)
 		if err != nil {
 			c.Flash().Add("danger", t(c, "cannot.found.documentation"))
 			me := currentMember(c)
 			mLogErr(c, MsgFacSecu, "invalid access: docs.show by %v", me)
-			return c.Redirect(http.StatusFound, "/docs")
+			return c.Redirect(http.StatusNotFound, "/docs")
 		}
 	}
 	c.Set("doc", doc)
-	return c.Render(200, r.HTML("docs/show.html"))
+	return c.Render(http.StatusOK, r.HTML("docs/show.html"))
 }
 
 // New renders the formular for creating a new Doc. GET /docs/new
@@ -74,7 +83,7 @@ func (v DocsResource) Show(c buffalo.Context) error {
 func (v DocsResource) New(c buffalo.Context) error {
 	c.Set("doc", &models.Doc{})
 	c.Set("theme", "default")
-	return c.Render(200, r.HTML("docs/new.html"))
+	return c.Render(http.StatusOK, r.HTML("docs/new.html"))
 }
 
 // Create adds a Doc to the DB. POST /docs
@@ -102,7 +111,7 @@ func (v DocsResource) Create(c buffalo.Context) error {
 		return c.Render(422, r.HTML("docs/new.html"))
 	}
 	c.Flash().Add("success", "Doc was created successfully")
-	return c.Redirect(302, "/docs/%s", doc.ID)
+	return c.Redirect(http.StatusSeeOther, "/docs/%s", doc.ID)
 }
 
 // Edit renders a edit formular for a doc. GET /docs/{doc_id}/edit
@@ -119,7 +128,7 @@ func (v DocsResource) Edit(c buffalo.Context) error {
 	}
 	c.Set("doc", doc)
 	c.Set("theme", "default")
-	return c.Render(200, r.HTML("docs/edit.html"))
+	return c.Render(http.StatusOK, r.HTML("docs/edit.html"))
 }
 
 // Update changes a doc in the DB. PUT /docs/{doc_id}
@@ -139,7 +148,8 @@ func (v DocsResource) Update(c buffalo.Context) error {
 		return errors.WithStack(err)
 	}
 
-	doc.Slug = inflect.Dasherize(strings.ToLower(doc.Title))
+	//? update slug or not?
+	//doc.Slug = inflect.Dasherize(strings.ToLower(doc.Title))
 
 	verrs, err := tx.ValidateAndUpdate(doc)
 	if err != nil {
@@ -152,7 +162,7 @@ func (v DocsResource) Update(c buffalo.Context) error {
 		return c.Render(422, r.HTML("docs/edit.html"))
 	}
 	c.Flash().Add("success", "Doc was updated successfully")
-	return c.Redirect(302, "/docs/%s", doc.ID)
+	return c.Redirect(http.StatusSeeOther, "/docs/%s", doc.ID)
 }
 
 // Destroy deletes a doc from the DB. DELETE /docs/{doc_id}
@@ -172,7 +182,7 @@ func (v DocsResource) Destroy(c buffalo.Context) error {
 		return errors.WithStack(err)
 	}
 	c.Flash().Add("success", "Doc was destroyed successfully")
-	return c.Redirect(302, "/docs")
+	return c.Redirect(http.StatusSeeOther, "/docs")
 }
 
 // Publish marks the document as published. GET /docs/{doc_id}/publish
@@ -196,5 +206,5 @@ func (v DocsResource) Publish(c buffalo.Context) error {
 		return c.Redirect(http.StatusFound, "/docs")
 	}
 	c.Flash().Add("success", "Doc was updated successfully")
-	return c.Redirect(302, "/docs/%s", doc.ID)
+	return c.Redirect(http.StatusSeeOther, "/docs/%s", doc.ID)
 }

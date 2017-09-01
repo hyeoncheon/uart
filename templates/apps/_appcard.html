@@ -43,7 +43,7 @@ partial("roles/roleline.html") %><%
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h4 class="modal-title"><%=t("role.request")%></h4>
 			</div>
-			<%= form_for(app, {action: requestPath(), method: "POST"}) { %>
+			<%= form_for(app, {action: requestRolesPath(), method: "POST"}) { %>
 			<div class="modal-body">
 				<p>
 				<%=t("modal.message.select.perfered.roles.for.this.app")%>

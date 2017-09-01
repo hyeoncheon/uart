@@ -1,6 +1,7 @@
 package actions
 
 //! WIP
+//* Test coverage: 100%
 
 import (
 	"net/http"
@@ -19,7 +20,7 @@ type MessengersResource struct {
 }
 
 // List gets all Messengers. GET /messengers
-// ADMIN PROTECTED
+//! ADMIN PROTECTED
 func (v MessengersResource) List(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	messengers := &models.Messengers{}
@@ -30,7 +31,7 @@ func (v MessengersResource) List(c buffalo.Context) error {
 	}
 	c.Set("messengers", messengers)
 	c.Set("pagination", q.Paginator)
-	return c.Render(200, r.HTML("messengers/index.html"))
+	return c.Render(http.StatusOK, r.HTML("messengers/index.html"))
 }
 
 // Create adds a Messenger to the DB. POST /messengers
@@ -60,6 +61,7 @@ func (v MessengersResource) Create(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	verrs, err := tx.ValidateAndCreate(messenger)
 	if err != nil {
+		c.Logger().Error("error while creating messenger: ", err)
 		return errors.WithStack(err)
 	}
 	if verrs.HasAny() {
@@ -70,7 +72,7 @@ func (v MessengersResource) Create(c buffalo.Context) error {
 		return c.Render(422, r.HTML("messengers/new.html"))
 	}
 	c.Flash().Add("success", t(c, "messenger.was.created.successfully"))
-	return c.Redirect(302, "/membership/me")
+	return c.Redirect(http.StatusSeeOther, "/membership/me")
 }
 
 // Update changes a messenger in the DB. PUT /messengers/{messenger_id}
@@ -92,7 +94,7 @@ func (v MessengersResource) Update(c buffalo.Context) error {
 	verrs, err := tx.ValidateAndUpdate(messenger)
 	if err != nil {
 		c.Flash().Add("danger", t(c, "oops.cannot.update.messenger"))
-		return c.Redirect(http.StatusFound, "/apps")
+		return c.Redirect(http.StatusFound, "/membership/me")
 	}
 	if verrs.HasAny() {
 		c.Set("messenger", messenger)
@@ -102,7 +104,7 @@ func (v MessengersResource) Update(c buffalo.Context) error {
 		return c.Render(422, r.HTML("messengers/edit.html"))
 	}
 	c.Flash().Add("success", t(c, "messenger.was.updated.successfully"))
-	return c.Redirect(302, "/membership/me")
+	return c.Redirect(http.StatusSeeOther, "/membership/me")
 }
 
 // Destroy deletes a messenger from the DB. DELETE /messengers/{messenger_id}
@@ -134,9 +136,9 @@ func (v MessengersResource) Destroy(c buffalo.Context) error {
 	}
 	c.Flash().Add("success", t(c, "messenger.was.deleted.successfully"))
 	if isAdmin && messenger.MemberID != me.ID {
-		return c.Redirect(http.StatusFound, "/messengers")
+		return c.Redirect(http.StatusSeeOther, "/messengers")
 	}
-	return c.Redirect(302, "/membership/me")
+	return c.Redirect(http.StatusSeeOther, "/membership/me")
 }
 
 // SetPrimary sets the messenger as primary (and unset others)
@@ -177,7 +179,7 @@ func (v MessengersResource) SetPrimary(c buffalo.Context) error {
 		return c.Render(422, r.HTML("messengers/edit.html"))
 	}
 	c.Flash().Add("success", t(c, "messenger.was.updated.successfully"))
-	return c.Redirect(302, "/membership/me")
+	return c.Redirect(http.StatusSeeOther, "/membership/me")
 }
 
 //** utilities
