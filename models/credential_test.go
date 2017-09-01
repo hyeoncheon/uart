@@ -7,7 +7,6 @@ import (
 )
 
 var cred = &models.Credential{
-	MemberID: member.ID,
 	Provider: "dummy",
 	UserID:   "dummy-001",
 	Name:     "Dummy",

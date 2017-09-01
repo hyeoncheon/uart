@@ -3,6 +3,8 @@ package models_test
 // Test coverage: 100% (without interface methods)
 
 import (
+	uuid "github.com/satori/go.uuid"
+
 	"github.com/hyeoncheon/uart/models"
 )
 
@@ -31,7 +33,7 @@ func (ms *ModelSuite) Test_App() {
 	ms.Equal("Admin", rl.Name)
 
 	brl := app.GetRole(models.DB, "superman")
-	ms.Nil(brl)
+	ms.Equal(uuid.Nil, brl.ID)
 
 	ms.Equal(1, len(*app.GetRoles()))
 	err = app.AddRole(models.DB, "Manager", "manager", "test manager", 2, true)
