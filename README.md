@@ -3,6 +3,7 @@
 [![Build Status](https://travis-ci.org/hyeoncheon/uart.svg?branch=master)](https://travis-ci.org/hyeoncheon/uart)
 [![Go Report Card](https://goreportcard.com/badge/github.com/hyeoncheon/uart)](https://goreportcard.com/report/github.com/hyeoncheon/uart)
 [![Code Climate](https://codeclimate.com/github/hyeoncheon/uart/badges/gpa.svg)](https://codeclimate.com/github/hyeoncheon/uart)
+[![Coverage Status](https://coveralls.io/repos/github/hyeoncheon/uart/badge.svg?branch=master)](https://coveralls.io/github/hyeoncheon/uart?branch=master)
 
 UART is an Universal Authorizaion, Role and Team management service software.
 
