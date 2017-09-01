@@ -17,7 +17,8 @@ func init() {
 		HTMLLayout: "application.html",
 
 		// Box containing all of the templates:
-		TemplatesBox: packr.NewBox("../templates"),
+		//TemplatesBox: packr.NewBox("../templates"),
+		TemplatesBox: packr.NewBox(uartHome + "/templates"),
 
 		// Add template helpers here:
 		Helpers: render.Helpers{
