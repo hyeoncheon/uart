@@ -6,9 +6,10 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/hyeoncheon/uart/models"
 	"github.com/markbates/willie"
 	uuid "github.com/satori/go.uuid"
+
+	"github.com/hyeoncheon/uart/models"
 )
 
 var roleTemplate = models.Role{
@@ -37,7 +38,7 @@ func (as *ActionSuite) Test_RolesResource_A_Protected() {
 		return as.HTML("/roles/%v", existingRole.ID).Put(existingRole)
 	})
 
-	// Destory(), denied by role based blocker
+	// Destroy(), denied by role based blocker
 	permissionDenied(as, func(*ActionSuite) *willie.Response {
 		return as.HTML("/roles/%v", existingRole.ID).Delete()
 	})
@@ -60,7 +61,7 @@ func (as *ActionSuite) Test_RolesResource_B_AsAppMan() {
 	as.setupMembers()
 	processFlowAppmanRole(as)
 
-	as.loginAs(appman)
+	as.loginAs(appman) //! login as appman
 
 	successCreateTestingApp(as)
 	app := models.GetAppByCode(AppCode)
@@ -100,21 +101,51 @@ func (as *ActionSuite) Test_RolesResource_B_AsAppMan() {
 	as.NotEqual(uuid.Nil, role.ID)
 	as.Equal("Perfect Tester", role.Name)
 
+	// Update() with invalid id
+	permissionDenied(as, func(*ActionSuite) *willie.Response {
+		return as.HTML("/roles/%v", uuid.Nil).Put(role)
+	})
+
+	// Update() with invalid value
+	role.Name = ""
+	res = as.HTML("/roles/%v", role.ID).Put(role)
+	as.Equal(http.StatusUnprocessableEntity, res.Code)
+
+	// Create() by appman, with AppID and right but data error
+	role.Name = ""
+	res = as.HTML("/roles").Post(role)
+	as.Equal(http.StatusUnprocessableEntity, res.Code)
+
+	// Update() on role of others, denied
+	UARTRole := models.GetAppRole(models.ACUART, models.RCUser)
+	permissionDenied(as, func(*ActionSuite) *willie.Response {
+		return as.HTML("/roles/%v", UARTRole.ID).Put(UARTRole)
+	})
+
+	// Update() on read only role, denied
+	userRole := app.GetRole(as.DB, models.RCUser)
+	permissionDenied(as, func(*ActionSuite) *willie.Response {
+		return as.HTML("/roles/%v", userRole.ID).Put(userRole)
+	})
+
 	// Destroy() by appman
 	res = as.HTML("/roles/%v", role.ID).Delete()
 	as.Equal(http.StatusSeeOther, res.Code)
 	as.Contains(res.HeaderMap.Get("Location"), "/apps/")
 
 	// Destroy() on read only role, denied
-	userRole := app.GetRole(as.DB, models.RCUser)
 	permissionDenied(as, func(*ActionSuite) *willie.Response {
 		return as.HTML("/roles/%v", userRole.ID).Delete()
 	})
 
 	// Destroy() on role of others, denied
-	UARTRole := models.GetAppRole(models.ACUART, models.RCUser)
 	permissionDenied(as, func(*ActionSuite) *willie.Response {
 		return as.HTML("/roles/%v", UARTRole.ID).Delete()
+	})
+
+	// Destroy() with invalid id
+	permissionDenied(as, func(*ActionSuite) *willie.Response {
+		return as.HTML("/roles/%v", uuid.Nil).Delete()
 	})
 
 	res = as.HTML("/apps/%v", app.ID).Get()
@@ -152,7 +183,38 @@ func (as *ActionSuite) Test_RolesResource_C_RoleRequestCycle() {
 	as.Equal(roleMap.RoleID, role.ID)
 	as.Equal(false, roleMap.IsActive) // inactive request
 
+	// Request() by normal member
+	uartRole := models.GetAppRole(models.ACUART, models.RCUser)
+	uartRoleRequest := url.Values{}
+	uartRoleRequest.Add("role_id", uartRole.ID.String())
+	// then
+	res = as.HTML("/request/roles").Post(&uartRoleRequest)
+	as.Equal(http.StatusSeeOther, res.Code)
+	as.Equal("/membership/me", res.HeaderMap.Get("Location"))
+
+	uartRoleMap := &models.RoleMap{}
+	err = as.DB.Where("role_id = ? AND member_id = ?", uartRole.ID, other.ID).First(uartRoleMap)
+	as.NoError(err)
+	as.Equal(uartRoleMap.RoleID, uartRole.ID)
+	as.Equal(false, uartRoleMap.IsActive) // inactive request
+
 	as.loginAs(appman) //! login as appman and accept request
+
+	// Accept() with invalid rolemap
+	permissionDenied(as, func(*ActionSuite) *willie.Response {
+		return as.HTML("/roles/accept/%v/%v", app.ID, uuid.Nil).Get()
+	})
+
+	// Accept() with invalid appID
+	permissionDenied(as, func(*ActionSuite) *willie.Response {
+		return as.HTML("/roles/accept/%v/%v", uuid.Nil, roleMap.ID).Get()
+	})
+
+	// Accept() on others app
+	uart := models.GetAppByCode(models.ACUART)
+	permissionDenied(as, func(*ActionSuite) *willie.Response {
+		return as.HTML("/roles/accept/%v/%v", uart.ID, uartRoleMap.ID).Get()
+	})
 
 	// Accept() by appman
 	res = as.HTML("/roles/accept/%v/%v", app.ID, roleMap.ID).Get()
@@ -170,6 +232,11 @@ func (as *ActionSuite) Test_RolesResource_C_RoleRequestCycle() {
 	as.Equal(http.StatusSeeOther, res.Code)
 	as.Equal("/membership/me", res.HeaderMap.Get("Location"))
 	as.Equal(0, len(*other.AppRoles(app.ID, true)))
+
+	// Retire() by normal member, invalid ID
+	res = as.HTML("/request/roles/%v/retire", uuid.Nil).Get()
+	as.Equal(http.StatusFound, res.Code)
+	as.Equal("/", res.HeaderMap.Get("Location"))
 }
 
 /**/
@@ -180,7 +247,7 @@ func (as *ActionSuite) Test_RolesResource_C_RoleRequestCycle() {
 // used by Test_AppsResource_O_GrantFlow
 func processFlowAppmanRole(as *ActionSuite) {
 	as.activateMember(appman)
-	as.loginAs(appman)
+	as.loginAs(appman) //! login as appman
 
 	role := models.GetAppRole(models.ACUART, models.RCAppMan)
 	as.NotEqual(uuid.Nil, role.ID, "cannot get appman role")
@@ -202,8 +269,7 @@ func processFlowAppmanRole(as *ActionSuite) {
 	as.Equal(http.StatusFound, res.Code)
 	as.Equal("/", res.HeaderMap.Get("Location"))
 
-	//! login as admin and accept role request
-	as.loginAs(admin)
+	as.loginAs(admin) //! login as admin and accept role request
 
 	// Accept() by admin
 	res = as.HTML("/roles/accept/%v/%v", uart.ID, roleMap.ID).Get()

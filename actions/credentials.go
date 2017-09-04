@@ -7,9 +7,10 @@ import (
 	"net/http"
 
 	"github.com/gobuffalo/buffalo"
-	"github.com/hyeoncheon/uart/models"
 	"github.com/markbates/pop"
-	"github.com/pkg/errors"
+
+	"github.com/hyeoncheon/uart/models"
+	"github.com/hyeoncheon/uart/utils"
 )
 
 // CredentialsResource is the resource for the credential model
@@ -25,7 +26,7 @@ func (v CredentialsResource) List(c buffalo.Context) error {
 	q := tx.PaginateFromParams(c.Params())
 	err := models.AllMy(q, dummyMember(c), credentials, false)
 	if err != nil {
-		return errors.WithStack(err)
+		return utils.DOOPS(c, "while list creds (params: %v, error: %v)", c.Params(), err)
 	}
 	c.Set("credentials", credentials)
 	c.Set("pagination", q.Paginator)
@@ -38,7 +39,8 @@ func (v CredentialsResource) Destroy(c buffalo.Context) error {
 	credential := &models.Credential{}
 	err := tx.Find(credential, c.Param("credential_id"))
 	if err != nil {
-		return errors.WithStack(err)
+		c.Flash().Add("danger", t(c, "credential.not.found"))
+		return c.Redirect(http.StatusFound, "/")
 	}
 
 	if credential.MemberID == c.Value("member_id") {
@@ -49,7 +51,7 @@ func (v CredentialsResource) Destroy(c buffalo.Context) error {
 
 	err = tx.Destroy(credential)
 	if err != nil {
-		return errors.WithStack(err)
+		return utils.DOOPS(c, "while destroy cred %v, error: %v)", credential, err)
 	}
 	c.Flash().Add("success", "Credential was deleted successfully")
 	mLogWarn(c, MsgFacUser, "credential %v was deleted", credential)

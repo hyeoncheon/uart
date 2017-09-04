@@ -7,8 +7,10 @@ package actions_test
 import (
 	"net/http"
 
-	"github.com/hyeoncheon/uart/models"
 	"github.com/markbates/willie"
+	uuid "github.com/satori/go.uuid"
+
+	"github.com/hyeoncheon/uart/models"
 )
 
 func (as *ActionSuite) Test_MessagesResource_A_ListShow_A() {
@@ -48,9 +50,13 @@ func (as *ActionSuite) Test_MessagesResource_A_ListShow_A() {
 	err = as.DB.Where("priority = ?", models.MsgPriErr).First(message)
 	as.NoError(err)
 
-	// Dismiss()
+	// Destroy()
 	res = as.HTML("/messages/%v", message.ID).Delete()
 	as.Equal(http.StatusSeeOther, res.Code)
+
+	// Destroy() non existing message
+	res = as.HTML("/messages/%v", uuid.Nil).Delete()
+	as.Equal(http.StatusFound, res.Code)
 }
 
 func (as *ActionSuite) Test_MessagesResource_A_ListShow_B() {
@@ -89,4 +95,8 @@ func (as *ActionSuite) Test_MessagesResource_A_ListShow_B() {
 	res = as.HTML("/messages").Get()
 	as.Equal(http.StatusOK, res.Code)
 	as.NotContains(res.Body.String(), "Member Status Changed: ")
+
+	// Dismiss() non existing message
+	res = as.HTML("/messages/%v/dismiss", uuid.Nil).Get()
+	as.Equal(http.StatusFound, res.Code)
 }

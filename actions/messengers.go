@@ -8,10 +8,10 @@ import (
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/markbates/pop"
-	"github.com/pkg/errors"
 	"github.com/satori/go.uuid"
 
 	"github.com/hyeoncheon/uart/models"
+	"github.com/hyeoncheon/uart/utils"
 )
 
 // MessengersResource is the resource for the messenger model
@@ -27,7 +27,7 @@ func (v MessengersResource) List(c buffalo.Context) error {
 	q := tx.PaginateFromParams(c.Params())
 	err := q.All(messengers)
 	if err != nil {
-		return errors.WithStack(err)
+		return utils.DOOPS(c, "while listing messengers (params: %v, error: %v)", c.Params(), err)
 	}
 	c.Set("messengers", messengers)
 	c.Set("pagination", q.Paginator)
@@ -39,7 +39,7 @@ func (v MessengersResource) Create(c buffalo.Context) error {
 	messenger := &models.Messenger{}
 	err := c.Bind(messenger)
 	if err != nil {
-		return errors.WithStack(err)
+		return utils.SOOPS(c, "while binding messenger: %v, error: %v", messenger, err)
 	}
 
 	me := dummyMember(c)
@@ -61,8 +61,7 @@ func (v MessengersResource) Create(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	verrs, err := tx.ValidateAndCreate(messenger)
 	if err != nil {
-		c.Logger().Error("error while creating messenger: ", err)
-		return errors.WithStack(err)
+		return utils.DOOPS(c, "while creating messenger: %v, error: %v", messenger, err)
 	}
 	if verrs.HasAny() {
 		c.Set("messenger", messenger)
@@ -89,12 +88,11 @@ func (v MessengersResource) Update(c buffalo.Context) error {
 
 	err = c.Bind(messenger)
 	if err != nil {
-		return errors.WithStack(err)
+		return utils.SOOPS(c, "while binding messenger: %v, error: %v", messenger, err)
 	}
 	verrs, err := tx.ValidateAndUpdate(messenger)
 	if err != nil {
-		c.Flash().Add("danger", t(c, "oops.cannot.update.messenger"))
-		return c.Redirect(http.StatusFound, "/membership/me")
+		return utils.DOOPS(c, "while updating messenger: %v, error: %v", messenger, err)
 	}
 	if verrs.HasAny() {
 		c.Set("messenger", messenger)
@@ -130,9 +128,7 @@ func (v MessengersResource) Destroy(c buffalo.Context) error {
 
 	err = tx.Destroy(messenger)
 	if err != nil {
-		c.Logger().Warnf("cannot delete messenger %v", messenger)
-		c.Flash().Add("danger", t(c, "oops.cannot.delete.messenger"))
-		return c.Redirect(http.StatusFound, "/membership/me")
+		return utils.DOOPS(c, "while deleting messenger: %v, error: %v", messenger, err)
 	}
 	c.Flash().Add("success", t(c, "messenger.was.deleted.successfully"))
 	if isAdmin && messenger.MemberID != me.ID {
@@ -168,8 +164,7 @@ func (v MessengersResource) SetPrimary(c buffalo.Context) error {
 	err = tx.Save(messenger)
 	if err != nil {
 		tx.TX.Rollback()
-		c.Flash().Add("danger", t(c, "oops.cannot.update.messenger"))
-		return c.Redirect(http.StatusFound, "/apps")
+		return utils.DOOPS(c, "while saving messenger: %v, error: %v", messenger, err)
 	}
 	c.Flash().Add("success", t(c, "messenger.was.updated.successfully"))
 	return c.Redirect(http.StatusSeeOther, "/membership/me")

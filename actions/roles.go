@@ -8,9 +8,9 @@ import (
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/markbates/pop"
-	"github.com/pkg/errors"
 
 	"github.com/hyeoncheon/uart/models"
+	"github.com/hyeoncheon/uart/utils"
 )
 
 // RolesResource is the resource for the role model
@@ -23,7 +23,7 @@ func (v RolesResource) Create(c buffalo.Context) error {
 	role := &models.Role{}
 	err := c.Bind(role)
 	if err != nil {
-		return errors.WithStack(err)
+		return utils.SOOPS(c, "while binding role: %v, error: %v", role, err)
 	}
 
 	tx := c.Value("tx").(*pop.Connection)
@@ -37,7 +37,7 @@ func (v RolesResource) Create(c buffalo.Context) error {
 
 	verrs, err := tx.ValidateAndCreate(role)
 	if err != nil {
-		return errors.WithStack(err)
+		return utils.DOOPS(c, "while creating role: %v, error: %v", role, err)
 	}
 	if verrs.HasAny() {
 		c.Set("role", role)
@@ -55,7 +55,7 @@ func (v RolesResource) Update(c buffalo.Context) error {
 	role := &models.Role{}
 	err := tx.Find(role, c.Param("role_id"))
 	if err != nil {
-		return errors.WithStack(err)
+		return utils.InvalidAccess(c, "/", "invalid access for %v!", c.Param("role_id"))
 	}
 
 	dmem := dummyMember(c)
@@ -74,11 +74,11 @@ func (v RolesResource) Update(c buffalo.Context) error {
 
 	err = c.Bind(role)
 	if err != nil {
-		return errors.WithStack(err)
+		return utils.SOOPS(c, "while binding role: %v, error: %v", role, err)
 	}
 	verrs, err := tx.ValidateAndUpdate(role)
 	if err != nil {
-		return errors.WithStack(err)
+		return utils.DOOPS(c, "while updating role: %v, error: %v", role, err)
 	}
 	if verrs.HasAny() {
 		c.Set("role", role)
@@ -96,7 +96,7 @@ func (v RolesResource) Destroy(c buffalo.Context) error {
 	role := &models.Role{}
 	err := tx.Find(role, c.Param("role_id"))
 	if err != nil {
-		return errors.WithStack(err)
+		return utils.InvalidAccess(c, "/", "invalid access for %v!", c.Param("role_id"))
 	}
 
 	dmem := dummyMember(c)
@@ -115,7 +115,7 @@ func (v RolesResource) Destroy(c buffalo.Context) error {
 
 	err = tx.Destroy(role)
 	if err != nil {
-		return errors.WithStack(err)
+		return utils.DOOPS(c, "while deleting role: %v, error: %v", role, err)
 	}
 
 	// TODO: cleanup rolemaps for this deleted role
@@ -153,14 +153,11 @@ func (v RolesResource) Accept(c buffalo.Context) error {
 	rolemap.IsActive = true
 	err = tx.Save(rolemap)
 	if err != nil {
-		c.Logger().Errorf("OOPS! cannot save rolemap id %v: %v", rmID, err)
-		c.Flash().Add("danger", t(c, "oops.cannot.proceed.acception"))
-	} else {
-		c.Flash().Add("success", t(c, "request.accepted.successfully"))
-		member := rolemap.Member()
-		appMsg(c, &models.Members{*member}, "",
-			"role request for %v accepted!", rolemap.Role())
+		return utils.DOOPS(c, "while saving rolemap: %v, error: %v", rolemap, err)
 	}
+	c.Flash().Add("success", t(c, "request.accepted.successfully"))
+	member := rolemap.Member()
+	appMsg(c, &models.Members{*member}, "", "role request for %v accepted!", rolemap.Role())
 	return c.Redirect(http.StatusSeeOther, "/apps/%s", appID)
 }
 
@@ -225,7 +222,7 @@ func (v RolesResource) Retire(c buffalo.Context) error {
 	role := &models.Role{}
 	err := tx.Find(role, c.Param("role_id"))
 	if err != nil {
-		return errors.WithStack(err)
+		return utils.InvalidAccess(c, "/", "invalid access for %v!", c.Param("role_id"))
 	}
 
 	member := currentMember(c)

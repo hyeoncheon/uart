@@ -9,9 +9,9 @@ import (
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/markbates/pop"
-	"github.com/pkg/errors"
 
 	"github.com/hyeoncheon/uart/models"
+	"github.com/hyeoncheon/uart/utils"
 )
 
 // AppsResource is the resource for the app model
@@ -31,7 +31,7 @@ func (v AppsResource) List(c buffalo.Context) error {
 		err = models.AllMyOwn(q, dummyMember(c), apps, false)
 	}
 	if err != nil {
-		return errors.WithStack(err)
+		return utils.DOOPS(c, "while listing apps (params: %v, error: %v)", c.Params(), err)
 	}
 	c.Set("apps", apps)
 	c.Set("pagination", q.Paginator)
@@ -70,14 +70,14 @@ func (v AppsResource) Create(c buffalo.Context) error {
 	app := &models.App{}
 	err := c.Bind(app)
 	if err != nil {
-		return errors.WithStack(err)
+		return utils.SOOPS(c, "while binding app: %v, error: %v", app, err)
 	}
 	app.GenerateKeyPair()
 
 	tx := c.Value("tx").(*pop.Connection)
 	verrs, err := tx.ValidateAndCreate(app)
 	if err != nil {
-		return errors.WithStack(err)
+		return utils.DOOPS(c, "while creating app: %v, error: %v", app, err)
 	}
 	if verrs.HasAny() {
 		c.Set("app", app)
@@ -128,13 +128,12 @@ func (v AppsResource) Update(c buffalo.Context) error {
 	}
 	err = c.Bind(app)
 	if err != nil {
-		return errors.WithStack(err)
+		return utils.SOOPS(c, "while binding app: %v, error: %v", app, err)
 	}
 
 	verrs, err := tx.ValidateAndUpdate(app)
 	if err != nil {
-		c.Flash().Add("danger", t(c, "oops.cannot.update.app"))
-		return c.Redirect(http.StatusFound, "/apps")
+		return utils.DOOPS(c, "while updating app: %v, error: %v", app, err)
 	}
 	if verrs.HasAny() {
 		c.Set("app", app)

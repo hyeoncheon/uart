@@ -8,9 +8,10 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/hyeoncheon/uart/models"
 	"github.com/markbates/willie"
 	uuid "github.com/satori/go.uuid"
+
+	"github.com/hyeoncheon/uart/models"
 )
 
 const (
@@ -30,6 +31,18 @@ func (as *ActionSuite) Test_AppsResource_A_All_As_Appman() {
 	res := as.HTML("/apps").Get()
 	as.Equal(http.StatusOK, res.Code)
 	as.Contains(res.Body.String(), fmt.Sprintf(`href="/apps/%v/edit`, uart.ID))
+
+	// Edit()
+	res = as.HTML("/apps/%v/edit", uart.ID).Get()
+	as.Equal(http.StatusOK, res.Code)
+	as.Contains(res.Body.String(), "form action=")
+
+	// caution: uart is a soft readonly app. this code is just for test.
+	uart.SiteURL = "siteurl"
+	uart.CallbackURL = "callback"
+	res = as.HTML("/apps/%v", uart.ID).Put(uart)
+	as.Equal(http.StatusSeeOther, res.Code)
+	as.Contains(res.HeaderMap.Get("Location"), "/apps/")
 
 	// Show() by admin
 	res = as.HTML("/apps/%v", uart.ID).Get()

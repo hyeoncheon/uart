@@ -69,6 +69,8 @@ func AllMy(q *pop.Query, m *Member, b Belonging, all ...bool) error {
 
 	if err := q.All(b); err != nil {
 		log.Errorf("cannot found belongings %v", reflect.TypeOf(b))
+		log.Errorf("query error: %v", err)
+		return err
 	}
 	return nil
 }
@@ -89,6 +91,8 @@ func AllMyOwn(q *pop.Query, m *Member, b Belonging, all ...bool) error {
 
 	if err := q.All(b); err != nil {
 		log.Errorf("cannot found belongings %v", reflect.TypeOf(b))
+		log.Errorf("query error: %v", err)
+		return err
 	}
 	return nil
 }

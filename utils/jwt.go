@@ -22,7 +22,6 @@ func NewRS256AccessTokenGen(issuer, key string) osin.AccessTokenGen {
 	var t RS256AccessTokenGen
 	if pem, err := ioutil.ReadFile(key); err != nil {
 		log.Fatalf("cannot read private key file: %v", err)
-
 	} else {
 		if t.PrivateKey, err = jwt.ParseRSAPrivateKeyFromPEM(pem); err != nil {
 			log.Fatalf("cannot parse private key: %v", err)

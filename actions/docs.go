@@ -9,10 +9,11 @@ import (
 	"strings"
 
 	"github.com/gobuffalo/buffalo"
-	"github.com/hyeoncheon/uart/models"
 	"github.com/markbates/inflect"
 	"github.com/markbates/pop"
-	"github.com/pkg/errors"
+
+	"github.com/hyeoncheon/uart/models"
+	"github.com/hyeoncheon/uart/utils"
 )
 
 // DocsResource is the resource for the doc model
@@ -30,7 +31,7 @@ func (v DocsResource) List(c buffalo.Context) error {
 	}
 	err := q.Order("category, subject").All(docs)
 	if err != nil {
-		return errors.WithStack(err)
+		return utils.DOOPS(c, "while listing docs (error: %v)", err)
 	}
 
 	cat := ""
@@ -92,7 +93,7 @@ func (v DocsResource) Create(c buffalo.Context) error {
 	doc := &models.Doc{}
 	err := c.Bind(doc)
 	if err != nil {
-		return errors.WithStack(err)
+		return utils.SOOPS(c, "while binding doc: %v, error: %v", doc, err)
 	}
 
 	dumme := dummyMember(c)
@@ -102,7 +103,7 @@ func (v DocsResource) Create(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	verrs, err := tx.ValidateAndCreate(doc)
 	if err != nil {
-		return errors.WithStack(err)
+		return utils.DOOPS(c, "while creating doc: %v, error: %v", doc, err)
 	}
 	if verrs.HasAny() {
 		c.Set("doc", doc)
@@ -145,7 +146,7 @@ func (v DocsResource) Update(c buffalo.Context) error {
 	}
 	err = c.Bind(doc)
 	if err != nil {
-		return errors.WithStack(err)
+		return utils.SOOPS(c, "while binding doc: %v, error: %v", doc, err)
 	}
 
 	//? update slug or not?
@@ -153,7 +154,7 @@ func (v DocsResource) Update(c buffalo.Context) error {
 
 	verrs, err := tx.ValidateAndUpdate(doc)
 	if err != nil {
-		return errors.WithStack(err)
+		return utils.DOOPS(c, "while updating doc: %v, error: %v", doc, err)
 	}
 	if verrs.HasAny() {
 		c.Set("doc", doc)
@@ -179,7 +180,7 @@ func (v DocsResource) Destroy(c buffalo.Context) error {
 	}
 	err = tx.Destroy(doc)
 	if err != nil {
-		return errors.WithStack(err)
+		return utils.DOOPS(c, "while deleting doc: %v, error: %v", doc, err)
 	}
 	c.Flash().Add("success", "Doc was destroyed successfully")
 	return c.Redirect(http.StatusSeeOther, "/docs")
@@ -200,10 +201,7 @@ func (v DocsResource) Publish(c buffalo.Context) error {
 	doc.IsPublished = true
 
 	if err := tx.Save(doc); err != nil {
-		c.Flash().Add("danger", t(c, "cannot.publish.the.document"))
-		me := currentMember(c)
-		mLogErr(c, MsgFacSecu, "publication error: docs.destroy by %v", me)
-		return c.Redirect(http.StatusFound, "/docs")
+		return utils.DOOPS(c, "while publishing doc: %v, error: %v", doc, err)
 	}
 	c.Flash().Add("success", "Doc was updated successfully")
 	return c.Redirect(http.StatusSeeOther, "/docs/%s", doc.ID)

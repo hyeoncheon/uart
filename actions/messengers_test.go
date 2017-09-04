@@ -7,8 +7,9 @@ package actions_test
 import (
 	"net/http"
 
-	"github.com/hyeoncheon/uart/models"
 	uuid "github.com/satori/go.uuid"
+
+	"github.com/hyeoncheon/uart/models"
 )
 
 var msgrTemplate = models.Messenger{

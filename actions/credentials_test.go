@@ -6,9 +6,10 @@ package actions_test
 import (
 	"net/http"
 
-	"github.com/hyeoncheon/uart/models"
 	"github.com/markbates/willie"
 	uuid "github.com/satori/go.uuid"
+
+	"github.com/hyeoncheon/uart/models"
 )
 
 var credAdmin = &models.Credential{
@@ -51,6 +52,11 @@ func (as *ActionSuite) Test_CredentialsResource_A_All_As_Admin() {
 		return as.HTML("/credentials/%v", cred.ID).Delete()
 	})
 	as.Equal(1, admin.CredentialCount())
+
+	// Destroy(), error, not exists
+	permissionDenied(as, func(*ActionSuite) *willie.Response {
+		return as.HTML("/credentials/%v", uuid.Nil).Delete()
+	})
 
 	// Destroy(), allowed
 	cred = (*other.Credentials())[0]

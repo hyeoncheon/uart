@@ -5,8 +5,10 @@ package actions_test
 import (
 	"net/http"
 
-	"github.com/hyeoncheon/uart/models"
 	"github.com/markbates/willie"
+	uuid "github.com/satori/go.uuid"
+
+	"github.com/hyeoncheon/uart/models"
 )
 
 var mlogTemplate = models.MessagingLog{
@@ -44,4 +46,9 @@ func (as *ActionSuite) Test_MessagingLogsResource() {
 	as.Equal("/messaging_logs", res.HeaderMap.Get("Location"))
 	err := as.DB.Reload(&mlog)
 	as.Error(err)
+
+	// Destroy(), denied by admin protect
+	permissionDenied(as, func(*ActionSuite) *willie.Response {
+		return as.HTML("/messaging_logs/%v", uuid.Nil).Delete()
+	})
 }

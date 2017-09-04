@@ -1,5 +1,7 @@
 package utils
 
+// NOTE: currently not used
+
 import (
 	"strconv"
 

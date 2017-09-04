@@ -6,8 +6,9 @@ package actions_test
 import (
 	"net/http"
 
-	"github.com/hyeoncheon/uart/models"
 	uuid "github.com/satori/go.uuid"
+
+	"github.com/hyeoncheon/uart/models"
 )
 
 func (as *ActionSuite) Test_DocsResource_A_CreateAndCheck() {

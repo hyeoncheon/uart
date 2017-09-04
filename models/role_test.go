@@ -3,6 +3,8 @@ package models_test
 // Test coverage: 100% (without interface methods)
 
 import (
+	uuid "github.com/satori/go.uuid"
+
 	"github.com/hyeoncheon/uart/models"
 )
 
@@ -45,6 +47,10 @@ func (ms *ModelSuite) Test_Role() {
 	rl := models.GetAppRole(app.Code, role.Code)
 	ms.NotNil(rl)
 	ms.Equal(role.Name, rl.Name)
+	rl = models.GetAppRole(app.Code, "Missing")
+	ms.Equal(uuid.Nil, rl.ID)
+	rl = models.GetAppRole("Missing", "Missing")
+	ms.Nil(rl)
 
 	rm := &models.RoleMap{}
 	err = models.DB.Where("role_id = ? AND member_id = ?", role.ID, member.ID).First(rm)

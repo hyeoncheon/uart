@@ -224,10 +224,6 @@ func (s *Provider) LoadAuthorize(code string) (*osin.AuthorizeData, error) {
 	if d, ok := s.authorize[code]; ok {
 		return d, nil
 	}
-	logger.Errorf("AUTHORIZE DATA NOT FOUND for code: -%s-", code)
-	for k := range s.authorize {
-		logger.Debugf("store has authorize code -%s-", k)
-	}
 	return nil, osin.ErrNotFound
 }
 

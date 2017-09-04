@@ -5,12 +5,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/markbates/willie"
-
 	"github.com/gobuffalo/suite"
+	"github.com/markbates/willie"
+	uuid "github.com/satori/go.uuid"
+
 	"github.com/hyeoncheon/uart/actions"
 	"github.com/hyeoncheon/uart/models"
-	uuid "github.com/satori/go.uuid"
 )
 
 type ActionSuite struct {

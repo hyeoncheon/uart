@@ -9,9 +9,9 @@ import (
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/markbates/pop"
-	"github.com/pkg/errors"
 
 	"github.com/hyeoncheon/uart/models"
+	"github.com/hyeoncheon/uart/utils"
 )
 
 // MembersResource is the resource for the member model
@@ -27,7 +27,7 @@ func (v MembersResource) List(c buffalo.Context) error {
 	q := tx.PaginateFromParams(c.Params())
 	err := models.AllMy(q, dummyMember(c), members, false)
 	if err != nil {
-		return errors.WithStack(err)
+		return utils.DOOPS(c, "while listing members (params: %v, error: %v)", c.Params(), err)
 	}
 	c.Set("members", members)
 	c.Set("pagination", q.Paginator)
@@ -72,7 +72,9 @@ func (v MembersResource) Edit(c buffalo.Context) error {
 	member := &models.Member{}
 	err := tx.Find(member, c.Param("member_id"))
 	if err != nil {
-		return errors.WithStack(err)
+		c.Logger().Errorf("cannot found member with id %v", c.Param("member_id"))
+		c.Flash().Add("danger", t(c, "cannot.found.member"))
+		return c.Redirect(http.StatusFound, "/members")
 	}
 	c.Set("member", member)
 	return c.Render(http.StatusOK, r.HTML("members/edit.html"))
@@ -86,19 +88,21 @@ func (v MembersResource) Update(c buffalo.Context) error {
 	member := &models.Member{}
 	err := tx.Find(member, c.Param("member_id"))
 	if err != nil {
-		return errors.WithStack(err)
+		c.Logger().Errorf("cannot found member with id %v", c.Param("member_id"))
+		c.Flash().Add("danger", t(c, "cannot.found.member"))
+		return c.Redirect(http.StatusFound, "/members")
 	}
 	statusOld := member.IsActive
 
 	err = c.Bind(member)
 	if err != nil {
-		return errors.WithStack(err)
+		return utils.SOOPS(c, "while binding member %v, error: %v", member, err)
 	}
 	statusNew := member.IsActive
 
 	verrs, err := tx.ValidateAndUpdate(member)
 	if err != nil {
-		return errors.WithStack(err)
+		return utils.DOOPS(c, "while updating member %v, error: %v", member, err)
 	}
 	if verrs.HasAny() {
 		c.Set("member", member)
@@ -139,7 +143,9 @@ func (v MembersResource) Destroy(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	member := &models.Member{}
 	if err := tx.Find(member, c.Param("member_id")); err != nil {
-		return errors.WithStack(err)
+		c.Logger().Errorf("cannot found member with id %v", c.Param("member_id"))
+		c.Flash().Add("danger", t(c, "cannot.found.member"))
+		return c.Redirect(http.StatusFound, "/members")
 	}
 	adminRole := models.GetAppRole(models.ACUART, models.RCAdmin)
 	if member.HasRole(adminRole.ID) {

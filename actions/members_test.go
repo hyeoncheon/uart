@@ -9,6 +9,7 @@ import (
 	"net/http"
 
 	"github.com/markbates/willie"
+	uuid "github.com/satori/go.uuid"
 )
 
 func (as *ActionSuite) Test_MembersResource_A_CreateUpdateList() {
@@ -39,6 +40,21 @@ func (as *ActionSuite) Test_MembersResource_A_CreateUpdateList() {
 	as.Equal("/members", res.HeaderMap.Get("Location"))
 	as.DB.Reload(other)
 	as.Equal("Other Name", other.Name)
+
+	// Update() none existing member
+	res = as.HTML("/members/%v/edit", uuid.Nil).Get()
+	as.Equal(http.StatusFound, res.Code)
+	as.Equal("/members", res.HeaderMap.Get("Location"))
+
+	// Update() none existing member
+	res = as.HTML("/members/%v", uuid.Nil).Put(other)
+	as.Equal(http.StatusFound, res.Code)
+	as.Equal("/members", res.HeaderMap.Get("Location"))
+
+	// Destroy() none existing member
+	res = as.HTML("/members/%v", uuid.Nil).Delete()
+	as.Equal(http.StatusFound, res.Code)
+	as.Equal("/members", res.HeaderMap.Get("Location"))
 }
 
 func (as *ActionSuite) Test_MembersResource_B_Delete() {
@@ -66,7 +82,7 @@ func (as *ActionSuite) Test_MembersResource_B_Delete() {
 
 	as.loginAs(admin) //! login as admin again (just for simulator)
 
-	// Destroy() by admin, allowed, delete permanantly!
+	// Destroy() by admin, allowed, delete permanently!
 	res = as.HTML("/members/%v", other.ID).Delete()
 	as.Equal(http.StatusSeeOther, res.Code)
 	as.Equal("/members", res.HeaderMap.Get("Location"))

@@ -51,7 +51,7 @@ func (v MessagesResource) List(c buffalo.Context) error {
 	q := tx.PaginateFromParams(c.Params())
 	err := models.AllMy(q, dummyMember(c), messages, false)
 	if err != nil {
-		return errors.WithStack(err)
+		return utils.DOOPS(c, "while listing messages (params: %v, error: %v)", c.Params(), err)
 	}
 	c.Set("messages", messages)
 	c.Set("pagination", q.Paginator)
@@ -113,13 +113,13 @@ func (v MessagesResource) Dismiss(c buffalo.Context) error {
 	err := tx.BelongsTo(dummyMember(c)).
 		Where("message_id = ?", c.Param("message_id")).First(messageMap)
 	if err != nil {
-		return errors.WithStack(err)
+		return utils.InvalidAccess(c, "/messages", "while find message: %v, error: %v", c.Param("message_id"), err)
 	}
 
 	messageMap.IsRead = true
 	err = tx.Save(messageMap)
 	if err != nil {
-		return errors.WithStack(err)
+		return utils.DOOPS(c, "while saving message map: %v, error: %v", messageMap, err)
 	}
 	c.Flash().Add("success", t(c, "message.dismissed"))
 	return c.Redirect(http.StatusSeeOther, "/messages")
@@ -132,11 +132,11 @@ func (v MessagesResource) Destroy(c buffalo.Context) error {
 	message := &models.Message{}
 	err := tx.Find(message, c.Param("message_id"))
 	if err != nil {
-		return errors.WithStack(err)
+		return utils.InvalidAccess(c, "/messages", "while find message: %v, error: %v", c.Param("message_id"), err)
 	}
 	err = tx.Destroy(message)
 	if err != nil {
-		return errors.WithStack(err)
+		return utils.DOOPS(c, "while deleting message: %v, error: %v", message, err)
 	}
 	c.Flash().Add("success", "Message was destroyed successfully")
 	return c.Redirect(http.StatusSeeOther, "/messages")
@@ -178,8 +178,8 @@ func mLog(c buffalo.Context, p int, fac, form string, args ...interface{}) error
 	m := models.NewMessage(tx, dummyMember(c).ID, rcpts, nil, mesg, "",
 		models.ACUART, fac, p, true)
 	if m == nil {
-		c.Logger().Error("cannot create new message")
 		tx.TX.Rollback()
+		c.Logger().Error("cannot create new message")
 		return errors.New("cannot create new message")
 	}
 	return nil
@@ -193,8 +193,8 @@ func appMsg(c buffalo.Context, r *models.Members, content, form string, args ...
 	m := models.NewMessage(tx, dummyMember(c).ID, r, nil, mesg, content,
 		models.ACUART, MsgFacApp, MsgPriNote, false)
 	if m == nil {
-		c.Logger().Error("cannot create new message")
 		tx.TX.Rollback()
+		c.Logger().Error("cannot create new message")
 		return errors.New("cannot create new message")
 	}
 
@@ -226,8 +226,8 @@ func xMsg(c buffalo.Context, r *models.Members, app, fac string, prio int, mesg,
 	m := models.NewMessage(tx, dummyMember(c).ID, r, nil, mesg, content,
 		app, fac, prio, false)
 	if m == nil {
-		c.Logger().Error("cannot create new formatted message")
 		tx.TX.Rollback()
+		c.Logger().Error("cannot create new formatted message")
 		return errors.New("cannot create new formatted message")
 	}
 

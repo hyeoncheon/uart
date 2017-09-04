@@ -6,9 +6,10 @@ import (
 	"net/http"
 
 	"github.com/gobuffalo/buffalo"
-	"github.com/hyeoncheon/uart/models"
 	"github.com/markbates/pop"
-	"github.com/pkg/errors"
+
+	"github.com/hyeoncheon/uart/models"
+	"github.com/hyeoncheon/uart/utils"
 )
 
 // MessagingLogsResource is the resource for the messaging_log model
@@ -24,7 +25,7 @@ func (v MessagingLogsResource) List(c buffalo.Context) error {
 	q := tx.PaginateFromParams(c.Params())
 	err := q.Order("updated_at desc").All(messagingLogs)
 	if err != nil {
-		return errors.WithStack(err)
+		return utils.DOOPS(c, "while listing messaging logs (params: %v, error: %v)", c.Params(), err)
 	}
 	c.Set("messagingLogs", messagingLogs)
 	c.Set("pagination", q.Paginator)
@@ -38,11 +39,12 @@ func (v MessagingLogsResource) Destroy(c buffalo.Context) error {
 	messagingLog := &models.MessagingLog{}
 	err := tx.Find(messagingLog, c.Param("messaging_log_id"))
 	if err != nil {
-		return errors.WithStack(err)
+		c.Logger().Warnf("cannot found messaging log %v. error: %v", c.Param("messaging_log_id"), err)
+		return c.Redirect(http.StatusFound, "/")
 	}
 	err = tx.Destroy(messagingLog)
 	if err != nil {
-		return errors.WithStack(err)
+		return utils.DOOPS(c, "while deleting messaging log: %v, error: %v", messagingLog, err)
 	}
 	c.Flash().Add("success", "MessagingLog was destroyed successfully")
 	return c.Redirect(http.StatusSeeOther, "/messaging_logs")
