@@ -3,12 +3,8 @@ package models
 // Test coverage: 100% (Nothing to test)
 
 import (
-	"encoding/json"
 	"time"
 
-	"github.com/markbates/pop"
-	"github.com/markbates/validate"
-	"github.com/markbates/validate/validators"
 	"github.com/satori/go.uuid"
 )
 
@@ -31,8 +27,7 @@ type MessagingLog struct {
 
 // String returns representation of the log
 func (m MessagingLog) String() string {
-	jm, _ := json.Marshal(m)
-	return string(jm)
+	return m.Subject + " sent for " + m.SentFor
 }
 
 //** implementations for interfaces ---------------------------------
@@ -43,31 +38,3 @@ func (m MessagingLog) String() string {
 
 // MessagingLogs is an array of Messages
 type MessagingLogs []MessagingLog
-
-// String returns json marshalled representation of the logs
-func (m MessagingLogs) String() string {
-	jm, _ := json.Marshal(m)
-	return string(jm)
-}
-
-// Validate gets run every time you call a "pop.Validate" method.
-func (m *MessagingLog) Validate(tx *pop.Connection) (*validate.Errors, error) {
-	return validate.Validate(
-		&validators.StringIsPresent{Field: m.Status, Name: "Status"},
-		&validators.StringIsPresent{Field: m.QueueID, Name: "QueueID"},
-		&validators.StringIsPresent{Field: m.Response, Name: "Response"},
-		&validators.StringIsPresent{Field: m.SentTo, Name: "SentTo"},
-		&validators.StringIsPresent{Field: m.Subject, Name: "Subject"},
-		&validators.StringIsPresent{Field: m.Notes, Name: "Notes"},
-	), nil
-}
-
-// ValidateSave gets run every time you call "pop.ValidateSave" method.
-func (m *MessagingLog) ValidateSave(tx *pop.Connection) (*validate.Errors, error) {
-	return validate.NewErrors(), nil
-}
-
-// ValidateUpdate gets run every time you call "pop.ValidateUpdate" method.
-func (m *MessagingLog) ValidateUpdate(tx *pop.Connection) (*validate.Errors, error) {
-	return validate.NewErrors(), nil
-}

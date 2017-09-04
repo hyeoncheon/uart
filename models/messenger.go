@@ -3,7 +3,6 @@ package models
 // Test coverage: 100% (without interface methods)
 
 import (
-	"encoding/json"
 	"fmt"
 	"time"
 
@@ -77,12 +76,6 @@ func (m *Messenger) AccessibleBy(q *pop.Query, o Owner, f ...bool) *pop.Query {
 
 // Messengers is an array of Messengers
 type Messengers []Messenger
-
-// String is not required by pop and may be deleted
-func (m Messengers) String() string {
-	jm, _ := json.Marshal(m)
-	return string(jm)
-}
 
 // Validate gets run every time you call a "pop.Validate" method.
 func (m *Messenger) Validate(tx *pop.Connection) (*validate.Errors, error) {

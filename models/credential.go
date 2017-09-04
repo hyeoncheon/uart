@@ -4,7 +4,6 @@ package models
 // Test coverage: 100% (without interface methods)
 
 import (
-	"encoding/json"
 	"time"
 
 	"github.com/markbates/pop"
@@ -95,9 +94,3 @@ func (c *Credentials) AccessibleBy(q *pop.Query, o Owner, f ...bool) *pop.Query 
 
 // Credentials is an array of Credentials.
 type Credentials []Credential
-
-// String returns json marshalled representation of Credentials
-func (c Credentials) String() string {
-	jc, _ := json.Marshal(c)
-	return string(jc)
-}

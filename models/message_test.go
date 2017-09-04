@@ -42,4 +42,8 @@ func (ms *ModelSuite) Test_Message() {
 	mm := m.MemberMap(member.ID)
 	ms.NotNil(mm)
 	ms.Equal(member.ID, mm.MemberID)
+
+	err = ms.DB.Destroy(app)
+	ms.NoError(err)
+	ms.Equal(message1.AppCode, message1.AppName())
 }

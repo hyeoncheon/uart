@@ -27,6 +27,7 @@ func (ms *ModelSuite) Test_Role() {
 
 	ms.Equal(app.ID, role.App().ID)
 	ms.Equal(app.Name+"."+role.Name, role.String())
+	ms.Equal(0, len(*role.Members()))
 
 	verrs, err = models.DB.ValidateAndCreate(member)
 	ms.NoError(err)

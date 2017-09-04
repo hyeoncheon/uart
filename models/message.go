@@ -3,7 +3,6 @@ package models
 // Test coverage: 100% (without interface methods)
 
 import (
-	"encoding/json"
 	"time"
 
 	"github.com/markbates/pop"
@@ -205,12 +204,6 @@ func NewMessage(tx *pop.Connection, sndrID interface{}, rcpts, bccs *Members, su
 
 // Messages is an array of Messages
 type Messages []Message
-
-// String returns json marshalled representation of Messages
-func (m Messages) String() string {
-	jm, _ := json.Marshal(m)
-	return string(jm)
-}
 
 // Validate gets run every time you call a "pop.Validate" method.
 func (m *Message) Validate(tx *pop.Connection) (*validate.Errors, error) {

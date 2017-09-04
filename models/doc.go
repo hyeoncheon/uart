@@ -3,7 +3,6 @@ package models
 // Test coverage: 100% (without interface methods)
 
 import (
-	"encoding/json"
 	"time"
 
 	"github.com/markbates/pop"
@@ -66,12 +65,6 @@ func (d *Doc) AccessibleBy(q *pop.Query, o Owner, f ...bool) *pop.Query {
 
 // Docs is an array of Docs
 type Docs []Doc
-
-// String returns json marshalled representation of messengers
-func (d Docs) String() string {
-	jd, _ := json.Marshal(d)
-	return string(jd)
-}
 
 // Validate gets run every time you call a "pop.Validate" method.
 func (d *Doc) Validate(tx *pop.Connection) (*validate.Errors, error) {

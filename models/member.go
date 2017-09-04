@@ -4,7 +4,6 @@ package models
 // Test coverage: 100% (without interface methods)
 
 import (
-	"encoding/json"
 	"errors"
 	"strings"
 	"time"
@@ -427,12 +426,6 @@ func CreateMember(cred *Credential) (*Member, error) {
 
 // Members is an array of Members.
 type Members []Member
-
-// String returns json marshalled representation of Members
-func (m Members) String() string {
-	jm, _ := json.Marshal(m)
-	return string(jm)
-}
 
 // Validate gets run every time you call a "pop.Validate" method.
 func (m *Member) Validate(tx *pop.Connection) (*validate.Errors, error) {

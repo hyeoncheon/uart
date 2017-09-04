@@ -4,7 +4,6 @@ package models
 // Test coverage: 100% (without interface methods)
 
 import (
-	"encoding/json"
 	"html/template"
 	"time"
 
@@ -79,23 +78,7 @@ func (g AccessGrant) App() *App {
 // AccessGrants is array of AccessGrants
 type AccessGrants []AccessGrant
 
-// String is not required by pop and may be deleted
-func (g AccessGrants) String() string {
-	jg, _ := json.Marshal(g)
-	return string(jg)
-}
-
 // Validate gets run every time you call a "pop.Validate" method.
 func (g *AccessGrant) Validate(tx *pop.Connection) (*validate.Errors, error) {
 	return validate.Validate(), nil
-}
-
-// ValidateSave gets run every time you call "pop.ValidateSave" method.
-func (g *AccessGrant) ValidateSave(tx *pop.Connection) (*validate.Errors, error) {
-	return validate.NewErrors(), nil
-}
-
-// ValidateUpdate gets run every time you call "pop.ValidateUpdate" method.
-func (g *AccessGrant) ValidateUpdate(tx *pop.Connection) (*validate.Errors, error) {
-	return validate.NewErrors(), nil
 }

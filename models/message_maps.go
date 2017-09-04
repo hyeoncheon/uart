@@ -29,9 +29,3 @@ func (m MessageMap) String() string {
 
 // MessageMaps is an array of message map
 type MessageMaps []MessageMap
-
-// String returns human readable string of model message map.
-func (m MessageMaps) String() string {
-	jm, _ := json.Marshal(m)
-	return string(jm)
-}

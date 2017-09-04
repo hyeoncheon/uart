@@ -4,7 +4,6 @@ package models
 // Test coverage: 100% (without interface methods)
 
 import (
-	"encoding/json"
 	"time"
 
 	"github.com/markbates/pop"
@@ -82,12 +81,6 @@ func GetAppRole(appCode, roleCode string) *Role {
 
 // Roles is array of Role.
 type Roles []Role
-
-// String is not required by pop and may be deleted
-func (r Roles) String() string {
-	jr, _ := json.Marshal(r)
-	return string(jr)
-}
 
 // Validate gets run every time you call a "pop.Validate" method.
 func (r *Role) Validate(tx *pop.Connection) (*validate.Errors, error) {

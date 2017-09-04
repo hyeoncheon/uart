@@ -7,10 +7,12 @@ import (
 )
 
 var messagingLog = &models.MessagingLog{
-	Status: "sent",
+	Subject: "New Member...",
+	SentFor: "Tony...",
+	Status:  "sent",
 }
 
 func (ms *ModelSuite) Test_MessagingLog() {
-	// Nothing to test
-	ms.Equal("sent", messagingLog.Status)
+	m := messagingLog
+	ms.Equal(m.Subject+" sent for "+m.SentFor, m.String())
 }
