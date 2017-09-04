@@ -58,21 +58,22 @@ func authorizeHandler(c buffalo.Context) error {
 		logger.Error("invalid request!")
 		return c.Redirect(http.StatusBadRequest, "/")
 	}
+
+	user := currentMember(c)
+	if !user.IsActive {
+		c.Flash().Add("danger", t(c, "no.perm.inactive.member"))
+		return c.Redirect(http.StatusFound, "/membership/me")
+	}
+
 	if ar := svr.HandleAuthorizeRequest(resp, c.Request()); ar != nil {
 		app := ar.Client.(*AppClient).GetApp()
-		user := currentMember(c)
-		if !user.IsActive {
-			c.Flash().Add("danger", t(c, "no.perm.inactive.member"))
-			return c.Redirect(http.StatusTemporaryRedirect, "/membership/me")
-		}
-
 		if ar.Authorized = user.Granted(app.ID, ar.Scope); !ar.Authorized {
 			logger.Warnf("request for grant: %v, %v, %v", app, user, ar.Scope)
 			c.Set("app", app)
 			c.Set("scope", ar.Scope)
 			c.Set("appkey", ar.Client.GetId())
 			c.Session().Set("origin", c.Request().RequestURI)
-			return c.Render(200, r.HTML("oauth2/grant.html"))
+			return c.Render(http.StatusOK, r.HTML("oauth2/grant.html"))
 		}
 		logger.Infof("app %v has grant for %v with scope %v", app, user, ar.Scope)
 
@@ -222,6 +223,10 @@ func (s *Provider) LoadAuthorize(code string) (*osin.AuthorizeData, error) {
 	logger.Debug("op.load authorize for ", code[0:9])
 	if d, ok := s.authorize[code]; ok {
 		return d, nil
+	}
+	logger.Errorf("AUTHORIZE DATA NOT FOUND for code: -%s-", code)
+	for k := range s.authorize {
+		logger.Debugf("store has authorize code -%s-", k)
 	}
 	return nil, osin.ErrNotFound
 }

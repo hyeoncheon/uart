@@ -77,6 +77,7 @@ func (as *ActionSuite) Test_MembersResource_B_Delete() {
 func (as *ActionSuite) Test_MembersResource_J_InvalidAccess() {
 	as.setupMembers()
 	as.activateMember(other)
+	as.loginAs(other)
 
 	// List(), denied by role based blocker
 	permissionDenied(as, func(*ActionSuite) *willie.Response {

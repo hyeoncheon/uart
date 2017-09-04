@@ -46,6 +46,14 @@ func (as *ActionSuite) Test_MessengersResource_A_Owner() {
 	as.NoError(err)
 	as.Equal("alert2@example.com", prim.Value)
 
+	// Update() by owner, but invalid value
+	prim.Value = ""
+	res = as.HTML("/messengers/%v", prim.ID).Put(prim)
+	as.Equal(http.StatusUnprocessableEntity, res.Code)
+	err = as.DB.Reload(prim)
+	as.NoError(err)
+	as.Equal("alert2@example.com", prim.Value)
+
 	// SetPrimary() non primary messenger by owner, allowed
 	res = as.HTML("/messengers/%v/setprimary", scnd.ID).Get()
 	as.Equal(http.StatusSeeOther, res.Code)
@@ -162,4 +170,13 @@ func setupTwoMessengerForMember(as *ActionSuite, m *models.Member) {
 	as.Equal("/membership/me", res.HeaderMap.Get("Location"))
 	scnd := &(*m.Messengers())[1]
 	as.NotEqual(uuid.Nil, scnd.ID)
+
+	// Create() by normal member, notification messenger
+	notification := msgrTemplate
+	notification.Priority = models.MessengerPriority["Notification"]
+	res = as.HTML("/messengers").Post(&notification)
+	as.Equal(http.StatusSeeOther, res.Code)
+	as.Equal("/membership/me", res.HeaderMap.Get("Location"))
+	noti := m.PrimaryNotifier()
+	as.NotEqual(uuid.Nil, noti.ID)
 }

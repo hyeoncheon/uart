@@ -40,8 +40,9 @@ func currentMember(c buffalo.Context) *models.Member {
 }
 
 func dummyMember(c buffalo.Context) *models.Member {
+	dummy := &models.Member{}
 	if id, ok := c.Value("member_id").(uuid.UUID); ok {
-		return &models.Member{ID: id}
+		dummy.ID = id
 	}
-	return &models.Member{}
+	return dummy
 }

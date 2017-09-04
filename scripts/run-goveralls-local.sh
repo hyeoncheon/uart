@@ -9,8 +9,6 @@ buffalo db create -e test
 buffalo db schema dump -e development
 buffalo db schema load -e test
 
-./scripts/keygen.sh 
-
 export GO_ENV="test"
 export UART_HOME=`pwd`
 goveralls -repotoken $COVERALLS_TOKEN

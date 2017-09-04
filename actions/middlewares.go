@@ -17,7 +17,7 @@ func LoginAsTester(next buffalo.Handler) buffalo.Handler {
 	return func(c buffalo.Context) error {
 		if ENV == "test" {
 			member := &models.Member{}
-			models.DB.Order("updated_at desc").First(member)
+			models.DB.Where("mobile LIKE '2017%'").Order("updated_at desc").First(member)
 			if ENV == "test" && member.ID != uuid.Nil {
 				c.Logger().Info("### ------ LoginAsTester: ", member)
 				c.Session().Set("member_id", member.ID)

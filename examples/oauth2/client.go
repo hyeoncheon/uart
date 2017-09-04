@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -45,6 +46,15 @@ func main() {
 		}
 		fmt.Printf("phase #2: get access token: %v %v %v\n",
 			t.TokenType, t.AccessToken, t.RefreshToken)
+		if t.TokenType == "" || t.AccessToken == "" {
+			w.Header().Set("Content-Type", "application/json")
+			js, err := json.Marshal(t)
+			if err != nil {
+				w.Write([]byte(`{"error":"cannot marshalling the output"}`))
+			}
+			w.Write([]byte(js))
+			return
+		}
 
 		// try to decode access token as it is jwt.
 		const pemfile = "../../files/jwt.public.pem"

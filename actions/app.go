@@ -1,7 +1,6 @@
 package actions
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"path"
@@ -14,6 +13,7 @@ import (
 	"github.com/gobuffalo/packr"
 	"github.com/gorilla/sessions"
 	"github.com/markbates/goth/gothic"
+	"github.com/pkg/errors"
 
 	"github.com/hyeoncheon/uart/jobs"
 	"github.com/hyeoncheon/uart/models"
@@ -50,9 +50,7 @@ func App() *buffalo.App {
 		app.Logger.Info("UART Home is ", uartHome)
 
 		if _, err := os.Stat(uartHome + "/messages/"); err != nil {
-			app.Logger.Error("Abort! message template directory not found!")
-			fmt.Println("Abort! message template directory not found!")
-			os.Exit(1)
+			app.Stop(errors.New("abort! message template not found"))
 		}
 
 		// register all taskers

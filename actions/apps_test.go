@@ -5,6 +5,7 @@ package actions_test
 // testing with flow (processFlowAppmanRole)
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/hyeoncheon/uart/models"
@@ -20,22 +21,39 @@ const (
 func (as *ActionSuite) Test_AppsResource_A_All_As_Appman() {
 	as.setupMembers()
 	as.activateMember(appman)
-	as.loginAs(appman)
-
 	processFlowAppmanRole(as)
-	successCreateTestingApp(as)
 
-	// List()
+	as.loginAs(admin) //! login as admin ----------------------------
+	uart := models.GetAppByCode(models.ACUART)
+
+	// List() by admin
 	res := as.HTML("/apps").Get()
 	as.Equal(http.StatusOK, res.Code)
-	as.Contains(res.Body.String(), AppName)
+	as.Contains(res.Body.String(), fmt.Sprintf(`href="/apps/%v/edit`, uart.ID))
+
+	// Show() by admin
+	res = as.HTML("/apps/%v", uart.ID).Get()
+	as.Equal(http.StatusOK, res.Code)
+	as.Contains(res.Body.String(), uart.Name)
+
+	as.loginAs(appman) //! login as appman --------------------------
+	successCreateTestingApp(as)
+	app := models.GetAppByCode(AppCode)
+
+	res = as.HTML("/apps").Post(&models.App{})
+	as.Equal(http.StatusUnprocessableEntity, res.Code)
+
+	// List()
+	res = as.HTML("/apps").Get()
+	as.Equal(http.StatusOK, res.Code)
+	as.Contains(res.Body.String(), fmt.Sprintf(`href="/apps/%v/edit`, app.ID))
+	as.NotContains(res.Body.String(), fmt.Sprintf(`href="/apps/%v/edit`, uart.ID))
 
 	// New()
 	res = as.HTML("/apps/new").Get()
 	as.Equal(http.StatusOK, res.Code)
 	as.Contains(res.Body.String(), "form action=")
 
-	app := models.GetAppByCode(AppCode)
 	as.NotEqual(uuid.Nil, app.ID, "cannot found app with code %v", AppCode)
 	as.NotEqual("", app.AppKey, "appKey not set! %v", app.AppKey)
 
@@ -50,11 +68,37 @@ func (as *ActionSuite) Test_AppsResource_A_All_As_Appman() {
 	as.Equal(http.StatusSeeOther, res.Code)
 	as.Contains(res.HeaderMap.Get("Location"), "/apps/")
 
+	// Update(), with invalid value
+	app.Name = ""
+	res = as.HTML("/apps/%v", app.ID).Put(app)
+	as.Equal(http.StatusUnprocessableEntity, res.Code)
+
 	// Show()
 	res = as.HTML("/apps/%v", app.ID).Get()
 	as.Equal(http.StatusOK, res.Code)
 	as.Contains(res.Body.String(), AppName)
 	as.Contains(res.Body.String(), "Testing Description")
+
+	// Edit(), denied by ownership function
+	permissionDenied(as, func(*ActionSuite) *willie.Response {
+		return as.HTML("/apps/%v/edit", uart.ID).Get()
+	})
+
+	// Update(), denied by ownership function
+	uart.Description = "I will rule you"
+	permissionDenied(as, func(*ActionSuite) *willie.Response {
+		return as.HTML("/apps/%v", uart.ID).Put(uart)
+	})
+
+	// Show(), denied by ownership function
+	permissionDenied(as, func(*ActionSuite) *willie.Response {
+		return as.HTML("/apps/%v", uart.ID).Get()
+	})
+
+	// Delete(), denied by ownership function
+	permissionDenied(as, func(*ActionSuite) *willie.Response {
+		return as.HTML("/apps/%v", uart.ID).Delete()
+	})
 
 	res = as.HTML("/apps/%v", app.ID).Delete()
 	as.Equal(http.StatusSeeOther, res.Code)
@@ -63,7 +107,7 @@ func (as *ActionSuite) Test_AppsResource_A_All_As_Appman() {
 
 func (as *ActionSuite) Test_AppsResource_J_All_As_Other() {
 	as.setupMembers()
-	as.loginAs(other)
+	as.loginAs(other) //! login as other
 	as.activateMember(other)
 
 	// List(), denied by role based blocker
@@ -104,7 +148,7 @@ func (as *ActionSuite) Test_AppsResource_J_All_As_Other() {
 func (as *ActionSuite) Test_AppsResource_O_GrantFlow() {
 	as.setupMembers()
 	as.activateMember(appman)
-	as.loginAs(appman)
+	as.loginAs(appman) //! login as appman
 
 	processFlowAppmanRole(as)
 	successCreateTestingApp(as)
@@ -135,6 +179,8 @@ func (as *ActionSuite) Test_AppsResource_O_GrantFlow() {
 	as.Equal(http.StatusSeeOther, res.Code)
 	as.Equal("/membership/me", res.HeaderMap.Get("Location"))
 }
+
+/**/
 
 //** test functions -------------------------------------------------
 

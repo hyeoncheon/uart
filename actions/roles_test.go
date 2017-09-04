@@ -172,6 +172,8 @@ func (as *ActionSuite) Test_RolesResource_C_RoleRequestCycle() {
 	as.Equal(0, len(*other.AppRoles(app.ID, true)))
 }
 
+/**/
+
 //** test functions -------------------------------------------------
 
 // used by Test_AppsResource_A_All_As_Appman

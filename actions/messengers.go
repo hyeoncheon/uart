@@ -165,18 +165,11 @@ func (v MessengersResource) SetPrimary(c buffalo.Context) error {
 	}
 	messenger.IsPrimary = true
 
-	verrs, err := tx.ValidateAndUpdate(messenger)
+	err = tx.Save(messenger)
 	if err != nil {
 		tx.TX.Rollback()
 		c.Flash().Add("danger", t(c, "oops.cannot.update.messenger"))
 		return c.Redirect(http.StatusFound, "/apps")
-	}
-	if verrs.HasAny() {
-		c.Set("messenger", messenger)
-		c.Set("m_priority", models.MessengerPriority)
-		c.Set("m_method", models.MessengerMethod)
-		c.Set("errors", verrs)
-		return c.Render(422, r.HTML("messengers/edit.html"))
 	}
 	c.Flash().Add("success", t(c, "messenger.was.updated.successfully"))
 	return c.Redirect(http.StatusSeeOther, "/membership/me")

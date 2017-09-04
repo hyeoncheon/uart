@@ -38,11 +38,20 @@ func (as *ActionSuite) Test_DocsResource_A_CreateAndCheck() {
 	as.NoError(err)
 	as.NotEqual(uuid.Nil, doc.ID)
 
+	// Create() with invalid values
+	doc.Title = ""
+	res = as.HTML("/docs").Post(doc)
+	as.Equal(http.StatusUnprocessableEntity, res.Code)
+
 	// Edit()
 	res = as.HTML("/docs/%v/edit", doc.ID).Get()
 	as.Equal(http.StatusOK, res.Code)
 	as.Contains(res.Body.String(), "form action=")
 	as.Contains(res.Body.String(), doc.Title)
+
+	// Update() with invalid values (Title == "")
+	res = as.HTML("/docs/%v", doc.ID).Put(doc)
+	as.Equal(http.StatusUnprocessableEntity, res.Code)
 
 	// Update()
 	doc.Title = "I Want Out (Helloween)"
@@ -67,6 +76,33 @@ func (as *ActionSuite) Test_DocsResource_A_CreateAndCheck() {
 	// Destroy()
 	res = as.HTML("/docs/%v", doc.ID).Delete()
 	as.Equal(http.StatusSeeOther, res.Code)
+	as.Equal("/docs", res.HeaderMap.Get("Location"))
+
+	//! ACCESS BY ADMIN BUT NOT OWNER
+
+	uartAdmin := models.GetAppRole(models.ACUART, models.RCAdmin)
+	appman.AddRole(as.DB, uartAdmin, true)
+
+	as.loginAs(appman) //! login as appman, admin but not owner
+
+	// Edit() as appman, denied
+	res = as.HTML("/docs/%v/edit", doc.ID).Get()
+	as.Equal(http.StatusFound, res.Code)
+	as.Equal("/docs", res.HeaderMap.Get("Location"))
+
+	// Update() as appman, denied
+	res = as.HTML("/docs/%v", doc.ID).Put(doc)
+	as.Equal(http.StatusFound, res.Code)
+	as.Equal("/docs", res.HeaderMap.Get("Location"))
+
+	// Delete() as appman, denied
+	res = as.HTML("/docs/%v", doc.ID).Delete()
+	as.Equal(http.StatusFound, res.Code)
+	as.Equal("/docs", res.HeaderMap.Get("Location"))
+
+	// Publish() as appman, denied
+	res = as.HTML("/docs/%v/publish", doc.ID).Get()
+	as.Equal(http.StatusFound, res.Code)
 	as.Equal("/docs", res.HeaderMap.Get("Location"))
 }
 
