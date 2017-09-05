@@ -4,6 +4,7 @@ package models_test
 
 import (
 	"github.com/hyeoncheon/uart/models"
+	uuid "github.com/satori/go.uuid"
 )
 
 func (ms *ModelSuite) Test_AccessGrant() {
@@ -29,4 +30,13 @@ func (ms *ModelSuite) Test_AccessGrant() {
 	ms.Contains(gd, "<p>Dummy Member granted scope <code>profile</code> to Test App")
 	ms.Equal(member.ID, grant.Member().ID)
 	ms.Equal(app.ID, grant.App().ID)
+}
+
+func (ms *ModelSuite) Test_AccessGrant_Invalid() {
+	ag := &models.AccessGrant{
+		AppID:    uuid.Nil,
+		MemberID: uuid.Nil,
+	}
+	str := ag.String()
+	ms.Equal("Broken Access Grant!", str)
 }

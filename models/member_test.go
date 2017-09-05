@@ -31,12 +31,16 @@ func (ms *ModelSuite) Test_Member() {
 	ms.NoError(err)
 	ms.False(verrs.HasAny())
 
-	// Grant
+	// Grant(), Granted()
 	err = member.Grant(models.DB, app, "profile")
 	ms.NoError(err)
 
 	isGranted := member.Granted(app.ID, "profile")
 	ms.True(isGranted)
+
+	// Granted() with invalid scope
+	isGranted = member.Granted(app.ID, "profile auth")
+	ms.False(isGranted)
 
 	grants := member.Grants()
 	ms.NotNil(grants)
@@ -82,8 +86,16 @@ func (ms *ModelSuite) Test_Member() {
 	roleCodes := member.GetAppRoleCodes(app.Code)
 	ms.Equal(1, len(roleCodes))
 
+	// GetAppRoleCodes() with non existing app
+	roleCodes = member.GetAppRoleCodes("NoWhereApp")
+	ms.Equal(0, len(roleCodes))
+
 	err = member.RemoveRole(models.DB, role)
 	ms.NoError(err)
+
+	// RemoveRole() with invalid role
+	err = member.RemoveRole(models.DB, role)
+	ms.Error(err)
 
 	hasRole = member.HasRole(role.ID)
 	ms.False(hasRole)
@@ -113,6 +125,10 @@ func (ms *ModelSuite) Test_Member() {
 
 	err = member.MessageMarkAsSent(message1.ID)
 	ms.NoError(err)
+
+	// MessageMarkAsSent() with invalid ID
+	err = member.MessageMarkAsSent(uuid.Nil)
+	ms.Error(err)
 
 	alert1.MemberID = member.ID
 	alert1.IsPrimary = true
@@ -146,6 +162,18 @@ func (ms *ModelSuite) Test_Member() {
 	mid := member.GetID()
 	ms.Equal(member.ID, mid)
 
+	// GetMember() with invalid ID
+	mem0 := models.GetMember(uuid.Nil)
+	ms.Equal(uuid.Nil, mem0.ID)
+
 	mem1 := models.GetMember(member.ID)
 	ms.Equal(member.ID, mem1.ID)
+}
+
+func (ms *ModelSuite) Test_Member_InvalidAccess() {
+	// Revoke() with invalid value
+	mem := &models.Member{}
+	app := &models.App{}
+	err := mem.Revoke(ms.DB, app)
+	ms.Error(err)
 }

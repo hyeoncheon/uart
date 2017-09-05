@@ -21,7 +21,7 @@ func (ms *ModelSuite) Test_App() {
 	ms.NotEqual(ak, app.AppKey)
 	ms.NotEqual(as, app.AppSecret)
 
-	app = models.NewApp(app.Name, app.Code, app.Description, "http://localhost", "http://localhost/auth")
+	app = models.NewApp(app.Name, app.Code, app.Description, "http://localhost", "http://localhost/auth", "image")
 	verrs, err := models.DB.ValidateAndCreate(app)
 	ms.NoError(err)
 	ms.False(verrs.HasAny())

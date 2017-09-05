@@ -215,13 +215,3 @@ func (m *Message) Validate(tx *pop.Connection) (*validate.Errors, error) {
 		&validators.IntIsPresent{Field: m.Priority, Name: "Priority"},
 	), nil
 }
-
-// ValidateSave gets run every time you call "pop.ValidateSave" method.
-func (m *Message) ValidateSave(tx *pop.Connection) (*validate.Errors, error) {
-	return validate.NewErrors(), nil
-}
-
-// ValidateUpdate gets run every time you call "pop.ValidateUpdate" method.
-func (m *Message) ValidateUpdate(tx *pop.Connection) (*validate.Errors, error) {
-	return validate.NewErrors(), nil
-}

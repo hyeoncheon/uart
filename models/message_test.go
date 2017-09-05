@@ -38,6 +38,8 @@ func (ms *ModelSuite) Test_Message() {
 	models.DB.All(members)
 	m := models.NewMessage(models.DB, member.ID, members, nil, message1.Subject, message1.Content, app.Code, models.MsgFacSecu, models.MsgPriAlert, true)
 	ms.NotNil(m)
+	m = models.NewMessage(models.DB, member.ID, nil, members, message1.Subject, message1.Content, app.Code, models.MsgFacSecu, models.MsgPriAlert, true)
+	ms.NotNil(m)
 
 	mm := m.MemberMap(member.ID)
 	ms.NotNil(mm)

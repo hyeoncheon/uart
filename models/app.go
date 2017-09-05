@@ -4,7 +4,6 @@ package models
 // Test coverage: 100% (without interface methods)
 
 import (
-	"encoding/json"
 	"time"
 
 	"github.com/markbates/pop"
@@ -229,12 +228,6 @@ func createUARTApp(tx *pop.Connection) *App {
 
 // Apps is array of App.
 type Apps []App
-
-// String returns json marshalled representation of Apps
-func (a Apps) String() string {
-	ja, _ := json.Marshal(a)
-	return string(ja)
-}
 
 // Validate gets run every time you call a "pop.Validate" method.
 func (a *App) Validate(tx *pop.Connection) (*validate.Errors, error) {

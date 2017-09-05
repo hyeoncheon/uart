@@ -40,15 +40,6 @@ func init() {
 			"timeYYMD": func(t time.Time) string {
 				return t.Local().Format("2006-01-02")
 			},
-			"timeMD": func(t time.Time) string {
-				return t.Local().Format("01-02")
-			},
-			"timeHMS": func(t time.Time) string {
-				return t.Local().Format("15:04:05")
-			},
-			"timeHM": func(t time.Time) string {
-				return t.Local().Format("15:04")
-			},
 		},
 	})
 }

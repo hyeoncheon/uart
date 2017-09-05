@@ -263,7 +263,7 @@ func (m *Member) Messengers(args ...int) *Messengers {
 	}
 	err := q.All(messengers)
 	if err != nil {
-		log.Warnf("cannot found messengers", err)
+		log.Warn("cannot found messengers: ", err)
 	}
 	return messengers
 }
@@ -287,7 +287,7 @@ func (m *Member) PrimaryAlert() *Messenger {
 		Where("priority = ?", MessengerPriority["Alert"]).
 		Where("is_primary = ?", true).First(messenger)
 	if err != nil {
-		log.Warn("cannot found primary messenger ", err)
+		log.Warn("cannot found primary messenger: ", err)
 	}
 	return messenger
 }
@@ -299,7 +299,7 @@ func (m *Member) PrimaryNotifier() *Messenger {
 		Where("priority = ?", MessengerPriority["Notification"]).
 		Where("is_primary = ?", true).First(messenger)
 	if err != nil {
-		log.Warnf("cannot found primary messenger", err)
+		log.Warn("cannot found primary messenger: ", err)
 	}
 	return messenger
 }

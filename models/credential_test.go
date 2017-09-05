@@ -3,6 +3,8 @@ package models_test
 // Test coverage: 100% (without interface methods)
 
 import (
+	uuid "github.com/satori/go.uuid"
+
 	"github.com/hyeoncheon/uart/models"
 )
 
@@ -22,4 +24,12 @@ func (ms *ModelSuite) Test_Credential() {
 
 	ms.Equal(mem.ID, cred.Owner().ID)
 	ms.Equal(mem.ID, cred.OwnerID())
+}
+
+func (ms *ModelSuite) Test_Credential_Invalid() {
+	cred := &models.Credential{
+		MemberID: uuid.Nil,
+	}
+	member := cred.Owner()
+	ms.Equal(uuid.Nil, member.ID)
 }

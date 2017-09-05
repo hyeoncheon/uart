@@ -58,3 +58,14 @@ func (ms *ModelSuite) Test_Role() {
 	ms.Equal(role.ID, rm.Role().ID)
 	ms.Equal(member.ID, rm.Member().ID)
 }
+
+func (ms *ModelSuite) Test_RoleMap_Invalid() {
+	rm := &models.RoleMap{
+		RoleID:   uuid.Nil,
+		MemberID: uuid.Nil,
+	}
+	role := rm.Role()
+	ms.Equal(uuid.Nil, role.ID)
+	member := rm.Member()
+	ms.Equal(uuid.Nil, member.ID)
+}
