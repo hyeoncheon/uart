@@ -10,6 +10,9 @@
 /public/assets/
 /uart
 
+/migrations/schema.sql
+/package-lock.json
+
 /debug
 /.vscode/
 /examples/**/client

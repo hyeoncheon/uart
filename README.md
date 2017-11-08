@@ -90,29 +90,120 @@ $
 ```
 
 
-### Install and Build UART
+### Get and Build UART
+
+#### Get Source
 
 ```console
 $ mkdir -p $GOPATH/src/github.com/hyeoncheon
 $ cd $GOPATH/src/github.com/hyeoncheon
 $ git clone https://github.com/hyeoncheon/uart.git
 $ cd uart
-$ go get -t -v ./...
+$ 
+```
+
+#### Vendoring with Godep
+
+```console
+$ go get -u github.com/golang/dep/cmd/dep
+$ dep ensure
+$ 
+```
+
+#### Get Buffalo and Build
+
+```console
 $ go get -u github.com/gobuffalo/buffalo/buffalo
-$ # buffalo setup
 $ npm install --no-progress
 $ buffalo build --static
 $ ls bin/uart
 $ 
 ```
 
-## Usage
+#### Install Files
+
+```console
+$ scripts/keygen.sh
+$ mkdir -p $UART_HOME
+$ install bin/uart $UART_HOME
+$ cp -a messages files locales templates $UART_HOME
+$ cp -a uart.conf $UART_HOME
+$ cp -a supports/uart.service $UART_HOME
+$ 
+```
+
+and register it as system service
+
+```console
+$ sudo ln -s /opt/hyeoncheon/uart/uart.service /etc/systemd/system/
+$ sudo systemctl is-enabled uart
+linked
+$ 
+```
 
 
-### Configure
+## Setup and Run
+
+### Configure Database
+
+For development,
+
+```console
+$ buffalo db create && buffalo db migrate
+$ 
+```
+
+or 
+
+```console
+$ GO_ENV=production buffalo db create && GO_ENV=production buffalo db migrate
+$ 
+```
+
+for production.
 
 
 ### Run
+
+```console
+$ sudo systemctl start uart
+$ sudo systemctl status uart
+● uart.service - UART server
+   Loaded: loaded (/opt/hyeoncheon/uart/uart.service; linked; vendor preset: enabled)
+   Active: active (running) since Wed 2017-11-08 19:03:54 KST; 30min ago
+ Main PID: 15264 (uart)
+    Tasks: 8
+   Memory: 7.7M
+      CPU: 352ms
+   CGroup: /system.slice/uart.service
+           └─15264 /opt/hyeoncheon/uart/uart
+
+<...>
+$ 
+```
+
+
+## OK, Show Me the Shots
+
+#### Login Screen
+
+![UART Login](docs/uart-login.png)
+
+#### Register New App
+
+![UART New App](docs/uart-new-app.png)
+
+#### Registered Apps
+
+![UART Apps](docs/uart-apps.png)
+
+#### App Details
+
+![UART App Details](docs/uart-app-details.png)
+
+#### Membership
+
+![UART Membership](docs/uart-membership.png)
 
 
 ## TODO

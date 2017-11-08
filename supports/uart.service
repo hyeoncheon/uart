@@ -1,0 +1,20 @@
+[Unit]
+Description=UART server
+After=network.target
+ConditionPathExists=!/opt/hyeoncheon/uart/uart_not_to_be_run
+
+[Service]
+EnvironmentFile=-/opt/hyeoncheon/uart/uart.conf
+WorkingDirectory=/opt/hyeoncheon/uart
+ExecStart=/opt/hyeoncheon/uart/uart
+ExecReload=/bin/kill -INT $MAINPID
+KillMode=process
+Restart=on-failure
+RestartPreventExitStatus=255
+Type=simple
+User=uart
+Group=zees
+SyslogFacility=local0
+
+[Install]
+WantedBy=multi-user.target

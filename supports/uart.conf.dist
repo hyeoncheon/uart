@@ -1,0 +1,23 @@
+# environment for uart
+# vim: set nowrap syntax=sh:
+
+GO_ENV='production'
+SESSION_SECRET='fdb3aa36...dC8c55b9'
+SESSION_NAME='_uart_session'
+HOST='http://uart.example.com'
+
+GPLUS_KEY='0000...-abcd...6789.apps.googleusercontent.com'
+GPLUS_SECRET='c4m1...vwTu'
+GITHUB_KEY='6d8c...a774'
+GITHUB_SECRET='7d27...9203'
+FACEBOOK_KEY='1483...1548'
+FACEBOOK_SECRET='b658...b58a'
+CF_KEY='b8B2...Hcwv'
+CF_SECRET='Vt7D...lCbT'
+
+MG_API_KEY='key-784e...cf53'
+MG_DOMAIN='mg.example.com'
+MG_URL='https://api.mailgun.net/v3'
+MAIL_SENDER='C-3PO <c3po@example.com>'
+
+
