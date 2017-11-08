@@ -95,7 +95,7 @@
   branch = "master"
   name = "github.com/gobuffalo/suite"
   packages = ["."]
-  revision = "985d7acf9588fa61c095bc5d357483e00e511ea3"
+  revision = "b46145fb74936231961caaab1062d5315dfea47c"
 
 [[projects]]
   name = "github.com/gobuffalo/tags"
