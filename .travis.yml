@@ -1,31 +1,44 @@
 language: go
 
 go:
-  - 1.8.x
+  - "1.9"
+  - "1.10"
 
 env:
-  - GO_ENV=test
+  global:
+    - GO_ENV=test
+    - CC_TEST_REPORTER_ID=871aa7166cc89677d1839bca6a9213454dcc94344f8ef937f07360e255cb774c
 
 before_install:
-  - curl -L -s https://github.com/golang/dep/releases/download/v0.3.2/dep-linux-amd64 -o $GOPATH/bin/dep
-  - chmod +x $GOPATH/bin/dep
+  - go get -u github.com/golang/dep/cmd/dep
+  - go get -u github.com/gobuffalo/buffalo/buffalo
 
 install:
   - dep ensure
+  - mkdir -p $TRAVIS_BUILD_DIR/public/assets
+  - npm install --no-progress
+  - sh ./scripts/keygen.sh
+  - cp database.yml.travis database.yml
 
 before_script:
-  - mkdir -p $TRAVIS_BUILD_DIR/public/assets
-  - go get github.com/gobuffalo/buffalo/buffalo
-  - go get github.com/mattn/goveralls
-  - npm install --no-progress
-  - cp database.yml.travis database.yml
+  - go get -u github.com/mattn/goveralls
+  - go get -u github.com/AlekSi/gocoverutil
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
+  - ./cc-test-reporter before-build
+
+script:
+  - buffalo build
+  #
   # `mysql ...` instead of `buffalo db create`. work-around for empty password.
   - mysql -e 'CREATE DATABASE hc_uart_test;'
   - buffalo db migrate -e test
-  - sh ./scripts/keygen.sh
-
-go_import_path: github.com/hyeoncheon/uart
-
-script:
-  - buffalo build --static
+  - UART_HOME=`pwd` GO_ENV=test gocoverutil -coverprofile=c.out -ignore=./vendor/... test -covermode=count ./... && ./cc-test-reporter after-build --exit-code 0
+  #
+  - mysql -e 'DROP DATABASE hc_uart_test;'
+  - mysql -e 'CREATE DATABASE hc_uart_test;'
+  - buffalo db migrate -e test
   - UART_HOME=`pwd` goveralls -service=travis-ci
+
+after_script: true
+
