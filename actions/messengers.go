@@ -7,8 +7,8 @@ import (
 	"net/http"
 
 	"github.com/gobuffalo/buffalo"
-	"github.com/markbates/pop"
-	"github.com/satori/go.uuid"
+	"github.com/gobuffalo/pop"
+	"github.com/gobuffalo/uuid"
 
 	"github.com/hyeoncheon/uart/models"
 	"github.com/hyeoncheon/uart/utils"

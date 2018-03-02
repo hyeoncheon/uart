@@ -7,10 +7,10 @@ import (
 	"html/template"
 	"time"
 
-	"github.com/markbates/pop"
-	"github.com/markbates/validate"
+	"github.com/gobuffalo/pop"
+	"github.com/gobuffalo/uuid"
+	"github.com/gobuffalo/validate"
 	"github.com/russross/blackfriday"
-	"github.com/satori/go.uuid"
 )
 
 const (

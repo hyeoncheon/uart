@@ -8,8 +8,8 @@ package actions_test
 import (
 	"net/http"
 
+	uuid "github.com/gobuffalo/uuid"
 	"github.com/markbates/willie"
-	uuid "github.com/satori/go.uuid"
 )
 
 func (as *ActionSuite) Test_MembersResource_A_CreateUpdateList() {

@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/satori/go.uuid"
+	"github.com/gobuffalo/uuid"
 )
 
 // MessageMap is structure for connection messages and members

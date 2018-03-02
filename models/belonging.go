@@ -5,7 +5,7 @@ package models
 import (
 	"reflect"
 
-	"github.com/markbates/pop"
+	"github.com/gobuffalo/pop"
 )
 
 // Owner is an interface for model which have belongings

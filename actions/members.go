@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/gobuffalo/buffalo"
-	"github.com/markbates/pop"
+	"github.com/gobuffalo/pop"
 
 	"github.com/hyeoncheon/uart/models"
 	"github.com/hyeoncheon/uart/utils"

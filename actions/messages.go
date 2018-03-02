@@ -11,8 +11,8 @@ import (
 	"text/template"
 
 	"github.com/gobuffalo/buffalo"
+	"github.com/gobuffalo/pop"
 	"github.com/markbates/inflect"
-	"github.com/markbates/pop"
 	"github.com/pkg/errors"
 
 	"github.com/hyeoncheon/uart/jobs"

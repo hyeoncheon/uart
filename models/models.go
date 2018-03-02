@@ -5,7 +5,7 @@ package models
 import (
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/envy"
-	"github.com/markbates/pop"
+	"github.com/gobuffalo/pop"
 )
 
 // DB and others: shared variables for models

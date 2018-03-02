@@ -1,8 +1,8 @@
 package models_test
 
 import (
+	"github.com/gobuffalo/uuid"
 	"github.com/hyeoncheon/uart/models"
-	"github.com/satori/go.uuid"
 )
 
 var member = &models.Member{

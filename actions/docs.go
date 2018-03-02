@@ -9,8 +9,8 @@ import (
 	"strings"
 
 	"github.com/gobuffalo/buffalo"
+	"github.com/gobuffalo/pop"
 	"github.com/markbates/inflect"
-	"github.com/markbates/pop"
 
 	"github.com/hyeoncheon/uart/models"
 	"github.com/hyeoncheon/uart/utils"

@@ -5,7 +5,7 @@ package models
 import (
 	"time"
 
-	"github.com/satori/go.uuid"
+	"github.com/gobuffalo/uuid"
 )
 
 // MessagingLog is a structure for log of messaging.

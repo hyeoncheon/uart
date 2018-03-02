@@ -3,7 +3,7 @@ package actions_test
 import (
 	"net/http"
 
-	uuid "github.com/satori/go.uuid"
+	uuid "github.com/gobuffalo/uuid"
 )
 
 func (as *ActionSuite) Test_Membership_A_Membership() {

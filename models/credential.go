@@ -6,8 +6,8 @@ package models
 import (
 	"time"
 
-	"github.com/markbates/pop"
-	"github.com/satori/go.uuid"
+	"github.com/gobuffalo/pop"
+	"github.com/gobuffalo/uuid"
 )
 
 // common constants
