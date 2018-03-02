@@ -13,7 +13,7 @@ import (
 
 func Test_GetParam(t *testing.T) {
 	r := require.New(t)
-	a := buffalo.Automatic(buffalo.Options{})
+	a := buffalo.New(buffalo.Options{})
 
 	a.GET("/", func(c buffalo.Context) error {
 		xstr := utils.GetParam(c, "string")
@@ -28,7 +28,7 @@ func Test_GetParam(t *testing.T) {
 
 func Test_GetIntParam(t *testing.T) {
 	r := require.New(t)
-	a := buffalo.Automatic(buffalo.Options{})
+	a := buffalo.New(buffalo.Options{})
 
 	a.GET("/", func(c buffalo.Context) error {
 		val := utils.GetIntParam(c, "val", 1, 10)
@@ -47,7 +47,7 @@ func Test_GetIntParam(t *testing.T) {
 
 func Test_GetStringParam(t *testing.T) {
 	r := require.New(t)
-	a := buffalo.Automatic(buffalo.Options{})
+	a := buffalo.New(buffalo.Options{})
 
 	a.GET("/", func(c buffalo.Context) error {
 		xstr := utils.GetStringParam(c, "param", "default")

@@ -36,7 +36,7 @@ var (
 // application.
 func App() *buffalo.App {
 	if app == nil {
-		app = buffalo.Automatic(buffalo.Options{
+		app = buffalo.New(buffalo.Options{
 			Env:          ENV,
 			SessionName:  sessionName,
 			SessionStore: newSessionStore(ENV),
@@ -57,19 +57,13 @@ func App() *buffalo.App {
 		jobs.RegisterAll(app)
 		models.Logger(app.Logger)
 
-		// Automatically save the session if the underlying
-		// Handler does not return an error.
-		app.Use(middleware.SessionSaver)
-
-		if ENV != "production" {
+		if ENV == "development" {
 			app.Use(middleware.ParameterLogger)
 		}
 
-		if ENV != "test" {
-			// Protect against CSRF attacks. https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)
-			// Remove to disable this.
-			app.Use(csrf.Middleware)
-		}
+		// Protect against CSRF attacks. https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)
+		// Remove to disable this.
+		app.Use(csrf.New)
 
 		// Wraps each request in a transaction.
 		//  c.Value("tx").(*pop.PopTransaction)
@@ -86,8 +80,6 @@ func App() *buffalo.App {
 		app.GET("/", HomeHandler)
 		app.GET("/login", LoginHandler)
 		app.GET("/logout", LogoutHandler)
-
-		app.ServeFiles("/assets", packr.NewBox("../public/assets"))
 
 		// authentication
 		auth := app.Group("/auth")
@@ -110,10 +102,10 @@ func App() *buffalo.App {
 		oauth := app.Group("/oauth")
 		oauth.GET("/authorize", authorizeHandler)
 		oauth.POST("/token", tokenHandler)
-		oauth.Middleware.Skip(csrf.Middleware, tokenHandler)
+		//oauth.Middleware.Skip(csrf.Middleware, tokenHandler)
 		oauth.Middleware.Skip(AuthenticateHandler, tokenHandler)
 		app.GET("/userinfo", userInfoHandler)
-		app.Middleware.Skip(csrf.Middleware, userInfoHandler)
+		//app.Middleware.Skip(csrf.Middleware, userInfoHandler)
 		app.Middleware.Skip(AuthenticateHandler, userInfoHandler)
 
 		var r buffalo.Resource
@@ -134,19 +126,20 @@ func App() *buffalo.App {
 		g = app.Resource("/docs", r)
 		g.Use(adminHandler)
 		g.Middleware.Skip(adminHandler, r.List, r.Show)
-		g.GET("/{doc_id}/publish", r.(*DocsResource).Publish)
+		g.GET("/publish", r.(*DocsResource).Publish)
 
 		r = &MessagesResource{&buffalo.BaseResource{}}
 		g = app.Resource("/messages", r)
 		g.Use(adminHandler)
 		g.Middleware.Skip(adminHandler, r.List, r.Show)
-		app.GET("/messages/{message_id}/dismiss", r.(*MessagesResource).Dismiss)
+		g.GET("/dismiss", r.(*MessagesResource).Dismiss)
+		g.Middleware.Skip(adminHandler, r.(*MessagesResource).Dismiss)
 
 		r = &MessengersResource{&buffalo.BaseResource{}}
 		g = app.Resource("/messengers", r)
 		g.Use(adminHandler)
 		g.Middleware.Skip(adminHandler, r.Create, r.Destroy, r.Update)
-		g.GET("/{messenger_id}/setprimary", r.(*MessengersResource).SetPrimary)
+		g.GET("/setprimary", r.(*MessengersResource).SetPrimary)
 		g.Middleware.Skip(adminHandler, r.(*MessengersResource).SetPrimary)
 
 		r = &MessagingLogsResource{&buffalo.BaseResource{}}
@@ -163,9 +156,13 @@ func App() *buffalo.App {
 		r = &RolesResource{&buffalo.BaseResource{}}
 		g = app.Resource("/roles", r)
 		g.Use(roleBasedLockHandler)
-		g.GET("/accept/{app_id}/{rolemap_id}", r.(*RolesResource).Accept)
-		app.POST("/request/roles", r.(*RolesResource).Request)
-		app.GET("/request/roles/{role_id}/retire", r.(*RolesResource).Retire)
+		//! FIXME: URLs are not pretty :-(
+		app.GET("/requests/{rolemap_id}/accept", r.(*RolesResource).Accept)
+		app.POST("/requests/roles", r.(*RolesResource).Request)
+		app.GET("/requests/roles/{role_id}/retire", r.(*RolesResource).Retire)
+
+		// move to end of the routing :-(
+		app.ServeFiles("/", assetsBox)
 	}
 
 	return app

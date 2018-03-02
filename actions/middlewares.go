@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/gobuffalo/buffalo"
-	uuid "github.com/gobuffalo/uuid"
+	"github.com/gobuffalo/uuid"
 
 	"github.com/hyeoncheon/uart/models"
 )
@@ -17,7 +17,7 @@ func LoginAsTester(next buffalo.Handler) buffalo.Handler {
 	return func(c buffalo.Context) error {
 		if ENV == "test" {
 			member := &models.Member{}
-			models.DB.Where("mobile LIKE '2017%'").Order("updated_at desc").First(member)
+			models.DB.Where("mobile LIKE '20%'").Order("updated_at desc").First(member)
 			if ENV == "test" && member.ID != uuid.Nil {
 				c.Logger().Info("### ------ LoginAsTester: ", member)
 				c.Session().Set("member_id", member.ID)
@@ -60,6 +60,9 @@ func contextHandler(next buffalo.Handler) buffalo.Handler {
 			c.Set("member_roles", c.Session().Get("member_roles"))
 		}
 		c.Set("member_is_admin", false) // prevent nil
+		c.Set("role_appman", false)     // prevent nil
+		c.Set("role_userman", false)    // prevent nil
+		c.Set("role_user", false)       // prevent nil
 		if roles, ok := c.Session().Get("member_roles").([]string); ok {
 			c.Logger().Debug("storing roles on context: ", roles)
 			for _, role := range roles {
@@ -69,6 +72,7 @@ func contextHandler(next buffalo.Handler) buffalo.Handler {
 				}
 			}
 		}
+		c.Set("theme", "default")
 		c.Set("brand_name", brandName)
 		c.Set("lang", languageSelector(c))
 		return next(c)
@@ -79,6 +83,8 @@ func adminHandler(next buffalo.Handler) buffalo.Handler {
 	return func(c buffalo.Context) error {
 		if val, ok := c.Value("member_is_admin").(bool); !ok || !val {
 			c.Flash().Add("danger", t(c, "staff.only"))
+			mLogErr(c, MsgFacSecu, "access violation: %v by %v",
+				c.Value("current_path"), currentMember(c))
 			return c.Redirect(http.StatusFound, "/")
 		}
 		c.Set("theme", "admin")
@@ -95,7 +101,7 @@ func roleBasedLockHandler(next buffalo.Handler) buffalo.Handler {
 				"roles": models.RCAppMan,
 			}
 			if p := perms[pos]; p != "" {
-				if c.Value("role_"+p) == nil {
+				if c.Value("role_"+p) == nil || c.Value("role_"+p) == false {
 					c.Logger().Warnf("%v has no permission for %v",
 						currentMember(c), pos)
 					c.Flash().Add("danger", t(c, "you.dont.have.permission"))

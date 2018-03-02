@@ -12,7 +12,7 @@ import (
 
 func Test_A_OOPS(t *testing.T) {
 	r := require.New(t)
-	a := buffalo.Automatic(buffalo.Options{})
+	a := buffalo.New(buffalo.Options{})
 
 	a.GET("/", func(c buffalo.Context) error {
 		return utils.OOPS(c, 302, "/302", "test", "mesg %v", "value")
@@ -26,7 +26,7 @@ func Test_A_OOPS(t *testing.T) {
 
 func Test_B_DOOPS(t *testing.T) {
 	r := require.New(t)
-	a := buffalo.Automatic(buffalo.Options{})
+	a := buffalo.New(buffalo.Options{})
 
 	a.GET("/", func(c buffalo.Context) error {
 		return utils.DOOPS(c, "mesg %v", "value")
@@ -40,7 +40,7 @@ func Test_B_DOOPS(t *testing.T) {
 
 func Test_C_SOOPS(t *testing.T) {
 	r := require.New(t)
-	a := buffalo.Automatic(buffalo.Options{})
+	a := buffalo.New(buffalo.Options{})
 
 	a.GET("/", func(c buffalo.Context) error {
 		return utils.SOOPS(c, "mesg %v", "value")
@@ -54,7 +54,7 @@ func Test_C_SOOPS(t *testing.T) {
 
 func Test_D_InvalidAccess(t *testing.T) {
 	r := require.New(t)
-	a := buffalo.Automatic(buffalo.Options{})
+	a := buffalo.New(buffalo.Options{})
 
 	a.GET("/", func(c buffalo.Context) error {
 		return utils.InvalidAccess(c, "/hell", "mesg %v", "value")

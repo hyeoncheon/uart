@@ -3,7 +3,7 @@ package models_test
 // Test coverage: 100% (without interface methods)
 
 import (
-	uuid "github.com/gobuffalo/uuid"
+	"github.com/gobuffalo/uuid"
 
 	"github.com/hyeoncheon/uart/models"
 )

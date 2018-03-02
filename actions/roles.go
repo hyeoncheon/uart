@@ -126,7 +126,6 @@ func (v RolesResource) Destroy(c buffalo.Context) error {
 
 // Accept changes the status of assigned role as active
 func (v RolesResource) Accept(c buffalo.Context) error {
-	appID := c.Param("app_id")
 	rmID := c.Param("rolemap_id")
 
 	rolemap := &models.RoleMap{}
@@ -139,12 +138,7 @@ func (v RolesResource) Accept(c buffalo.Context) error {
 	}
 
 	role := rolemap.Role()
-	if role.AppID.String() != appID {
-		c.Flash().Add("danger", t(c, "oops.manipulated.request"))
-		c.Logger().Errorf("app_id mismatch! probably manipulated request!")
-		return c.Redirect(http.StatusFound, "/")
-	}
-	err = models.FindMyOwn(tx.Q(), dummyMember(c), &models.App{}, appID)
+	err = models.FindMyOwn(tx.Q(), dummyMember(c), &models.App{}, role.AppID)
 	if err != nil {
 		c.Flash().Add("danger", t(c, "you.have.no.right.for.this.app"))
 		return c.Redirect(http.StatusFound, "/")
@@ -158,7 +152,7 @@ func (v RolesResource) Accept(c buffalo.Context) error {
 	c.Flash().Add("success", t(c, "request.accepted.successfully"))
 	member := rolemap.Member()
 	appMsg(c, &models.Members{*member}, "", "role request for %v accepted!", rolemap.Role())
-	return c.Redirect(http.StatusSeeOther, "/apps/%s", appID)
+	return c.Redirect(http.StatusSeeOther, "/apps/%s", role.AppID)
 }
 
 // Request creates role assignments for the member's request.

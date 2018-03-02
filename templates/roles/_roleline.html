@@ -13,7 +13,7 @@
 		<p class="btn-group">
 		<a class="btn btn-xs btn-warning<%=
 			if (((app.Code == "uart") && ((role.Code == "user") || (role.Code == "guest"))) || (role.Code == "admin")) { %> disabled<%
-			} %>" href="<%= requestRoleRetirePath({ role_id: role.ID })
+			} %>" href="<%= requestsRoleRetirePath({ role_id: role.ID })
 			%>" data-confirm="<%=t("are.you.sure")%>"><%=t("revoke")%></a>
 		</p>
 	</div>

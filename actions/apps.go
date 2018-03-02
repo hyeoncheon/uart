@@ -208,7 +208,10 @@ func (v AppsResource) Grant(c buffalo.Context) error {
 	// escape route first.
 	origin := "/"
 	if orig, ok := c.Session().Get("origin").(string); ok {
-		origin = orig
+		if len(orig) > 0 {
+			c.Logger().Infof("origin from session: %v", orig)
+			origin = orig
+		}
 	}
 	c.Session().Delete("origin")
 	c.Session().Save()

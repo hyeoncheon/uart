@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"net/url"
 
-	uuid "github.com/gobuffalo/uuid"
+	"github.com/gobuffalo/uuid"
 	"github.com/markbates/willie"
 
 	"github.com/hyeoncheon/uart/models"
@@ -47,12 +47,12 @@ func (as *ActionSuite) Test_RolesResource_A_Protected() {
 	roleRequest.Add("role_id", existingRole.ID.String())
 
 	// Request() by normal member, not allowed (inactive user)
-	res := as.HTML("/request/roles").Post(&roleRequest)
+	res := as.HTML("/requests/roles").Post(&roleRequest)
 	as.Equal(http.StatusFound, res.Code)
 	as.Equal("/membership/me", res.HeaderMap.Get("Location"))
 
 	// Retire() by normal member, not allowed (inactive user)
-	res = as.HTML("/request/roles/%v/retire", existingRole.ID).Get()
+	res = as.HTML("/requests/roles/%v/retire", existingRole.ID).Get()
 	as.Equal(http.StatusFound, res.Code)
 	as.Equal("/membership/me", res.HeaderMap.Get("Location"))
 }
@@ -173,7 +173,7 @@ func (as *ActionSuite) Test_RolesResource_C_RoleRequestCycle() {
 	roleRequest := url.Values{}
 	roleRequest.Add("role_id", role.ID.String())
 	// then
-	res := as.HTML("/request/roles").Post(&roleRequest)
+	res := as.HTML("/requests/roles").Post(&roleRequest)
 	as.Equal(http.StatusSeeOther, res.Code)
 	as.Equal("/membership/me", res.HeaderMap.Get("Location"))
 
@@ -188,7 +188,7 @@ func (as *ActionSuite) Test_RolesResource_C_RoleRequestCycle() {
 	uartRoleRequest := url.Values{}
 	uartRoleRequest.Add("role_id", uartRole.ID.String())
 	// then
-	res = as.HTML("/request/roles").Post(&uartRoleRequest)
+	res = as.HTML("/requests/roles").Post(&uartRoleRequest)
 	as.Equal(http.StatusSeeOther, res.Code)
 	as.Equal("/membership/me", res.HeaderMap.Get("Location"))
 
@@ -202,22 +202,11 @@ func (as *ActionSuite) Test_RolesResource_C_RoleRequestCycle() {
 
 	// Accept() with invalid rolemap
 	permissionDenied(as, func(*ActionSuite) *willie.Response {
-		return as.HTML("/roles/accept/%v/%v", app.ID, uuid.Nil).Get()
-	})
-
-	// Accept() with invalid appID
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
-		return as.HTML("/roles/accept/%v/%v", uuid.Nil, roleMap.ID).Get()
-	})
-
-	// Accept() on others app
-	uart := models.GetAppByCode(models.ACUART)
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
-		return as.HTML("/roles/accept/%v/%v", uart.ID, uartRoleMap.ID).Get()
+		return as.HTML("/requests/%v/accept", uuid.Nil).Get()
 	})
 
 	// Accept() by appman
-	res = as.HTML("/roles/accept/%v/%v", app.ID, roleMap.ID).Get()
+	res = as.HTML("/requests/%v/accept", roleMap.ID).Get()
 	as.Equal(http.StatusSeeOther, res.Code)
 	as.Contains(res.HeaderMap.Get("Location"), "/apps/")
 	err = as.DB.Where("role_id = ? AND member_id = ?", role.ID, other.ID).First(roleMap)
@@ -228,13 +217,13 @@ func (as *ActionSuite) Test_RolesResource_C_RoleRequestCycle() {
 	as.loginAs(other) //! login as other and retire a role
 
 	// Retire() by normal member, allowed
-	res = as.HTML("/request/roles/%v/retire", role.ID).Get()
+	res = as.HTML("/requests/roles/%v/retire", role.ID).Get()
 	as.Equal(http.StatusSeeOther, res.Code)
 	as.Equal("/membership/me", res.HeaderMap.Get("Location"))
 	as.Equal(0, len(*other.AppRoles(app.ID, true)))
 
 	// Retire() by normal member, invalid ID
-	res = as.HTML("/request/roles/%v/retire", uuid.Nil).Get()
+	res = as.HTML("/requests/roles/%v/retire", uuid.Nil).Get()
 	as.Equal(http.StatusFound, res.Code)
 	as.Equal("/", res.HeaderMap.Get("Location"))
 }
@@ -254,7 +243,7 @@ func processFlowAppmanRole(as *ActionSuite) {
 	roleRequest := url.Values{}
 	roleRequest.Add("role_id", role.ID.String())
 
-	res := as.HTML("/request/roles").Post(roleRequest)
+	res := as.HTML("/requests/roles").Post(roleRequest)
 	as.Equal(http.StatusSeeOther, res.Code)
 	as.Equal("/membership/me", res.HeaderMap.Get("Location"))
 
@@ -264,15 +253,14 @@ func processFlowAppmanRole(as *ActionSuite) {
 	as.Equal(false, roleMap.IsActive) // inactive request, OK
 
 	// Accept() by normal user not allowed
-	uart := models.GetAppByCode(models.ACUART)
-	res = as.HTML("/roles/accept/%v/%v", uart.ID, roleMap.ID).Get()
+	res = as.HTML("/requests/%v/accept", roleMap.ID).Get()
 	as.Equal(http.StatusFound, res.Code)
 	as.Equal("/", res.HeaderMap.Get("Location"))
 
 	as.loginAs(admin) //! login as admin and accept role request
 
 	// Accept() by admin
-	res = as.HTML("/roles/accept/%v/%v", uart.ID, roleMap.ID).Get()
+	res = as.HTML("/requests/%v/accept", roleMap.ID).Get()
 	as.Equal(http.StatusSeeOther, res.Code)
 	as.Contains(res.HeaderMap.Get("Location"), "/apps/")
 

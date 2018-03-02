@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/gobuffalo/suite"
-	uuid "github.com/gobuffalo/uuid"
+	"github.com/gobuffalo/uuid"
 	"github.com/markbates/willie"
 
 	"github.com/hyeoncheon/uart/actions"
@@ -43,7 +43,7 @@ func (as *ActionSuite) setupMembers() {
 func (as *ActionSuite) loginAs(member *models.Member) {
 	as.NotEqual(uuid.Nil, member.ID, "member not setted %v", member.Name)
 	time.Sleep(1000 * time.Millisecond) // limitation of simulation
-	member.Mobile = time.Now().Format(time.RFC3339)
+	member.Mobile = time.Now().Format(time.RFC3339)[0:7]
 	err := as.DB.Save(member)
 	as.NoError(err, "simulated login failed for %v/%v: %v", member.Name, member.Mobile, err)
 }

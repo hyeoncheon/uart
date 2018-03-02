@@ -10,6 +10,7 @@ import (
 )
 
 var r *render.Engine
+var assetsBox = packr.NewBox("../public")
 
 func init() {
 	r = render.New(render.Options{
@@ -19,6 +20,7 @@ func init() {
 		// Box containing all of the templates:
 		//TemplatesBox: packr.NewBox("../templates"),
 		TemplatesBox: packr.NewBox(uartHome + "/templates"),
+		AssetsBox:    assetsBox,
 
 		// Add template helpers here:
 		Helpers: render.Helpers{

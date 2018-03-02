@@ -52,7 +52,3 @@
 [[constraint]]
   name = "github.com/gobuffalo/suite"
   version = "2.0.0"
-
-[[constraint]]
-  name = "github.com/gobuffalo/tags"
-  version = "2.0.0"

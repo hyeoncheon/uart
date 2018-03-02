@@ -3,6 +3,8 @@
 # manually migrate development database to test database and run gocoverutil
 #
 #  repository: https://github.com/AlekSi/gocoverutil
+#
+# go get -u github.com/AlekSi/gocoverutil
 
 app=github.com/hyeoncheon/uart
 

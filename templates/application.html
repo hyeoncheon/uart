@@ -5,12 +5,12 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title><%= brand_name %></title>
-	<link rel="stylesheet" href="/assets/application.css" type="text/css" media="all" />
+	<%= stylesheetTag("application.css") %>
 	<link rel="stylesheet" href="/assets/themes/<%= theme %>/theme.css" type="text/css" media="all" />
 	<link rel="shortcut icon" href="/assets/images/hyeoncheon-icon.png">
 	<meta name="csrf-param" content="authenticity_token" />
 	<meta name="csrf-token" content="<%= authenticity_token %>" />
-	<script src="/assets/application.js" type="text/javascript" charset="utf-8"></script>
+	<%= javascriptTag("application.js") %>
 </head>
 <body>
 	<nav class="navbar navbar-default navbar-fixed-top">

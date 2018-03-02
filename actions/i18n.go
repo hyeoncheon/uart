@@ -7,10 +7,7 @@ import (
 )
 
 func t(c buffalo.Context, str string) string {
-	s, err := T.Translate(c, str)
-	if err != nil {
-		return str
-	}
+	s := T.Translate(c, str)
 	if s == str {
 		c.Logger().WithField("category", "i18n").Warnf("UNTRANSLATED: %v", str)
 	}
