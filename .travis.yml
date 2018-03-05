@@ -30,13 +30,12 @@ before_script:
 script:
   - buffalo build
   #
-  # `mysql ...` instead of `buffalo db create`. work-around for empty password.
-  - mysql -e 'CREATE DATABASE hc_uart_test;'
+  - buffalo db create -e test
   - buffalo db migrate -e test
   - UART_HOME=`pwd` GO_ENV=test gocoverutil -coverprofile=c.out -ignore=./vendor/... test -covermode=count ./... && ./cc-test-reporter after-build --exit-code 0
   #
-  - mysql -e 'DROP DATABASE hc_uart_test;'
-  - mysql -e 'CREATE DATABASE hc_uart_test;'
+  - buffalo db drop -e test
+  - buffalo db create -e test
   - buffalo db migrate -e test
   - UART_HOME=`pwd` goveralls -service=travis-ci
 

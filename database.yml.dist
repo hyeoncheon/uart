@@ -7,7 +7,9 @@ development:
   password: "root"
 
 test:
-  url: {{envOr "TEST_DATABASE_URL" "mysql://root:root@localhost:3306/hc_uart_test"}}
+  dialect: "mysql"
+  url: {{envOr "TEST_DATABASE_URL" "mysql://root:root@localhost:3306/hc_uart_test?parseTime=true&multiStatements=true&readTimeout=3s"}}
 
 production:
-  url: {{envOr "DATABASE_URL" "mysql://root:root@localhost:3306/hc_uart_production"}}
+  dialect: "mysql"
+  url: {{envOr "DATABASE_URL" "mysql://root:root@localhost:3306/hc_uart_production?parseTime=true&multiStatements=true&readTimeout=3s"}}

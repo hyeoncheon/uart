@@ -10,11 +10,12 @@ app=github.com/hyeoncheon/uart
 
 buffalo db drop -e test
 buffalo db create -e test
-buffalo db schema dump -e development
-buffalo db schema load -e test
+buffalo db migrate -e test
+# bad way while using on test machine:
+# buffalo db schema dump -e development && buffalo db schema load -e test
 
-export GO_ENV="test"
-export UART_HOME=`pwd`
-gocoverutil -coverprofile=cover.out test -covermode=count $app/... && \
-go tool cover -html=cover.out -o cover.html
+GO_ENV="test" \
+UART_HOME=`pwd` \
+gocoverutil -coverprofile=c.out test -covermode=count ./... && \
+go tool cover -html=c.out -o cover.html
 
