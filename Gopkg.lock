@@ -121,8 +121,8 @@
     "fizz/translators",
     "nulls"
   ]
-  revision = "7e5659815c83f0e257958631052f2df0acec8be9"
-  version = "v4.0.5"
+  revision = "68c0bd054d37fc011433363f5139bc64458bbbaf"
+  version = "v4.0.7"
 
 [[projects]]
   name = "github.com/gobuffalo/suite"
@@ -201,7 +201,7 @@
   branch = "master"
   name = "github.com/jinzhu/copier"
   packages = ["."]
-  revision = "db4671f3a9b8df855e993f7c94ec5ef1ffb0a23b"
+  revision = "6d89066dd0cd179a5f8f06105c9215edb95a69e2"
 
 [[projects]]
   branch = "master"
@@ -439,7 +439,7 @@
   branch = "master"
   name = "github.com/shurcooL/graphql"
   packages = ["ident"]
-  revision = "8d3d310716dedf6f4945d11299e54a55bbdc6ff1"
+  revision = "3d276b9dcc6b1e0adf19557a8de5cb8632c07697"
 
 [[projects]]
   branch = "master"
@@ -536,7 +536,7 @@
     "unix",
     "windows"
   ]
-  revision = "f6cff0780e542efa0c8e864dc8fa522808f6a598"
+  revision = "dd2ff4accc098aceecb86b36eaa7829b2a17b1c9"
 
 [[projects]]
   name = "google.golang.org/appengine"
