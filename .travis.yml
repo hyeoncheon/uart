@@ -4,12 +4,30 @@ go:
   - "1.9"
   - "1.10"
 
+# sudo enabled, fully virtualized virtual machine required for mysql 5.7.
+# https://docs.travis-ci.com/user/database-setup/#MySQL-5.7
+# https://docs.travis-ci.com/user/reference/trusty/
+
+dist: trusty
+sudo: required
+
+addons:
+  apt:
+    sources:
+      - mysql-5.7-trusty
+    package:
+      - mysql-server
+      - mysql-client
+
 env:
   global:
     - GO_ENV=test
     - CC_TEST_REPORTER_ID=871aa7166cc89677d1839bca6a9213454dcc94344f8ef937f07360e255cb774c
 
 before_install:
+  - sudo mysql_upgrade --force
+  - sudo service mysql restart
+  - mysql --version
   - go get -u github.com/golang/dep/cmd/dep
   - go get -u github.com/gobuffalo/buffalo/buffalo
 
