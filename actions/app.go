@@ -63,7 +63,8 @@ func App() *buffalo.App {
 
 		// Protect against CSRF attacks. https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)
 		// Remove to disable this.
-		app.Use(csrf.New)
+		csrfHandler := csrf.New
+		app.Use(csrfHandler)
 
 		// Wraps each request in a transaction.
 		//  c.Value("tx").(*pop.PopTransaction)
@@ -102,7 +103,7 @@ func App() *buffalo.App {
 		oauth := app.Group("/oauth")
 		oauth.GET("/authorize", authorizeHandler)
 		oauth.POST("/token", tokenHandler)
-		//oauth.Middleware.Skip(csrf.Middleware, tokenHandler)
+		oauth.Middleware.Skip(csrfHandler, tokenHandler)
 		oauth.Middleware.Skip(AuthenticateHandler, tokenHandler)
 		app.GET("/userinfo", userInfoHandler)
 		//app.Middleware.Skip(csrf.Middleware, userInfoHandler)

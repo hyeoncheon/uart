@@ -41,8 +41,10 @@ func (g RS256AccessTokenGen) GenerateAccessToken(data *osin.AccessData, refresh 
 		"iat": data.CreatedAt.Unix(),
 		"nbf": data.CreatedAt.Unix() - 600,
 	}
-	for k, v := range data.UserData.(map[string]interface{}) {
-		claims[k] = v
+	if userdata, ok := data.UserData.(map[string]interface{}); ok {
+		for k, v := range userdata {
+			claims[k] = v
+		}
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodRS256, claims)

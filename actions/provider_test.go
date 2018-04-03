@@ -11,6 +11,8 @@ import (
 	"github.com/hyeoncheon/uart/models"
 )
 
+//! TODO: testcase for missing parameter, especially for scope, state
+
 func (as *ActionSuite) Test_OAuth2Provider_A_Authorize() {
 	as.setupMembers()
 

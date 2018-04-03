@@ -127,7 +127,9 @@ func userInfoHandler(c buffalo.Context) error {
 	defer resp.Close()
 	logger = c.Logger().WithField("category", "oauth2")
 	if ir := svr.HandleInfoRequest(resp, c.Request()); ir != nil {
-		resp.Output = ir.AccessData.UserData.(map[string]interface{})
+		if userdata, ok := ir.AccessData.UserData.(map[string]interface{}); ok {
+			resp.Output = userdata
+		}
 	}
 	logger.Debugf("userinfo response: --- %v ---", resp.Output)
 	return osin.OutputJSON(resp, c.Response(), c.Request())
