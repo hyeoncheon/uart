@@ -90,6 +90,12 @@ func (c *Credentials) AccessibleBy(q *pop.Query, o Owner, f ...bool) *pop.Query 
 
 //** common database/crud functions ---------------------------------
 
+// Save just save self.
+func (c *Credential) Save() {
+	log.Debugf("saving credential %v", c)
+	DB.ValidateAndSave(c)
+}
+
 //** array model for base model -------------------------------------
 
 // Credentials is an array of Credentials.

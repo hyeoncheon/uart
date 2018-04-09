@@ -62,19 +62,46 @@ func AuthCallback(c buffalo.Context) error {
 		c.Flash().Add("success", t(c, "welcome.to.uart"))
 		return loggedIn(c, member)
 	case 1:
-		member := (*credentials)[0].Owner()
+		cred := (*credentials)[0]
+		member := cred.Owner()
 		if member.Email == "" {
 			mLogWarn(c, MsgFacAuth,
-				"attempted to register with orphan credential %v",
-				(*credentials)[0])
+				"attempted to register with orphan credential %v", cred)
 			c.Flash().Add("danger", t(c, "credential.exist.without.owner"))
 			return c.Redirect(http.StatusTemporaryRedirect, "/login")
 		}
+		updateCredential(&cred, user)
 		c.Flash().Add("success", t(c, "welcome.back.i.missed.you"))
-		return loggedIn(c, member)
+		return loggedIn(c, cred.Owner())
 	default:
 		mLogAlert(c, MsgFacAuth, "SYSTEM ERROR: duplicated credentials")
 		return c.Error(501, errors.New("SYSTEM ERROR: duplicated credentials"))
+	}
+}
+
+func updateCredential(cred *models.Credential, user goth.User) {
+	if user.Email != "" && cred.Email != user.Email {
+		cred.Email = user.Email
+	}
+	if user.Name != "" && cred.Name != user.Name {
+		cred.Name = user.Name
+	}
+	if user.Provider == "facebook" {
+		if p, ok := user.RawData["picture"].(map[string]interface{}); ok {
+			if d, ok := p["data"].(map[string]interface{}); ok {
+				if s, ok := d["is_silhouette"].(bool); ok && s {
+					cred.AvatarURL = ""
+				} else {
+					cred.AvatarURL = user.AvatarURL
+				}
+			}
+		}
+	}
+	cred.Save()
+	if cred.IsPrimary {
+		member := cred.Owner()
+		member.Icon = cred.AvatarURL
+		member.Save()
 	}
 }
 

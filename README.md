@@ -53,9 +53,10 @@ $
 ```console
 $ sudo mkdir -p /opt/google
 $ cd /opt/google/
-$ wget -nv https://storage.googleapis.com/golang/go1.8.3.linux-amd64.tar.gz -O - |sudo tar zx
-$ sudo mv go go-1.8.3
-$ sudo ln -s go-1.8.3 go
+$ rm -f go
+$ wget -nv https://storage.googleapis.com/golang/go1.10.linux-amd64.tar.gz -O - |sudo tar zx
+$ sudo mv go go-1.10
+$ sudo ln -s go-1.10 go
 $ cat >> ~/.bashrc <<EOF
 > 
 > ## GOLANG

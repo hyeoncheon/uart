@@ -345,6 +345,12 @@ func (m *Members) AccessibleBy(q *pop.Query, o Owner, f ...bool) *pop.Query {
 
 //** common database/crud functions ---------------------------------
 
+// Save just save self.
+func (m *Member) Save() {
+	log.Debugf("saving member %v...", m)
+	DB.ValidateAndSave(m)
+}
+
 // GetMember picks a member instance with given id.
 func GetMember(id interface{}) *Member {
 	m := &Member{}
