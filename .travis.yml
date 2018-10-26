@@ -72,3 +72,8 @@ script:
 
 after_script: true
 
+after_success:
+  # for codecov.io
+  - cp c.out coverage.txt
+  - bash <(curl -s https://codecov.io/bash)
+
