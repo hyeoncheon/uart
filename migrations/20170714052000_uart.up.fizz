@@ -61,6 +61,7 @@ create_table("roles") {
 }
 add_index("roles", "app_id", {})
 create_table("role_maps") {
+	t.Column("id", "integer", {"primary": true})
 	t.Column("member_id", "uuid", {})
 	t.Column("role_id", "uuid", {})
 	t.Column("is_active", "bool", {})

@@ -48,7 +48,3 @@
 [[constraint]]
   name = "gopkg.in/mailgun/mailgun-go.v1"
   version = "1.1.0"
-
-[[constraint]]
-  name = "github.com/gobuffalo/suite"
-  version = "2.0.0"

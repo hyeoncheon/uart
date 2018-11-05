@@ -10,7 +10,7 @@ import (
 	"github.com/gobuffalo/pop"
 	"github.com/gobuffalo/uuid"
 	"github.com/gobuffalo/validate"
-	"github.com/russross/blackfriday"
+	"gopkg.in/russross/blackfriday.v2"
 )
 
 const (
@@ -43,7 +43,7 @@ func (g AccessGrant) Description() template.HTML {
 	app := g.App()
 	mem := g.Member()
 	timeString := g.CreatedAt.Local().Format("06-01-02 15:04")
-	mdBytes := blackfriday.MarkdownBasic([]byte(
+	mdBytes := blackfriday.Run([]byte(
 		mem.Name + " granted scope `" + g.Scope +
 			"` to " + app.String() +
 			" at " + timeString,
