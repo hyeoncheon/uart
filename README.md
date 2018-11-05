@@ -86,8 +86,8 @@ $ nvm ls-remote --lts |tail -2
 $ nvm install lts/boron
 $ node --version
 v6.11.2
-$ npm --version
-3.10.10
+$ yarn --version
+1.10.1
 $ 
 ```
 
@@ -95,6 +95,14 @@ $
 ### Get and Build UART
 
 #### Get Source
+
+```console
+$ go get github.com/hyeoncheon/uart
+$ cd $GOPATH/src/hyeoncheon/uart
+$ 
+```
+
+or
 
 ```console
 $ mkdir -p $GOPATH/src/github.com/hyeoncheon
@@ -116,8 +124,8 @@ $
 
 ```console
 $ go get -u github.com/gobuffalo/buffalo/buffalo
-$ npm install --no-progress
-$ buffalo build --static
+$ yarn
+$ buffalo build
 $ ls bin/uart
 $ 
 ```
@@ -125,21 +133,27 @@ $
 #### Install Files
 
 ```console
+$ export UART_HOME=/opt/hyeoncheon/uart
 $ scripts/keygen.sh
 $ mkdir -p $UART_HOME
 $ install bin/uart $UART_HOME
 $ cp -a messages files locales templates $UART_HOME
 $ cp -a uart.conf $UART_HOME
 $ cp -a supports/uart.service $UART_HOME
+$ cp supports/uart.service $UART_HOME
+$ cp supports/uart.conf.dist $UART_HOME/uart.conf
+$ cp database.yml.dist $UART_HOME/database.yml
+$ $EDITOR $UART_HOME/uart.conf
+$ $EDITOR $UART_HOME/database.yml
 $ 
 ```
 
 and register it as system service
 
 ```console
-$ sudo ln -s /opt/hyeoncheon/uart/uart.service /etc/systemd/system/
+$ sudo systemctl enable $UART_HOME/uart.service
 $ sudo systemctl is-enabled uart
-linked
+enabled
 $ 
 ```
 

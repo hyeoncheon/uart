@@ -4,11 +4,11 @@
 #
 #  repository: https://github.com/mattn/goveralls
 
-buffalo db drop -e test
-buffalo db create -e test
-buffalo db migrate -e test
+buffalo pop drop -e test
+buffalo pop create -e test
+buffalo pop migrate -e test
 # bad way while using on test machine:
-# buffalo db schema dump -e development && buffalo db schema load -e test
+# buffalo pop schema dump -e development && buffalo pop schema load -e test
 
 export GO_ENV="test"
 export UART_HOME=`pwd`

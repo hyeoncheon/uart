@@ -8,11 +8,11 @@
 
 app=github.com/hyeoncheon/uart
 
-buffalo db drop -e test
-buffalo db create -e test
-buffalo db migrate -e test
+buffalo pop drop -e test
+buffalo pop create -e test
+buffalo pop migrate -e test
 # bad way while using on test machine:
-# buffalo db schema dump -e development && buffalo db schema load -e test
+# buffalo pop schema dump -e development && buffalo pop schema load -e test
 
 GO_ENV="test" \
 UART_HOME=`pwd` \
