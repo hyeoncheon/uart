@@ -1,15 +1,15 @@
-create_table("messengers", func(t) {
+create_table("messengers") {
 	t.Column("id", "uuid", {"primary": true})
 	t.Column("member_id", "uuid", {})
 	t.Column("priority", "integer", {})
 	t.Column("method", "string", {})
 	t.Column("value", "string", {})
 	t.Column("is_primary", "bool", {})
-})
+}
 add_index("messengers", "member_id", {})
 add_index("messengers", "priority", {})
 
-create_table("messages", func(t) {
+create_table("messages") {
 	t.Column("id", "uuid", {"primary": true})
 	t.Column("member_id", "uuid", {})
 	t.Column("subject", "string", {})
@@ -18,22 +18,22 @@ create_table("messages", func(t) {
 	t.Column("facility", "string", {})
 	t.Column("priority", "integer", {})
 	t.Column("is_log", "bool", {"default": false})
-})
+}
 add_index("messages", "member_id", {})
 add_index("messages", "priority", {})
 
-create_table("message_maps", func(t) {
+create_table("message_maps") {
 	t.Column("id", "uuid", {"primary": true})
 	t.Column("member_id", "uuid", {})
 	t.Column("message_id", "uuid", {})
 	t.Column("is_sent", "bool", {"default": false})
 	t.Column("is_read", "bool", {"default": false})
 	t.Column("is_bcc", "bool", {"default": false})
-})
+}
 add_index("message_maps", "member_id", {})
 add_index("message_maps", "message_id", {})
 
-create_table("messaging_logs", func(t) {
+create_table("messaging_logs") {
 	t.Column("id", "uuid", {"primary": true})
 	t.Column("status", "string", {})
 	t.Column("queue_id", "string", {"null": true})
@@ -43,4 +43,4 @@ create_table("messaging_logs", func(t) {
 	t.Column("sent_to", "string", {})
 	t.Column("subject", "string", {"null": true})
 	t.Column("notes", "text", {"null": true})
-})
+}
