@@ -31,7 +31,7 @@
 
 [[constraint]]
   name = "github.com/gobuffalo/buffalo"
-  version = "0.11.0"
+  version = "0.13.4"
 
 [[constraint]]
   name = "github.com/RangelReale/osin"

@@ -8,8 +8,8 @@ package actions_test
 import (
 	"net/http"
 
+	"github.com/gobuffalo/httptest"
 	"github.com/gobuffalo/uuid"
-	"github.com/markbates/willie"
 )
 
 func (as *ActionSuite) Test_MembersResource_A_CreateUpdateList() {

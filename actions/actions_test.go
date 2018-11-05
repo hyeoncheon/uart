@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/gobuffalo/httptest"
 	"github.com/gobuffalo/suite"
 	"github.com/gobuffalo/uuid"
-	"github.com/markbates/willie"
 
 	"github.com/hyeoncheon/uart/actions"
 	"github.com/hyeoncheon/uart/models"

@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/gobuffalo/buffalo"
-	"github.com/markbates/willie"
+	"github.com/gobuffalo/httptest"
 	"github.com/stretchr/testify/require"
 
 	"github.com/hyeoncheon/uart/utils"

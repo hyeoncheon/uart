@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/gobuffalo/buffalo/worker"
-	"github.com/shurcooL/github_flavored_markdown"
+	"github.com/gobuffalo/github_flavored_markdown"
 	mailgun "gopkg.in/mailgun/mailgun-go.v1"
 
 	"github.com/hyeoncheon/uart/models"
