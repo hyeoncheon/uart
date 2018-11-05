@@ -20,9 +20,9 @@ func Test_GetParam(t *testing.T) {
 		xint := utils.GetParam(c, "integer")
 		return c.Render(200, render.String("%s-%d", xstr, xint))
 	})
-	w := willie.New(a)
+	w := httptest.New(a)
 
-	res := w.Request("/?string=value&integer=1").Get()
+	res := w.HTML("/?string=value&integer=1").Get()
 	r.Equal("value-1", res.Body.String())
 }
 
@@ -36,12 +36,12 @@ func Test_GetIntParam(t *testing.T) {
 		min := utils.GetIntParam(c, "min", 1, 10)
 		return c.Render(200, render.String("%d-%d-%d", val, max, min))
 	})
-	w := willie.New(a)
+	w := httptest.New(a)
 
-	res := w.Request("/?val=5&max=11&min=0").Get()
+	res := w.HTML("/?val=5&max=11&min=0").Get()
 	r.Equal("5-10-1", res.Body.String())
 
-	res = w.Request("/?val=5&max=8&min=2").Get()
+	res = w.HTML("/?val=5&max=8&min=2").Get()
 	r.Equal("5-8-2", res.Body.String())
 }
 
@@ -53,11 +53,11 @@ func Test_GetStringParam(t *testing.T) {
 		xstr := utils.GetStringParam(c, "param", "default")
 		return c.Render(200, render.String("%s", xstr))
 	})
-	w := willie.New(a)
+	w := httptest.New(a)
 
-	res := w.Request("/?param=value").Get()
+	res := w.HTML("/?param=value").Get()
 	r.Equal("value", res.Body.String())
 
-	res = w.Request("/?str=value").Get()
+	res = w.HTML("/?str=value").Get()
 	r.Equal("default", res.Body.String())
 }

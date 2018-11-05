@@ -25,7 +25,7 @@ func (as *ActionSuite) Test_RolesResource_A_Protected() {
 	role := roleTemplate
 
 	// Create(), denied by role based blocker
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
+	permissionDenied(as, func(*ActionSuite) *httptest.Response {
 		return as.HTML("/roles").Post(&role)
 	})
 
@@ -34,12 +34,12 @@ func (as *ActionSuite) Test_RolesResource_A_Protected() {
 
 	// Update(), denied by role based blocker
 	existingRole.Name = "tester"
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
+	permissionDenied(as, func(*ActionSuite) *httptest.Response {
 		return as.HTML("/roles/%v", existingRole.ID).Put(existingRole)
 	})
 
 	// Destroy(), denied by role based blocker
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
+	permissionDenied(as, func(*ActionSuite) *httptest.Response {
 		return as.HTML("/roles/%v", existingRole.ID).Delete()
 	})
 
@@ -70,13 +70,13 @@ func (as *ActionSuite) Test_RolesResource_B_AsAppMan() {
 	role := &rolem
 
 	// Create() by appman, without AppID
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
+	permissionDenied(as, func(*ActionSuite) *httptest.Response {
 		return as.HTML("/roles").Post(role)
 	})
 
 	// Create() by appman, with AppID but no right for the app
 	role.AppID = models.GetAppByCode(models.ACUART).ID
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
+	permissionDenied(as, func(*ActionSuite) *httptest.Response {
 		return as.HTML("/roles").Post(role)
 	})
 
@@ -102,7 +102,7 @@ func (as *ActionSuite) Test_RolesResource_B_AsAppMan() {
 	as.Equal("Perfect Tester", role.Name)
 
 	// Update() with invalid id
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
+	permissionDenied(as, func(*ActionSuite) *httptest.Response {
 		return as.HTML("/roles/%v", uuid.Nil).Put(role)
 	})
 
@@ -118,13 +118,13 @@ func (as *ActionSuite) Test_RolesResource_B_AsAppMan() {
 
 	// Update() on role of others, denied
 	UARTRole := models.GetAppRole(models.ACUART, models.RCUser)
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
+	permissionDenied(as, func(*ActionSuite) *httptest.Response {
 		return as.HTML("/roles/%v", UARTRole.ID).Put(UARTRole)
 	})
 
 	// Update() on read only role, denied
 	userRole := app.GetRole(as.DB, models.RCUser)
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
+	permissionDenied(as, func(*ActionSuite) *httptest.Response {
 		return as.HTML("/roles/%v", userRole.ID).Put(userRole)
 	})
 
@@ -134,17 +134,17 @@ func (as *ActionSuite) Test_RolesResource_B_AsAppMan() {
 	as.Contains(res.HeaderMap.Get("Location"), "/apps/")
 
 	// Destroy() on read only role, denied
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
+	permissionDenied(as, func(*ActionSuite) *httptest.Response {
 		return as.HTML("/roles/%v", userRole.ID).Delete()
 	})
 
 	// Destroy() on role of others, denied
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
+	permissionDenied(as, func(*ActionSuite) *httptest.Response {
 		return as.HTML("/roles/%v", UARTRole.ID).Delete()
 	})
 
 	// Destroy() with invalid id
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
+	permissionDenied(as, func(*ActionSuite) *httptest.Response {
 		return as.HTML("/roles/%v", uuid.Nil).Delete()
 	})
 
@@ -201,7 +201,7 @@ func (as *ActionSuite) Test_RolesResource_C_RoleRequestCycle() {
 	as.loginAs(appman) //! login as appman and accept request
 
 	// Accept() with invalid rolemap
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
+	permissionDenied(as, func(*ActionSuite) *httptest.Response {
 		return as.HTML("/requests/%v/accept", uuid.Nil).Get()
 	})
 

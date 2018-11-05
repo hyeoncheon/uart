@@ -55,9 +55,9 @@ func (as *ActionSuite) activateMember(member *models.Member) {
 	as.NoError(err, "cannot activate member %v: %v", member, err)
 }
 
-type requestFunc func(*ActionSuite) *willie.Response
+type requestFunc func(*ActionSuite) *httptest.Response
 
-func permissionDenied(as *ActionSuite, fn func(*ActionSuite) *willie.Response) {
+func permissionDenied(as *ActionSuite, fn func(*ActionSuite) *httptest.Response) {
 	res := fn(as)
 	as.Equal(http.StatusFound, res.Code)
 	as.Equal("/", res.HeaderMap.Get("Location"))
