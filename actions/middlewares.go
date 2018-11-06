@@ -75,6 +75,7 @@ func contextHandler(next buffalo.Handler) buffalo.Handler {
 		c.Set("theme", "default")
 		c.Set("brand_name", brandName)
 		c.Set("lang", languageSelector(c))
+		c.Set("TIME_FORMAT", "2006-01-02T15:04:05Z07:00")
 		return next(c)
 	}
 }

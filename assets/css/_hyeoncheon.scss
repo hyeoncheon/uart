@@ -1,0 +1,258 @@
+//* css for hyeoncheon project rebooted.
+//*
+
+@import url('//cdn.jsdelivr.net/nanumsquare/1.0/nanumsquare.css');
+@import url('//fonts.googleapis.com/earlyaccess/notosanskr.css');
+@import url('//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800');
+
+$font-base: 'Open Sans','Noto Sans KR','Helvetica Neue',sans-serif;
+$font-head: 'Open Sans','NanumSquare','Helvetica Neue',sans-serif;
+$font-type: Monaco, "Ubuntu Mono", "Courier New", monospace !important;
+
+$font-size: 16px;
+$nav-height: 40px;
+$nav-icon-size: 32px;
+
+$color-nav: black;
+$color-hover: #555;
+$color-header: #f4f4f4;
+$color-border: #ccc;
+$color-gray: #999;
+$color-white: white;
+$color-danger: #ca0000;
+
+
+//* mixins
+.mixin-strong { font-weight: 600; }
+.mixin-green { color: green; }
+.mixin-red { color: red; }
+.mixin-orange { color: orange; }
+.mixin-gray { color: $color-gray; }
+.mixin-small { font-size: $font-size - 2px; }
+.mixin-danger { color: $color-danger; }
+
+
+//* layout and basic elements
+html, body {
+	height: 100%;
+	font-family: $font-base;
+	font-size: $font-size;
+}
+body {
+	font-size: $font-size !important;
+}
+h1 {
+	font-size: 2rem;
+}
+h2 {
+	font-size: 1.6rem;
+}
+h3 {
+	font-size: 1.4rem;
+}
+h4, h5, h6 {
+	font-size: 1rem;
+}
+table {
+	tr.linked td:hover:not(.nolink) {
+		cursor: pointer;
+	}
+}
+table.table {
+	th, td {
+		border-top: 0;
+	}
+	thead tr th,
+	thead tr td,
+	tbody tr th,
+	tbody tr td,
+	tfoot tr td,
+	tfoot tr th {
+		padding: 2px 6px;
+		border-bottom: 1px solid $color-border + #222;
+		font-weight: normal;
+	}
+}
+
+.navbar {
+	box-shadow: 0 2px 2px rgba(100,100,100, 0.5);
+}
+.lay-outter-container {
+	width: 100%;
+	height: 100%;
+	display: table;
+	margin: -40px 0 0;
+	padding: 40px 0 60px;
+	.lay-inner-container {
+		height: 100%;
+		.content {
+			.page-header {
+				background-color: $color-header;
+				padding-top: 0.3rem;
+				border-bottom: 1px solid $color-border;
+				.description {
+					color: $color-gray;
+					padding-bottom: 0.2rem;
+					min-height: 1.5em;
+				}
+			}
+			.page-content {
+				padding-top: 0.5rem;
+				padding-bottom: 2rem;
+			}
+			.page-footer {
+				color: $color-gray;
+			}
+		}
+	}
+}
+.lay-footer {
+	margin-top: -60px;
+	color: $color-gray;
+}
+
+
+//* hyeoncheon custom widgets
+.hc-img-profile {
+	height: $nav-icon-size;
+	width: $nav-icon-size;
+	border-radius: $nav-icon-size / 3;
+}
+
+.overlay-flash {
+	position: fixed;
+	right: 25px;
+	top: 55px;
+	width: 600px;
+	z-index: 999;
+	opacity: 0.95;
+	.alert {
+		position: relative;
+		margin-bottom: 10px;
+		padding: 10px 15px;
+		clear: both;
+		float: right;
+		box-shadow: 2px 2px 2px rgba(100,100,100, 0.5);
+		border-width: 0 0 0 3px;
+		border-radius: 0;
+		border-style: solid;
+		.close {
+			margin-left: 10px;
+		}
+	}
+}
+
+.hc-doc {
+	.hc-doc-path {
+		.breadcrumb {
+			padding: 0.1rem 0.5rem;
+			a {
+				color: inherit !important;
+			}
+		}
+	}
+	.hc-doc-title {
+	}
+	.hc-doc-meta {
+		color: $color-gray;
+		font-size: $font-size - 2px;
+	}
+	.hc-doc-subdocs {
+		margin: 1rem 0;
+		padding: 0 0;
+		border-left: 4px solid $color-gray;
+	}
+	.hc-doc-content {
+	}
+}
+.hc-docs {
+	ul {
+		margin: 0;
+		list-style: none;
+		a {
+			color: inherit !important;
+		}
+	}
+}
+
+.hc-message-box {
+	border-left: 4px solid black;
+	padding: 1rem 2rem;
+	margin: 1rem 0;
+	&.hc-message-box-danger {
+		border-left-color: $color-danger;
+	}
+}
+
+.wg.icon {
+	&24 {
+		height: 24px;
+	}
+	&32 {
+		height: 32px;
+	}
+	&64 {
+		height: 64px;
+	}
+	&128 {
+		height: 128px;
+	}
+	&.rounded {
+		border-radius: 16px;
+	}
+}
+
+//* override default styles of bootstrap
+.navbar {
+	background-color: $color-nav !important;
+	padding: 0 0.5rem;
+	* {
+		line-height: 1em;
+	}
+	.navbar-brand {
+		padding: ($nav-height - $font-size * 1.25) / 2 0;
+		img {
+			width: $nav-height - 8px;
+			height: $nav-height - 8px;
+			margin: -14px 8px -10px -4px;
+		}
+	}
+	.nav-link {
+		padding: 0;
+	}
+	.nav-item {
+		padding: ($nav-height - $font-size - 2) / 2 0.5rem !important;
+		&:last-child {
+			padding-right: 0 !important;
+		}
+		img {
+			margin: ($font-size - $nav-icon-size) / 2 0;
+		}
+		&.hc-badge .fa-empire {
+			color: orange;
+		}
+	}
+	.dropdown-item-text,
+	.dropdown-item {
+		padding: 0.5rem 1.5rem;
+		white-space: nowrap;
+		i.fa {
+			width: 1.5rem;
+			margin-left: -0.5rem;
+		}
+	}
+	.dropdown-item {
+		&.active {
+			color: $color-white;
+			background: $color-nav;
+		}
+		&:hover {
+			color: $color-white;
+			background: $color-hover;
+		}
+	}
+}
+
+.btn-sm, .btn-group-sm > .btn {
+	padding: 0 .4rem;
+}
