@@ -1,6 +1,7 @@
-@import "~bootstrap-sass/assets/stylesheets/_bootstrap-sprockets.scss";
-@import "~bootstrap-sass/assets/stylesheets/_bootstrap.scss";
+@import "~bootstrap/scss/bootstrap.scss";
 @import "~font-awesome/css/font-awesome.css";
+@import "~simplemde/dist/simplemde.min.css";
+@import "~highlight.js/styles/androidstudio.css";
 @import "~awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css";
 
-@import "hyeoncheon.scss";
+@import "hyeoncheon";
