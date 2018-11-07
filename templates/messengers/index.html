@@ -1,16 +1,15 @@
-<div class="row wg phead">
-	<div class="col-md-3 col-xs-12 wg ptitle">
-		<h1><%=t("messengers")%></h1>
-	</div>
-	<div class="col-md-9 col-xs-12 wg pnav">
-		<span class="pull-right" data-toggle="popover" data-trigger="hover"
-			data-placement="left" data-content="<%=t("all.registered.messengers")
+<div class="page-header col-12">
+	<h1><%= t("messengers") %></h1>
+	<div class="pull-right">
+		<span data-toggle="popover" data-trigger="hover" data-placement="left"
+			data-content="<%=t("all.registered.messengers")
 			%>"><i class="fa fa-question-circle"></i></span>
 	</div>
+	<div class="description"><%= t("credentials.header.description") %></div>
 </div>
 
-<table class="table table-striped table-condensed table-hover">
-	<thead>
+<div class="page-content col-12">
+	<table class="table table-striped table-condensed table-hover"><thead>
 		<tr>
 			<th><%=t("member")%></th>
 			<th><%=t("priority")%></th>
@@ -20,17 +19,16 @@
 			<th><%=t("created.at")%></th>
 			<th>&nbsp;</th>
 		</tr>
-	</thead>
-	<tbody>
-		<%= for (messenger) in messengers { %><tr>
+	</thead><tbody><%= for (messenger) in messengers { %>
+		<tr>
 			<td><%= messenger.MemberID %></td>
 			<td><%= messenger.Priority %></td>
 			<td><%= messenger.Method %></td>
 			<td><%= messenger.Value %></td>
 			<td><%= if (messenger.IsPrimary) { %>Yes<% } else { %>No<% } %></td>
-			<td><%= timeYYMD(messenger.CreatedAt) %></td>
+			<td class="moment"><%= messenger.CreatedAt %></td>
 			<td>
-				<div class="pull-right btn-group">
+				<div class="pull-right btn-group btn-group-sm">
 					<a class="btn btn-xs btn-danger" href="<%=
 						messengerPath({ messenger_id: messenger.ID }) %>"
 						data-method="DELETE" data-confirm="<%=t("are.you.sure")
@@ -38,9 +36,13 @@
 				</div>
 			</td>
 		</tr><% } %>
-	</tbody>
-</table>
+	</tbody></table>
 
-<div class="text-center">
-	<%= paginator(pagination) %>
+	<div class="text-center">
+<%= paginator(pagination) %>
+	</div>
+
+</div>
+
+<div class="page-footer col-12">
 </div>
