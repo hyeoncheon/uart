@@ -57,9 +57,9 @@
 				</div><% } %>
 			</div>
 			<div class="navbar-nav mr-auto" id="member-menu"><%=
-				if (member_id) { %>
+				if (member_id) { %><%= if (0 != len(member_roles)) { %>
 				<span class="nav-item hc-badge"><%=
-					iconize(member_roles[0]) %></span>
+					iconize(member_roles[0]) %></span><% } %>
 				<div class="nav-item dropdown">
 					<a href="#" class="nav-link dropdown-toggle"
 						data-toggle="dropdown" role="button"

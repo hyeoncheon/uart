@@ -30,11 +30,13 @@ before_install:
   - sudo service mysql restart
   - mysql --version
   - go get -u github.com/golang/dep/cmd/dep
-  - wget https://github.com/gobuffalo/buffalo/releases/download/v0.13.4/buffalo_0.13.4_linux_amd64.tar.gz
-  - tar xvf buffalo_0.13.4_linux_amd64.tar.gz
+  - wget -O - https://github.com/gobuffalo/buffalo/releases/download/v0.13.4/buffalo_0.13.4_linux_amd64.tar.gz |tar zxv
   - mv buffalo-no-sqlite $GOPATH/bin/buffalo
+  - wget -O - https://github.com/gobuffalo/buffalo-pop/releases/download/v1.1.12/buffalo-pop_1.1.12_linux_amd64.tar.gz |tar zxv
+  - mv buffalo-pop $GOPATH/bin/
   - ls -l $GOPATH/bin
   - ls -ld $GOPATH/src/*/*
+  - buffalo help
 
 install:
   - dep ensure

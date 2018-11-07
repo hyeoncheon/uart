@@ -120,26 +120,26 @@
   version = "v0.13.4"
 
 [[projects]]
-  digest = "1:119549eb308e1417c2be6bdfa485ae07446a6c595a4db3d018e603e0b524c4b9"
+  digest = "1:f30030bd007fedc447181ab6c58efb5701042f9084df2a73c3862c3cd2a161ad"
   name = "github.com/gobuffalo/buffalo-plugins"
   packages = [
     "plugins",
     "plugins/plugdeps",
   ]
   pruneopts = "UT"
-  revision = "3747f3756a4915200132e2b74bbc93e1182cf04a"
-  version = "v1.6.7"
+  revision = "7111c7547d13752d2abc8f913d5acd9c2f97e86f"
+  version = "v1.6.8"
 
 [[projects]]
-  digest = "1:13135d6460447c1c3011f4fa86fc8637ea92c986746ce9ecbd1ec7441c597824"
+  digest = "1:ca5f2d028ba83e3de705db68f7ed2e590632c0a9764393eb6173bfa6c45c1024"
   name = "github.com/gobuffalo/buffalo-pop"
   packages = [
     "pop",
     "pop/popmw",
   ]
   pruneopts = "UT"
-  revision = "e9673e6747d06c4bd1f1e75856c9bb6db168bd84"
-  version = "v1.1.8"
+  revision = "afb798b46e1299a4db98646773ca4275ec8afda6"
+  version = "v1.1.12"
 
 [[projects]]
   digest = "1:72139cbee5a41ff8a322681be104aa8d7e7c92a5f3ad5501ea3505042b050b57"
@@ -181,14 +181,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:cd61eaf24bdcca192c6fe64bb0c862a99d95d3334aab6355594d451ba92b514c"
+  digest = "1:98e3796a08802cc956118ef9d26adf0373ff40a7b622490d0d3750557e6d481f"
   name = "github.com/gobuffalo/genny"
   packages = [
     ".",
     "movinglater/gotools/gomods",
   ]
   pruneopts = "UT"
-  revision = "ed103521b8ec86e030d9776a8dad6deac56ba586"
+  revision = "7dcb0924caf1e883115084cee0b0f7ff3389d557"
 
 [[projects]]
   digest = "1:114fbde5ab0239bddb4e8733d3174f8f4008ff84d7161c549e501a4339bdc75c"
@@ -206,12 +206,12 @@
   version = "v1.0.7"
 
 [[projects]]
-  digest = "1:a9b601fdb6b87f7057b7ee052da1b51880db93f796e6d6a7fa8d04bb94a180aa"
+  digest = "1:b3e6299dff5e73ca84ecf9165f7d69d8c788a4ed90b3006fb08132aa0ae63a41"
   name = "github.com/gobuffalo/httptest"
   packages = ["."]
   pruneopts = "UT"
-  revision = "de9ccf41480fd43364948cc09ea6e9572a94c6d1"
-  version = "v1.0.2"
+  revision = "b32a7b1c43f64e10ffe13d2becf51faea70b8d32"
+  version = "v1.0.3"
 
 [[projects]]
   branch = "master"
@@ -315,15 +315,15 @@
   version = "v4.8.8"
 
 [[projects]]
-  digest = "1:b7ec600153e9198cf5c509ad9ac7cef3f1699a224ff8698136b20e6324782967"
+  digest = "1:6b6908b59273cb9f2d1dbd7cc6abea699c13395e6a629f1c5acbf0537e80f486"
   name = "github.com/gobuffalo/suite"
   packages = [
     ".",
     "fix",
   ]
   pruneopts = "UT"
-  revision = "3bc49fc4f99cc1cb9dd4685c6e56bbed1065f46c"
-  version = "v2.2.0"
+  revision = "9f2732522240ef14e12c0c01318f68e193395ecd"
+  version = "v2.4.0"
 
 [[projects]]
   digest = "1:67caa8474de61d17bd909ffac7818fa7abd5a4e5f8af05bc8edd4cfdda18ddff"
@@ -594,14 +594,6 @@
   version = "v1.0.0"
 
 [[projects]]
-  digest = "1:293e816d1b2377b653b5b9631d291ba0b43f2544eda9ff7f442ce9c333cc90bd"
-  name = "github.com/markbates/willie"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "ac63979756d79f88b45b471778c237b14dbe0188"
-  version = "v1.0.9"
-
-[[projects]]
   digest = "1:c658e84ad3916da105a761660dcaeb01e63416c8ec7bc62256a9b411a05fcd67"
   name = "github.com/mattn/go-colorable"
   packages = ["."]
@@ -809,7 +801,7 @@
     "ssh/terminal",
   ]
   pruneopts = "UT"
-  revision = "4d3f4d9ffa16a13f451c3b2999e9c49e9750bf06"
+  revision = "e4dc69e5b2fd71dcaf8bd5d054eb936deb78d1fa"
 
 [[projects]]
   branch = "master"
@@ -822,18 +814,18 @@
     "html/atom",
   ]
   pruneopts = "UT"
-  revision = "c10e9556a7bc0e7c942242b606f0acf024ad5d6a"
+  revision = "a544f70c90f196e50d198126db0c4cb2b562fec0"
 
 [[projects]]
   branch = "master"
-  digest = "1:a7b20b632c01d31a065ddfd4c4faaea60ed08861c961a71db219c19e2ba18908"
+  digest = "1:bd33fb266abe5db1fb1c04e58e98192068f05a8d22fae2a9f22270c8422bb331"
   name = "golang.org/x/oauth2"
   packages = [
     ".",
     "internal",
   ]
   pruneopts = "UT"
-  revision = "232e45548389bd9357411a6922a07c5fd4068bda"
+  revision = "f42d05182288abf10faef86d16c0d07b8d40ea2d"
 
 [[projects]]
   branch = "master"
@@ -845,14 +837,14 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:417d27a82efb8473554234a282be33d23b0d6adc121e636b55950f913ac071d6"
+  digest = "1:f97031542387802b6fd8867c3f29488c2852aac19954ed51df6231a4fadf1707"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = "UT"
-  revision = "9b800f95dbbc54abff0acf7ee32d88ba4e328c89"
+  revision = "3a76605856fddce5718553cbb8bd50ca492a7274"
 
 [[projects]]
   digest = "1:a623ed4965cad144a32551cb009b9bad9ad247c22ca1afdd934fc85d0c891f93"
@@ -926,7 +918,6 @@
     "github.com/markbates/goth/providers/gplus",
     "github.com/markbates/grift/grift",
     "github.com/markbates/inflect",
-    "github.com/markbates/willie",
     "github.com/pkg/errors",
     "github.com/stretchr/testify/require",
     "golang.org/x/oauth2",

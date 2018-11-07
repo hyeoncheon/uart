@@ -16,6 +16,6 @@ buffalo pop migrate -e test
 
 GO_ENV="test" \
 UART_HOME=`pwd` \
-gocoverutil -coverprofile=c.out test -covermode=count ./... && \
+gocoverutil -coverprofile=c.out test $@ -covermode=count ./... && \
 go tool cover -html=c.out -o cover.html
 
