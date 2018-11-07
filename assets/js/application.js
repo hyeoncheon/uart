@@ -42,7 +42,7 @@ $(() => {
 		}
 		var time = moment($(e).text());
 		var disp = time.format(format);
-		if(moment().diff(time, 'months') < 1) {
+		if (moment().diff(time, 'months') < 1 && !$(e).hasClass("norel")) {
 			disp = time.fromNow();
 		}
 		$(e).html('<span title="' + time.format() + '">' + disp + '</span>');

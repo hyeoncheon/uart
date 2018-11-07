@@ -106,6 +106,9 @@ table.table {
 			.page-content {
 				padding-top: 15px;
 				padding-bottom: 30px;
+				.pagination {
+					display: inline-flex;
+				}
 			}
 			.page-footer {
 				color: $color-gray;
@@ -193,6 +196,12 @@ table.table {
 	&.hc-message-box-danger {
 		border-left-color: $color-danger;
 	}
+}
+
+.hc-quote {
+	margin: 5px 0;
+	border-left: 4px solid #bbb;
+	padding: 0 1rem;
 }
 
 .wg.icon {
