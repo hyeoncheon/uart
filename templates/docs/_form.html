@@ -1,43 +1,28 @@
-<div class="col-sm-4 x-nopadding">
+<div class="row">
+	<div class="col-sm-4 x-nopadding">
 <%= f.InputTag("Category", {hide_label: true, placeholder: "Category"}) %>
-</div>
-<div class="col-sm-4 x-nopadding">
+	</div>
+	<div class="col-sm-4 x-nopadding">
 <%= f.InputTag("Subject", {hide_label: true, placeholder: "Subject"}) %>
-</div>
-<div class="col-sm-4 x-nopadding">
+	</div>
+	<div class="col-sm-4 x-nopadding">
 <%= f.InputTag("Type", {hide_label: true, placeholder: "Type"}) %>
+	</div>
 </div>
-<div class="col-sm-9 x-nopadding">
+<div class="row">
+	<div class="col-sm-9 x-nopadding">
 <%= f.InputTag("Title", {hide_label: true, placeholder: "Title"}) %>
-</div>
-<div class="col-sm-3 x-nopadding">
+	</div>
+	<div class="col-sm-3 x-nopadding">
 <%= f.InputTag("IsPublished", {hide_label: true, placeholder: "Publishing?"}) %>
+	</div>
 </div>
-<div class="col-sm-12 x-nopadding">
-<%= f.TextArea("Content", {hide_label: true, rows: 10}) %>
+<div class="row">
+	<div class="col-sm-12 x-nopadding">
+<%= f.TextArea("Content", {hide_label: true}) %>
+	</div>
 </div>
 
-<!-- https://github.com/sparksuite/simplemde-markdown-editor -->
-<link rel="stylesheet" href="/assets/vendor/simplemde/simplemde.min.css">
-<script src="/assets/vendor/simplemde/simplemde.min.js"></script>
-
-<!-- https://highlightjs.org -->
-<script src="/assets/vendor/highlightjs/highlight.pack.js"></script>
-<link rel="stylesheet" href="/assets/vendor/highlightjs/style.github.css">
-
-<script>
-var simplemde = new SimpleMDE({
-	lineWrapping: false,
-	spellChecker: false,
-	placeholder: "Type here...",
-	renderingConfig: {
-		singleLineBreaks: false,
-		codeSyntaxHighlighting: true,
-	},
-});
-</script>
-
-<!-- customize fullscreen -->
 <style>
 .editor-toolbar.fullscreen {
 	top: 40px;

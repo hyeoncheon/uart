@@ -3,6 +3,7 @@ language: go
 go:
   - "1.9"
   - "1.10"
+  - "1.11.1"
 
 # sudo enabled, fully virtualized virtual machine required for mysql 5.7.
 # https://docs.travis-ci.com/user/database-setup/#MySQL-5.7
@@ -29,27 +30,19 @@ before_install:
   - sudo service mysql restart
   - mysql --version
   - go get -u github.com/golang/dep/cmd/dep
-    #- go get -u github.com/gobuffalo/buffalo/buffalo
-    #- pushd $GOPATH/src/github.com/gobuffalo/buffalo
-    #- git checkout v0.11.0 ; popd
-    #- pushd $GOPATH/src/github.com/gobuffalo/pop
-    #- git checkout v4.0.7 ; popd
-    #- pwd
-    #- go get github.com/mattn/anko
-    #- go get github.com/gobuffalo/buffalo/buffalo
-    #- go get GOPATH/src/github.com/gobuffalo/pop/soda
-  - wget https://github.com/gobuffalo/buffalo/releases/download/v0.11.0/buffalo_0.11.0_linux_amd64.tar.gz
-  - tar xvf buffalo_0.11.0_linux_amd64.tar.gz
+  - wget -O - https://github.com/gobuffalo/buffalo/releases/download/v0.13.4/buffalo_0.13.4_linux_amd64.tar.gz |tar zxv
   - mv buffalo-no-sqlite $GOPATH/bin/buffalo
+  - wget -O - https://github.com/gobuffalo/buffalo-pop/releases/download/v1.1.12/buffalo-pop_1.1.12_linux_amd64.tar.gz |tar zxv
+  - mv buffalo-pop $GOPATH/bin/
   - ls -l $GOPATH/bin
   - ls -ld $GOPATH/src/*/*
+  - buffalo help
 
 install:
   - dep ensure
   - mkdir -p $TRAVIS_BUILD_DIR/public/assets
-  - npm install --no-progress
+  - yarn
   - sh ./scripts/keygen.sh
-  - cp database.yml.travis database.yml
 
 before_script:
   - go get -u github.com/mattn/goveralls
@@ -59,15 +52,16 @@ before_script:
   - ./cc-test-reporter before-build
 
 script:
-  - buffalo build
+  - buffalo build --skip-assets
   #
-  - buffalo db create -e test
-  - buffalo db migrate -e test
+  - cp database.yml.travis database.yml
+  - buffalo pop create -e test
+  - buffalo pop migrate -e test
   - UART_HOME=`pwd` GO_ENV=test gocoverutil -coverprofile=c.out -ignore=./vendor/... test -covermode=count ./... && ./cc-test-reporter after-build --exit-code 0
   #
-  - buffalo db drop -e test
-  - buffalo db create -e test
-  - buffalo db migrate -e test
+  - buffalo pop drop -e test
+  - buffalo pop create -e test
+  - buffalo pop migrate -e test
   - UART_HOME=`pwd` goveralls -service=travis-ci
 
 after_script: true

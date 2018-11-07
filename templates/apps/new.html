@@ -1,24 +1,29 @@
-<div class="row wg phead">
-	<div class="col-md-3 col-xs-12 wg ptitle">
-		<h1><%=t("new.app")%></h1>
+<div class="page-header col-12">
+	<div class="page-icon"></div>
+	<h1><%=t("new.app")%></h1>
+	<div class="pull-right">
+		<span data-toggle="popover" data-trigger="hover" data-placement="left"
+			data-content="<%=t("apps.new.popup") %>">
+			<i class="fa fa-question-circle"></i>
+		</span>
 	</div>
-	<div class="col-md-9 col-xs-12 wg pnav">
-		<span class="pull-right" data-toggle="popover" data-trigger="hover"
-			data-placement="left" data-content="<%=t("register.new.app.here")
-			%>"><i class="fa fa-question-circle"></i></span>
+	<div class="description">
+		<%=t("register.new.app.here") %>
 	</div>
 </div>
 
-<div class="row">
-	<div class="col-md-8 col-md-offset-2">
-	<%= form_for(app, {action: appsPath(), method: "POST",
-		class: "horizontal"}) { %>
-	<%= partial("apps/form.html") %>
-	<div class="buttons">
-		<button class="btn btn-success" role="submit"><%=t("save")%></button>
-		<a class="btn btn-warning" href="<%= appsPath()
-			%>" data-confirm="<%=t("are.you.sure")%>"><%=t("cancel")%></a>
-	</div>
-	<% } %>
+<div class="page-content col-12 uart-app">
+	<div class="row">
+		<div class="col-lg-8 offset-lg-2">
+			<%= form_for(app, {action: appsPath(),
+				method: "POST", class: "horizontal"}) { %>
+<%= partial("apps/form.html") %>
+			<div class="buttons">
+				<a class="btn btn-warning" href="<%= appsPath()
+					%>" data-confirm="<%= t("are.you.sure") %>"><%= t("cancel") %></a>
+				<button class="btn btn-success" role="submit"><%= t("save") %></button>
+			</div>
+			<% } %>
+		</div>
 	</div>
 </div>

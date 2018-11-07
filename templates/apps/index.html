@@ -1,25 +1,21 @@
-<div class="row wg phead">
-	<div class="col-md-3 col-xs-12 wg ptitle">
-		<h1><%=t("all.applications")%></h1>
+<div class="page-header col-12">
+	<h1><%=t("all.applications")%></h1>
+	<div class="pull-right">
+		<span data-toggle="popover" data-trigger="hover" data-placement="left"
+			data-content="<%=t("all.registered.apps") %>">
+			<i class="fa fa-question-circle"></i>
+		</span>
 	</div>
-	<div class="col-md-9 col-xs-12 wg pnav">
-		<span class="pull-right" data-toggle="popover" data-trigger="hover"
-			data-placement="left" data-content="<%=t("all.registered.apps")
-			%>"><i class="fa fa-question-circle"></i></span>
-	</div>
+	<div class="description"><%= t("apps.header.description") %></div>
 </div>
 
-<div class="row" style="margin-bottom: 10px;">
-	<div class="col-md-12">
-		<p class="pull-right">
-			<a class="btn btn-xs btn-default" href="<%= newAppsPath()
-				%>"><%=t("new.app")%></a>
-		</p>
+<div class="page-content col-12 hc-docs">
+	<div class="pull-right">
+		<a class="btn btn-sm btn-primary" href="<%= newAppsPath() %>"><%=
+			t("new.app") %></a>
 	</div>
-</div>
 
-<table class="table table-striped table-condensed table-hover">
-	<thead>
+	<table class="table table-striped table-condensed table-hover"><thead>
 		<tr>
 			<th>&nbsp;</th>
 			<th><%=t("name")%></th>
@@ -30,20 +26,18 @@
 			<th><%=t("since")%></th>
 			<th>&nbsp;</th>
 		</tr>
-	</thead>
-	<tbody>
-		<%= for (app) in apps { %><tr class="clickable">
+	</thead><tbody><%= for (app) in apps { %>
+		<tr class="linked" target="<%= appPath({ app_id: app.ID }) %>">
 			<td><%= imageFor(app.AppIcon, "wg icon24") %></td>
-			<td><a id="link" href="<%= appPath({ app_id: app.ID })
-					%>"><%= app.Name %></a></td>
+			<td><%= app.Name %></td>
 			<td><%= app.Description %></td>
 			<td><%= app.SiteURL %></td>
 			<td><%= app.GrantsCount() %></td>
 			<td><%= app.RequestsCount() %></td>
-			<td><%= timeYYMD(app.CreatedAt) %></td>
-			<td class="unclickable">
-				<div class="pull-right btn-group">
-					<a class="btn btn-xs btn-default<%= if (app.Code == "uart") {
+			<td class="moment" form="YYYY-MM-DD"><%= app.CreatedAt %></td>
+			<td class="nolink">
+				<div class="pull-right btn-group btn-group-sm">
+					<a class="btn btn-xs btn-secondary<%= if (app.Code == "uart") {
 						%> disabled<% } %>" href="<%=
 						editAppPath({ app_id: app.ID }) %>"><%=t("edit")%></a>
 					<a class="btn btn-xs btn-danger<%= if (app.Code == "uart") {
@@ -54,9 +48,13 @@
 				</div>
 			</td>
 		</tr><% } %>
-	</tbody>
-</table>
+	</tbody></table>
 
-<div class="text-center">
-	<%= paginator(pagination) %>
+	<div class="text-center">
+<%= paginator(pagination) %>
+	</div>
+
+</div> <!-- end of page-content -->
+
+<div class="page-footer col-12">
 </div>

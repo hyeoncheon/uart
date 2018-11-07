@@ -3,10 +3,11 @@ package actions
 // TODO REVIEW REQUIRED
 
 import (
-	"time"
+	"html/template"
 
 	"github.com/gobuffalo/buffalo/render"
 	"github.com/gobuffalo/packr"
+	"github.com/gobuffalo/uuid"
 )
 
 var r *render.Engine
@@ -24,23 +25,34 @@ func init() {
 
 		// Add template helpers here:
 		Helpers: render.Helpers{
-			"shorten":  shortenHelper,
 			"imageFor": imageForHelper,
 			"logoFor":  logoForHelper,
-			"timeYYMDHMS": func(t time.Time) string {
-				return t.Local().Format("2006-01-02 15:04:05")
+			"iconize": func(s string) template.HTML {
+				switch s {
+				case "admin":
+					return template.HTML(`<i class="fa fa-empire"></i>`)
+				default:
+					return template.HTML(`<i class="fa fa-` + s + `"></i>`)
+				}
 			},
-			"timeYYMDHM": func(t time.Time) string {
-				return t.Local().Format("2006-01-02 15:04")
-			},
-			"timeYMDHM": func(t time.Time) string {
-				return t.Local().Format("06-01-02 15:04")
-			},
-			"timeMDHM": func(t time.Time) string {
-				return t.Local().Format("01-02 15:04")
-			},
-			"timeYYMD": func(t time.Time) string {
-				return t.Local().Format("2006-01-02")
+			"trunc": func(t interface{}, args ...int) string {
+				length := 20
+				var s string
+				switch t.(type) {
+				case string:
+					s = t.(string)
+				case uuid.UUID:
+					s = t.(uuid.UUID).String()
+					length = 14
+				}
+
+				if len(args) > 0 {
+					length = args[0]
+				}
+				if length > len(s)-4 {
+					return s
+				}
+				return s[0:length] + "..."
 			},
 		},
 	})

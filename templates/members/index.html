@@ -1,51 +1,53 @@
-<div class="row wg phead">
-	<div class="col-md-3 col-xs-12 wg ptitle">
-		<h1><%=t("members")%></h1>
+<div class="page-header col-12">
+	<h1><%= t("members") %></h1>
+	<div class="pull-right">
+		<span data-toggle="popover" data-trigger="hover" data-placement="left"
+			data-content="<%= t("all.registered.members") %>">
+			<i class="fa fa-question-circle"></i>
+		</span>
 	</div>
-	<div class="col-md-9 col-xs-12 wg pnav">
-		<span class="pull-right" data-toggle="popover" data-trigger="hover"
-			data-placement="left" data-content="<%=t("all.registered.members")
-			%>"><i class="fa fa-question-circle"></i></span>
-	</div>
+	<div class="description"><%= t("members.header.description") %></div>
 </div>
 
-<table class="table table-striped table-condensed table-hover">
-	<thead>
+<div class="page-content col-12 hc-docs">
+	<table class="table table-striped table-condensed table-hover"><thead>
 		<tr>
 			<th>&nbsp;</th>
-			<th><%=t("name")%></th>
-			<th><%=t("email")%></th>
-			<th><%=t("active")%></th>
-			<th><%=t("credentials")%></th>
-			<th><%=t("access.grants")%></th>
-			<th><%=t("since")%></th>
+			<th><%= t("name") %></th>
+			<th><%= t("email") %></th>
+			<th><%= t("active") %></th>
+			<th><%= t("credentials") %></th>
+			<th><%= t("access.grants") %></th>
+			<th><%= t("since") %></th>
 			<th>&nbsp;</th>
 		</tr>
-	</thead>
-	<tbody>
-		<%= for (member) in members { %><tr class="clickable">
+	</thead><tbody><%= for (member) in members { %>
+		<tr class="linked" target="<%= membershipPath({ member_id: member.ID }) %>">
 			<td><%= imageFor(member.Icon, "wg icon24") %></td>
-			<td><a id="link" href="<%= membershipPath({ member_id: member.ID })
-					%>"><%= member.Name %></a></td>
+			<td><%= member.Name %></td>
 			<td><%= member.Email %></td>
 			<td><%= if (member.IsActive) { %>Active<% } else { %>Locked<% } %></td>
 			<td><%= member.CredentialCount() %></td>
 			<td><%= member.AccessGrantCount() %></td>
-			<td><%= timeYYMD(member.CreatedAt) %></td>
-			<td class="unclickable">
-				<div class="pull-right btn-group">
-					<a class="btn btn-xs btn-warning" href="<%=
-						editMemberPath({ member_id: member.ID }) %>"><%=t("edit")%></a>
-					<a class="btn btn-xs btn-danger" href="<%=
-						memberPath({ member_id: member.ID }) %>"
-						data-method="DELETE" data-confirm="<%=t("are.you.sure")
-						%>"><%=t("delete")%></a>
+			<td class="moment"><%= member.CreatedAt %></td>
+			<td class="nolink">
+				<div class="pull-right btn-group btn-group-sm">
+					<a class="btn btn-secondary" href="<%=
+						editMemberPath({ member_id: member.ID }) %>"><%= t("edit") %></a>
+					<a class="btn btn-danger" href="<%=
+						memberPath({ member_id: member.ID })
+						%>" data-method="DELETE" data-confirm="<%= t("are.you.sure")
+						%>"><%= t("delete") %></a>
 				</div>
 			</td>
 		</tr><% } %>
-	</tbody>
-</table>
+	</tbody></table>
 
-<div class="text-center">
-	<%= paginator(pagination) %>
+	<div class="text-center">
+<%= paginator(pagination) %>
+	</div>
+
+</div> <!-- end of page-content -->
+
+<div class="page-footer col-12">
 </div>

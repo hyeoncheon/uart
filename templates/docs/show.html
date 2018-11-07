@@ -1,38 +1,40 @@
-<div class="row">
-	<div class="col-md-10 col-md-offset-1 document">
-		<h1><i class="fa fa-book"></i> <%= doc.Title %></h1>
-		<div class="meta">
-			<div class="wg meta pull-left">
-				<%=t("subject")%>: <%= doc.Category %> / <%= doc.Subject %>
-				<%=t("type")%>: <%= doc.Type %>
-			</div>
-			<div class="wg meta pull-right">
-				<%= timeYYMD(doc.CreatedAt) %> by <%= doc.AuthorName() %>
-			</div>
-		</div>
-
-		<div class="content"> <!-- document content ~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-			<%= if (member_is_admin) { %><div class="pull-right hidden-print">
-				<%= if (!doc.IsPublished) {
-					%><a class="btn btn-xs btn-primary" href="<%=
-					docPublishPath({ doc_id: doc.ID }) %>" data-confirm="<%=
-					t("are.you.sure")%>">Publish</a><% } else { %>Published<% } %>
-				<div class="btn-group">
-				<a class="btn btn-xs btn-default" href="<%=
-					docsPath() %>"><i class="fa fa-arrow-left"></i></a>
-				<a class="btn btn-xs btn-default" href="<%=
-					editDocPath({ doc_id: doc.ID }) %>"><%=t("edit")%></a>
-				<a class="btn btn-xs btn-danger" href="<%=
-					docPath({ doc_id: doc.ID }) %>" data-method="DELETE" data-confirm="<%=
-					t("are.you.sure") %>"><%=t("delete")%></a>
-				</div>
-			</div><% } %>
-			<div>
-				<%= markdown(doc.Content) %>
-			</div>
-		</div>
+<div class="page-header col-12">
+	<div class="page-icon"></div>
+	<h1><i class="fa fa-book"></i> <%= doc.Title %></h1>
+	<div class="pull-right">
+		<span data-toggle="popover" data-trigger="hover" data-placement="left"
+			data-content="<%= t("message.popup") %>">
+			<i class="fa fa-question-circle"></i>
+		</span>
+	</div>
+	<div class="description">
+		<%= doc.Type %>: <%= doc.Category %> / <%= doc.Subject %>
+		<span class="moment"><%= doc.CreatedAt %></span>
+		by <%= doc.AuthorName() %>
 	</div>
 </div>
+
+<div class="page-content col-12 uart-app">
+	<div class="content"><%= if (member_is_admin) { %>
+		<div class="pull-right hidden-print"><%= if (!doc.IsPublished) { %>
+			<a class="btn btn-sm btn-primary" href="<%=
+				docPublishPath({ doc_id: doc.ID }) %>" data-confirm="<%=
+				t("are.you.sure") %>">Publish</a><% } %>
+			<div class="btn-group btn-group-sm">
+			<a class="btn btn-xs btn-dark" href="<%=
+				docsPath() %>"><i class="fa fa-arrow-left"></i></a>
+			<a class="btn btn-xs btn-secondary" href="<%=
+				editDocPath({ doc_id: doc.ID }) %>"><%=t("edit")%></a>
+			<a class="btn btn-xs btn-danger" href="<%=
+				docPath({ doc_id: doc.ID }) %>" data-method="DELETE" data-confirm="<%=
+				t("are.you.sure") %>"><%=t("delete")%></a>
+			</div>
+		</div><% } %>
+		<div>
+			<%= markdown(doc.Content) %>
+		</div>
+	</div>
+</div> <!-- end of page-content -->
 
 <style>
 .document {
@@ -63,6 +65,3 @@
 	}
 }
 </style>
-
-<script src="/assets/vendor/highlightjs/highlight.pack.js"></script>
-<link rel="stylesheet" href="/assets/vendor/highlightjs/style.github.css">

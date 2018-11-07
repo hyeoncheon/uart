@@ -1,27 +1,25 @@
-<div class="row wg phead">
-	<div class="col-md-3 col-xs-12 wg ptitle">
-		<h1><%=t("messaging.logs")%></h1>
-	</div>
-	<div class="col-md-9 col-xs-12 wg pnav">
-		<span class="pull-right" data-toggle="popover" data-trigger="hover"
-			data-placement="left" data-content="<%=t("all.processed.messagings")
+<div class="page-header col-12">
+	<h1><%= t("messaging.logs") %></h1>
+	<div class="pull-right">
+		<span data-toggle="popover" data-trigger="hover" data-placement="left"
+			data-content="<%= t("all.processed.messagings")
 			%>"><i class="fa fa-question-circle"></i></span>
 	</div>
+	<div class="description"><%= t("credentials.header.description") %></div>
 </div>
 
-<table class="table table-striped table-condensed table-hover">
-	<thead>
+<div class="page-content col-12">
+	<table class="table table-striped table-condensed table-hover"><thead>
 		<tr>
-			<th><%=t("date")%></th>
-			<th><%=t("subject")%></th>
-			<th><%=t("sent.for")%></th>
-			<th><%=t("status")%></th>
+			<th><%= t("date") %></th>
+			<th><%= t("subject") %></th>
+			<th><%= t("sent.for") %></th>
+			<th><%= t("status") %></th>
 			<th>&nbsp;</th>
 		</tr>
-	</thead>
-	<tbody>
-		<%= for (messagingLog) in messagingLogs { %><tr>
-			<td><%= timeMDHM(messagingLog.CreatedAt) %></td>
+	</thead><tbody><%= for (messagingLog) in messagingLogs { %>
+		<tr>
+			<td class="moment"><%= messagingLog.CreatedAt %></td>
 			<td><span data-toggle="tooltip" data-placement="top" title="<%=
 				messagingLog.Notes %>"><%= messagingLog.Subject %></span></td>
 			<td><span data-toggle="tooltip" data-placement="top" title="<%=
@@ -31,7 +29,7 @@
 				messagingLog.QueueID %>/<%= messagingLog.Response %>"><%=
 				humanize(messagingLog.Status) %></span></td>
 			<td>
-				<div class="pull-right btn-group">
+				<div class="pull-right btn-group btn-group-sm">
 					<a class="btn btn-xs btn-danger" href="<%=
 						messagingLogPath({ messaging_log_id: messagingLog.ID })
 						%>" data-method="DELETE" data-confirm="<%=t("are.you.sure")
@@ -39,9 +37,13 @@
 				</div>
 			</td>
 		</tr><% } %>
-	</tbody>
-</table>
+	</tbody></table>
 
-<div class="text-center">
-	<%= paginator(pagination) %>
+	<div class="text-center">
+<%= paginator(pagination) %>
+	</div>
+
+</div>
+
+<div class="page-footer col-12">
 </div>

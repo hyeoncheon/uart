@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/gobuffalo/httptest"
 	"github.com/gobuffalo/uuid"
-	"github.com/markbates/willie"
 
 	"github.com/hyeoncheon/uart/models"
 )
@@ -93,23 +93,23 @@ func (as *ActionSuite) Test_AppsResource_A_All_As_Appman() {
 	as.Contains(res.Body.String(), "Testing Description")
 
 	// Edit(), denied by ownership function
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
+	permissionDenied(as, func(*ActionSuite) *httptest.Response {
 		return as.HTML("/apps/%v/edit", uart.ID).Get()
 	})
 
 	// Update(), denied by ownership function
 	uart.Description = "I will rule you"
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
+	permissionDenied(as, func(*ActionSuite) *httptest.Response {
 		return as.HTML("/apps/%v", uart.ID).Put(uart)
 	})
 
 	// Show(), denied by ownership function
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
+	permissionDenied(as, func(*ActionSuite) *httptest.Response {
 		return as.HTML("/apps/%v", uart.ID).Get()
 	})
 
 	// Delete(), denied by ownership function
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
+	permissionDenied(as, func(*ActionSuite) *httptest.Response {
 		return as.HTML("/apps/%v", uart.ID).Delete()
 	})
 
@@ -124,12 +124,12 @@ func (as *ActionSuite) Test_AppsResource_J_All_As_Other() {
 	as.activateMember(other)
 
 	// List(), denied by role based blocker
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
+	permissionDenied(as, func(*ActionSuite) *httptest.Response {
 		return as.HTML("/apps").Get()
 	})
 
 	// New(), denied by role based blocker
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
+	permissionDenied(as, func(*ActionSuite) *httptest.Response {
 		return as.HTML("/apps/new").Get()
 	})
 
@@ -138,22 +138,22 @@ func (as *ActionSuite) Test_AppsResource_J_All_As_Other() {
 
 	// Show(), denied by role based blocker
 	uart := models.GetAppByCode(models.ACUART)
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
+	permissionDenied(as, func(*ActionSuite) *httptest.Response {
 		return as.HTML("/apps/%v", uart.ID).Get()
 	})
 
 	// Edit(), denied by role based blocker
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
+	permissionDenied(as, func(*ActionSuite) *httptest.Response {
 		return as.HTML("/apps/%v/edit", uart.ID).Get()
 	})
 
 	// Update(), denied by role based blocker
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
+	permissionDenied(as, func(*ActionSuite) *httptest.Response {
 		return as.HTML("/apps/%v", uart.ID).Put(uart)
 	})
 
 	// Destroy(), denied by role based blocker
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
+	permissionDenied(as, func(*ActionSuite) *httptest.Response {
 		return as.HTML("/apps/%v", uart.ID).Delete()
 	})
 }
@@ -197,7 +197,7 @@ func (as *ActionSuite) Test_AppsResource_O_GrantFlow() {
 
 //** test functions -------------------------------------------------
 
-func requestCreateTestingApp(as *ActionSuite) *willie.Response {
+func requestCreateTestingApp(as *ActionSuite) *httptest.Response {
 	app := &models.App{
 		Name:        AppName,
 		Code:        AppCode,

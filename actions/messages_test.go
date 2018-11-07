@@ -7,8 +7,8 @@ package actions_test
 import (
 	"net/http"
 
+	"github.com/gobuffalo/httptest"
 	"github.com/gobuffalo/uuid"
-	"github.com/markbates/willie"
 
 	"github.com/hyeoncheon/uart/models"
 )
@@ -37,7 +37,7 @@ func (as *ActionSuite) Test_MessagesResource_A_ListShow_A() {
 
 	// Show() denied, this message is for other not admin
 	//! it also generate error log for admin
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
+	permissionDenied(as, func(*ActionSuite) *httptest.Response {
 		return as.HTML("/messages/%v", message.ID).Get()
 	})
 

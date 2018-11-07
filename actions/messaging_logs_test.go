@@ -5,8 +5,8 @@ package actions_test
 import (
 	"net/http"
 
+	"github.com/gobuffalo/httptest"
 	"github.com/gobuffalo/uuid"
-	"github.com/markbates/willie"
 
 	"github.com/hyeoncheon/uart/models"
 )
@@ -24,12 +24,12 @@ func (as *ActionSuite) Test_MessagingLogsResource() {
 	as.DB.Save(&mlog)
 
 	// List(), denied by admin protect
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
+	permissionDenied(as, func(*ActionSuite) *httptest.Response {
 		return as.HTML("/messaging_logs").Get()
 	})
 
 	// Destroy(), denied by admin protect
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
+	permissionDenied(as, func(*ActionSuite) *httptest.Response {
 		return as.HTML("/messaging_logs/%v", mlog.ID).Delete()
 	})
 
@@ -48,7 +48,7 @@ func (as *ActionSuite) Test_MessagingLogsResource() {
 	as.Error(err)
 
 	// Destroy(), denied by admin protect
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
+	permissionDenied(as, func(*ActionSuite) *httptest.Response {
 		return as.HTML("/messaging_logs/%v", uuid.Nil).Delete()
 	})
 }

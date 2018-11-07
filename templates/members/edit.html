@@ -1,24 +1,30 @@
-<div class="row wg phead">
-	<div class="col-md-3 col-xs-12 wg ptitle">
-		<h1><%=t("edit")%> <%= member.Name %></h1>
+<div class="page-header col-12">
+	<div class="page-icon"></div>
+	<h1><%=t("edit")%> <%= member.Name %></h1>
+	<div class="pull-right">
+		<span data-toggle="popover" data-trigger="hover" data-placement="left"
+			data-content="<%=t("member.edit.popup") %>">
+			<i class="fa fa-question-circle"></i>
+		</span>
 	</div>
-	<div class="col-md-9 col-xs-12 wg pnav">
-		<span class="pull-right" data-toggle="popover" data-trigger="hover"
-			data-placement="left" data-content="<%=t("set.member.status.and.notes")
-			%>"><i class="fa fa-question-circle"></i></span>
+	<div class="description">
+		<%= member.Email %>,
+		<%= t("since") %> <span class="moment"><%= member.CreatedAt %></span>
 	</div>
 </div>
 
-<div class="row">
-	<div class="col-md-10 col-md-offset-1 col-xs-12">
-	<%= form_for(member, {action: memberPath({ member_id: member.ID }),
-		method: "PUT", class: "horizontal"}) { %>
-	<%= partial("members/form.html") %>
-	<div class="buttons">
-		<button class="btn btn-success" role="submit"><%=t("save")%></button>
-		<a class="btn btn-warning" href="<%= membersPath()
-			%>" data-confirm="<%=t("are.you.sure")%>"><%=t("cancel")%></a>
-	</div>
-	<% } %>
+<div class="page-content col-12 uart-app">
+	<div class="row">
+		<div class="col-lg-8 offset-lg-2">
+			<%= form_for(member, {action: memberPath({ member_id: member.ID }),
+				method: "PUT", class: "horizontal"}) { %>
+<%= partial("members/form.html") %>
+			<div class="buttons">
+				<a class="btn btn-warning" href="<%= membersPath()
+					%>" data-confirm="<%= t("are.you.sure") %>"><%= t("cancel") %></a>
+				<button class="btn btn-success" role="submit"><%= t("save") %></button>
+			</div>
+			<% } %>
+		</div>
 	</div>
 </div>

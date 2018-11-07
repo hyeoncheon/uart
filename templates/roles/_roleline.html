@@ -1,20 +1,18 @@
-<div class="wg line">
-	<div class="wg thumb">
-		<i class="fa fa-star<%= if (!is_active) { %>-o<% } %>"></i>
-	</div>
-	<div class="wg title">
-		<% let app = role.App() %>
+<div class="hc-line">
+	<div class="thumb"><i class="fa fa-star<%= if (!is_active) {
+		%>-o<% } %>"></i></div>
+	<div class="title"><% let app = role.App() %>
 		<b><%= role.Name %></b>
-		<span class="wg meta">
-			<%= role.Description %>
-		</span>
+		<span class="meta"><%= role.Description %></span>
 	</div>
-	<div class="wg extra">
-		<p class="btn-group">
-		<a class="btn btn-xs btn-warning<%=
-			if (((app.Code == "uart") && ((role.Code == "user") || (role.Code == "guest"))) || (role.Code == "admin")) { %> disabled<%
-			} %>" href="<%= requestsRoleRetirePath({ role_id: role.ID })
-			%>" data-confirm="<%=t("are.you.sure")%>"><%=t("revoke")%></a>
-		</p>
+	<div class="extra">
+		<div class="btn-group btn-group-sm">
+			<a class="btn btn-warning<%=
+				if (((app.Code == "uart") &&
+						((role.Code == "user") || (role.Code == "guest"))) ||
+						(role.Code == "admin")) { %> disabled<%
+				} %>" href="<%= requestsRoleRetirePath({ role_id: role.ID })
+					%>" data-confirm="<%=t("are.you.sure")%>"><%=t("revoke")%></a>
+		</div>
 	</div>
 </div>

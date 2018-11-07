@@ -1,95 +1,94 @@
-<div class="row wg phead">
-	<div class="col-md-3 col-xs-12 wg ptitle">
-		<h1><%= member %></h1>
+<div class="page-header col-12">
+	<div class="page-icon"></div>
+	<h1><%= member %></h1>
+	<div class="pull-right">
+		<span data-toggle="popover" data-trigger="hover" data-placement="left"
+			data-content="<%=t("show.and.edit.your.settings") %>">
+			<i class="fa fa-question-circle"></i>
+		</span>
 	</div>
-	<div class="col-md-9 col-xs-12 wg pnav">
-		<span class="pull-right" data-toggle="popover" data-trigger="hover"
-			data-placement="left" data-content="<%=t("show.and.edit.your.settings")
-			%>"><i class="fa fa-question-circle"></i></span>
+	<div class="description">
+		Uses <%= len(grants) %> apps
 	</div>
 </div>
 
-<div class="row">
-	<%= if (member.ID.String() != member_id.String()) { %>
-	<div class="col-md-8 col-md-offset-2 col-xs-12">
-		<div class="alert alert-danger">
-			<%=t("this.profile.is.not.yours.do.not.make.any.action")%>
-		</div>
-	</div>
-	<% } %>
-
+<div class="page-content col-12 uart-app"><%=
+	if (member.ID.String() != member_id.String()) { %>
+	<div class="col-md-8 offset-md-2 col-xs-12">
+		<div class="alert alert-danger"><%=
+			t("this.profile.is.not.yours.do.not.make.any.action")
+			%></div>
+	</div><% } %>
 	<%= if (!member.IsActive) { %>
-	<div class="col-md-8 col-md-offset-2 col-xs-12">
-		<div class="alert alert-danger">
-			<%=t("you.are.currently.locked.or.new")%>
-		</div>
+	<div class="col-md-8 offset-md-2 col-xs-12">
+		<div class="alert alert-danger"><%=
+			t("you.are.currently.locked.or.new")
+			%></div>
 	</div>
 	<% } %>
 
-	<div class="col-md-6 col-xs-12">
-		<div class="wg chapter">
-			<h2 class="wg underline head">
-				<%=t("my.authorized.apps")%>
-			</h2>
-			<div class="wg content-box">
-				<%= for (grant) in grants { %><%
-				let app = grant.App() %><%
-partial("apps/appcard.html") %><%
-				} %>
+	<div class="row">
+		<div class="col-lg-6"> <!-- pannel ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+			<div class="hc-box">
+				<h2 class=""><%= t("my.authorized.apps")%></h2>
+				<div class="wg content-box"><%= for (grant) in grants { %><%
+					let app = grant.App() %><%
+					partial("apps/appcard.html") %><% } %>
+				</div>
 			</div>
 		</div>
 
-	</div><div class="col-md-6 col-xs-12"> <!-- ---------------------------- -->
-		<div class="wg chapter">
-			<h2 class="wg underline head">
-				<%=t("messengers")%>
-				<span class="pull-right"><a class="btn btn-sm btn-default<%=
+		<div class="col-lg-6"> <!-- contents ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+			<div class="hc-box"> <!-- messengers ~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+				<div class="pull-right"><a href="#" class="btn btn-sm btn-secondary<%=
 					if (!member.IsActive) { %> disabled<% }
 					%>" data-toggle="modal" data-target="#newMessenger"><%=
-					t("add.new.messenger")%></a></span>
-			</h2>
-			<div class="wg content-box">
-				<%= for (messenger) in messengers { %><%=
-partial("messengers/messengercard.html") %><%
-				} %>
+					t("add.new.messenger") %></a></div>
+				<h2 class=""><%= t("messengers") %></h2>
+				<div class="wg content-box">
+					<%= for (messenger) in messengers { %><%=
+	partial("messengers/messengercard.html") %><%
+					} %>
+				</div>
 			</div>
-		</div>
 
-		<div class="wg chapter">
-			<h2 class="wg underline head">
-				<%=t("teams")%>
-				<span class="pull-right"><a class="btn btn-sm btn-default disabled"><%=
-						t("create.new.team")%></a></span>
-			</h2>
-			<div class="wg content-box">
+			<div class="hc-box"> <!-- teams ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+				<div class="pull-right"><a href="#"
+					class="btn btn-sm btn-secondary disabled"><%=
+					t("create.new.team") %></a></div>
+				<h2 class=""><%= t("teams") %></h2>
+				<div class="wg content-box">
+				</div>
 			</div>
-		</div>
 
-		<div class="wg chapter">
-			<h2 class="wg underline head">
-				<%=t("credentials")%>
-				<span class="pull-right"><a class="btn btn-sm btn-default disabled"><%=
-						t("add.credential")%></a></span>
-			</h2>
-			<div class="wg content-box">
-				<%= for (credential) in credentials { %><%=
-partial("credentials/creditcard.html") %><%
-				} %>
+			<div class="hc-box"> <!-- credentials ~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+				<div class="pull-right"><a href="#"
+					class="btn btn-sm btn-secondary disabled"><%=
+					t("add.credential") %></a></div>
+				<h2 class=""><%= t("credentials") %></h2>
+				<div class="wg content-box">
+					<%= for (credential) in credentials { %><%=
+	partial("credentials/creditcard.html") %><%
+					} %>
+				</div>
 			</div>
-		</div>
 
-	</div>
-</div>
+		</div> <!-- end of contents -->
+	</div> <!-- end of row -->
+</div> <!-- end of page-content -->
+
 
 <!-- Modal for Role -->
 <div class="modal fade" id="newMessenger" tabindex="-1" role="dialog">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h4 class="modal-title"><%=t("add.new.messenger")%></h4>
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
 			</div>
-			<%= form_for(messenger, {action: messengersPath(), method: "POST"}) { %>
+			<%= form_for(messenger, {action: messengersPath(),
+				method: "POST", class: "horizontal"}) { %>
 			<div class="modal-body">
 				<p>
 				<%=t("modal.message.add.your.favorite.messenger")%>
@@ -97,10 +96,11 @@ partial("credentials/creditcard.html") %><%
 				<%= partial("messengers/form.html") %>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-warning" data-dismiss="modal" aria-label="Close"><%=t("close")%></button>
-				<button class="btn btn-success" style="width: 120px" role="submit"><%=t("add")%></button>
-			</div>
-			<% } %>
+				<button type="button" class="btn btn-warning" data-dismiss="modal"><%=
+					t("close") %></button>
+				<button class="btn btn-success" style="width: 120px" role="submit"><%=
+					t("add") %></button>
+			</div><% } %>
 		</div><!-- /.modal-content -->
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->

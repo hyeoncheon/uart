@@ -1,4 +1,4 @@
-create_table("docs", func(t) {
+create_table("docs") {
 	t.Column("id", "uuid", {"primary": true})
 	t.Column("member_id", "uuid", {})
 	t.Column("type", "string", {})
@@ -8,6 +8,6 @@ create_table("docs", func(t) {
 	t.Column("title", "string", {})
 	t.Column("content", "text", {})
 	t.Column("is_published", "bool", {})
-})
+}
 add_index("docs", "member_id", {})
 add_index("docs", "slug", {})

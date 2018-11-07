@@ -6,8 +6,8 @@ package actions_test
 import (
 	"net/http"
 
+	"github.com/gobuffalo/httptest"
 	"github.com/gobuffalo/uuid"
-	"github.com/markbates/willie"
 
 	"github.com/hyeoncheon/uart/models"
 )
@@ -48,13 +48,13 @@ func (as *ActionSuite) Test_CredentialsResource_A_All_As_Admin() {
 	// Destroy(), denied by current rule. cannot delete credential by self.
 	cred := (*admin.Credentials())[0]
 	as.NotEqual(uuid.Nil, cred.ID)
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
+	permissionDenied(as, func(*ActionSuite) *httptest.Response {
 		return as.HTML("/credentials/%v", cred.ID).Delete()
 	})
 	as.Equal(1, admin.CredentialCount())
 
 	// Destroy(), error, not exists
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
+	permissionDenied(as, func(*ActionSuite) *httptest.Response {
 		return as.HTML("/credentials/%v", uuid.Nil).Delete()
 	})
 
@@ -73,14 +73,14 @@ func (as *ActionSuite) Test_CredentialsResource_B_All_As_Other() {
 	as.loginAs(other)
 
 	// List(), denied by admin protector
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
+	permissionDenied(as, func(*ActionSuite) *httptest.Response {
 		return as.HTML("/credentials").Get()
 	})
 
 	// Destroy(), denied by current rule. cannot delete credential by self.
 	cred := (*other.Credentials())[0]
 	as.NotEqual(uuid.Nil, cred.ID)
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
+	permissionDenied(as, func(*ActionSuite) *httptest.Response {
 		return as.HTML("/credentials/%v", cred.ID).Delete()
 	})
 	as.Equal(1, other.CredentialCount())

@@ -8,8 +8,8 @@ package actions_test
 import (
 	"net/http"
 
+	"github.com/gobuffalo/httptest"
 	"github.com/gobuffalo/uuid"
-	"github.com/markbates/willie"
 )
 
 func (as *ActionSuite) Test_MembersResource_A_CreateUpdateList() {
@@ -96,22 +96,22 @@ func (as *ActionSuite) Test_MembersResource_J_InvalidAccess() {
 	as.loginAs(other)
 
 	// List(), denied by role based blocker
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
+	permissionDenied(as, func(*ActionSuite) *httptest.Response {
 		return as.HTML("/members").Get()
 	})
 
 	// Edit(), denied by role based blocker TODO: open it later?
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
+	permissionDenied(as, func(*ActionSuite) *httptest.Response {
 		return as.HTML("/members/%v/edit", other.ID).Get()
 	})
 
 	// Update(), denied by role based blocker TODO: open it later?
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
+	permissionDenied(as, func(*ActionSuite) *httptest.Response {
 		return as.HTML("/members/%v", other.ID).Put(other)
 	})
 
 	// Destroy(), denied by role based blocker
-	permissionDenied(as, func(*ActionSuite) *willie.Response {
+	permissionDenied(as, func(*ActionSuite) *httptest.Response {
 		return as.HTML("/members/%v", other.ID).Delete()
 	})
 }

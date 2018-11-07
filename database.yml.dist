@@ -1,15 +1,21 @@
+# vim: set syntax=yaml:
+
 development:
   dialect: "mysql"
   database: "hc_uart_development"
   host: "localhost"
   port: "3306"
-  user: "root"
-  password: "root"
+  user: "hyeoncheon"
+  password: "hyeoncheon"
+  options:
+    multiStatements: true
+    readTimeout: 10s
+    parseTime: true
 
 test:
   dialect: "mysql"
-  url: {{envOr "TEST_DATABASE_URL" "mysql://root:root@localhost:3306/hc_uart_test?parseTime=true&multiStatements=true&readTimeout=3s"}}
+  url: {{ envOr "TEST_DATABASE_URL" "mysql://hyeoncheon:hyeoncheon@(localhost:3306)/hc_uart_test?parseTime=true&multiStatements=true&readTimeout=3s" }}
 
 production:
   dialect: "mysql"
-  url: {{envOr "DATABASE_URL" "mysql://root:root@localhost:3306/hc_uart_production?parseTime=true&multiStatements=true&readTimeout=3s"}}
+  url: {{ envOr "DATABASE_URL" "mysql://hyeoncheon:hyeoncheon@(localhost:3306)/hc_uart_production?parseTime=true&multiStatements=true&readTimeout=3s" }}
