@@ -90,6 +90,13 @@ table.table {
 				background-color: $color-header;
 				padding-top: 0.3rem;
 				border-bottom: 1px solid $color-border;
+				.page-icon {
+					img {
+						margin-left: -10px;
+						padding-right: 10px;
+						float: left;
+					}
+				}
 				.description {
 					color: $color-gray;
 					padding-bottom: 0.2rem;
@@ -97,8 +104,8 @@ table.table {
 				}
 			}
 			.page-content {
-				padding-top: 0.5rem;
-				padding-bottom: 2rem;
+				padding-top: 15px;
+				padding-bottom: 30px;
 			}
 			.page-footer {
 				color: $color-gray;
@@ -140,6 +147,10 @@ table.table {
 			margin-left: 10px;
 		}
 	}
+}
+
+.hc-box {
+	margin-bottom: 30px;
 }
 
 .hc-doc {
@@ -255,4 +266,38 @@ table.table {
 
 .btn-sm, .btn-group-sm > .btn {
 	padding: 0 .4rem;
+}
+
+//* workaround
+form.horizontal {
+	.form-group {
+		label {
+			width: 23%;
+			text-align: right;
+			vertical-align: top;
+		}
+		input, textarea, select {
+			display: inline-block;
+			margin-left: 2%;
+			width: 75%;
+		}
+		div.widget-group {
+			display: inline-block;
+			margin-left: 2%;
+			width: 70%;
+		}
+		div.help-block,
+		span.help-block {
+			width: 75%;
+			margin: 0 0 0 25%;
+		}
+	}
+	.buttons {
+		text-align: right;
+		width: 75%;
+		margin: 0 0 0 25%;
+	}
+	button.btn-success {
+		min-width: 150px;
+	}
 }

@@ -1,151 +1,126 @@
-<div class="row wg phead">
-	<div class="col-md-3 col-xs-12 wg ptitle">
-		<h1><i class="fa fa-asterisk"></i> <%= app.Name %></h1>
+<div class="page-header col-12">
+	<div class="page-icon"></div>
+	<h1><%= app.Name %> (<%= t("App") %>)</h1>
+	<div class="pull-right">
+		<span data-toggle="popover" data-trigger="hover" data-placement="left"
+			data-content="<%=t("app.header.popup") %>">
+			<i class="fa fa-question-circle"></i>
+		</span>
 	</div>
-	<div class="col-md-9 col-xs-12 wg pnav">
-		<span class="pull-right" data-toggle="popover" data-trigger="hover"
-			data-placement="left" data-content="<%=t("app.details")
-			%>"><i class="fa fa-question-circle"></i></span>
+	<div class="description">
+		<%= app.Description %>,
+		<%= t("since") %> <span class="moment"><%= app.CreatedAt %></span>
+		<%= app.GrantsCount() %> <%= t("users") %>
 	</div>
 </div>
 
-<div class="row">
-	<div class="col-md-3 col-xs-12">
-		<div class="wg card"> <!-- left card ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-			<div class="wg frame"><%= imageFor(app.AppIcon, "wg icon128") %></div>
-			<div class="wg title">
-				<h3><%= app.Name %></h3>
-				<div class="wg meta">
-					<div><%=t("since")%>: <%= timeYYMD(app.CreatedAt) %></div>
-					<div><%=t("code")%>: <%= app.Code %></div>
-					<div><%=t("grants")%>: <%= app.GrantsCount() %></div>
+<div class="page-content col-12 uart-app">
+	<div class="row">
+		<div class="col-lg-3"> <!-- pannel ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+			<div class="uart-appbox">
+				<div class="page-icon"><%= imageFor(app.AppIcon, "wg icon128") %></div>
+				<h2><%= app.Name %></h2>
+				<blockquote><%= app.Description %></blockquote>
+			</div>
+		</div>
+
+		<div class="col-lg-9"> <!-- contents ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+			<div class="btn-group btn-group-sm pull-right">
+				<a class="btn btn-dark goback" href="<%= appsPath()
+					%>"><i class="fa fa-arrow-left"></i></a>
+				<a class="btn btn-secondary<%= if (app.Code == "uart") {
+					%> disabled<% } %>" href="<%= editAppPath({ app_id: app.ID })
+					%>"><%=t("edit")%></a>
+				<a class="btn btn-danger<%= if (app.Code == "uart") {
+					%> disabled<% } %>" href="<%= appPath({ app_id: app.ID })
+					%>" data-method="DELETE" data-confirm="<%=t("are.you.sure")
+					%>"><%=t("delete")%></a>
+			</div>
+
+			<div class="hc-box"> <!-- app details ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+				<h3><%= app.Description %></h3>
+				<table class="table table-striped table-condensed"><tbody>
+				<tr><td><%=t("site.url")%></td><td><%= app.SiteURL %></td></tr>
+				<tr><td><%=t("callback.url")%></td><td><%= app.CallbackURL %></td></tr>
+				<tr><td><%=t("app.key")%></td><td><%= app.AppKey %></td></tr>
+				<tr><td><%=t("app.secret")%></td><td><%= app.AppSecret %></td></tr>
+				</tbody></table>
+			</div>
+
+			<div class="hc-box"> <!-- roles ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+				<div class="btn-group btn-group-sm pull-right">
+					<a class="btn btn-secondary" data-toggle="modal"
+						href="#" data-target="#newRole"><%=t("new.role")%></a>
 				</div>
+
+				<h3><%=t("roles")%></h3>
+				<table class="table table-striped table-condensed"><thead>
+					<tr>
+						<th><%=t("name")%></th>
+						<th><%=t("description")%></th>
+						<th><%=t("code")%></th>
+						<th><%=t("active.members")%></th>
+						<th><%=t("role.requests")%></th>
+						<th><%=t("rank")%></th>
+						<th>&nbsp;</th>
+					</tr>
+				</thead><tbody><%= for (role) in roles { %>
+					<tr>
+						<td><%= role.Name %></td>
+						<td><%= role.Description %></td>
+						<td><%= role.Code %></td>
+						<td><%= role.MemberCount(true) %></td>
+						<td><%= role.MemberCount(false) %></td>
+						<td><%= role.Rank %></td>
+						<td>
+							<div class="pull-right btn-group btn-group-sm">
+								<a class="btn btn-secondary<%= if (role.IsReadonly) {
+									%> disabled<% } %>" data-toggle="modal"
+									data-target="#editRole" data-roleid="<%=
+									role.ID %>" data-appid="<%=
+									role.AppID %>" data-rname="<%=
+									role.Name %>" data-rcode="<%=
+									role.Code %>" data-rdesc="<%=
+									role.Description %>" data-rrank="<%=
+									role.Rank %>"><%=t("edit")%></a>
+								<a class="btn btn-danger<%= if (role.IsReadonly) {
+									%> disabled<% } %>" href="<%=
+									rolePath({ role_id: role.ID })
+									%>" data-method="DELETE" data-confirm="<%=t("are.you.sure")
+									%>"><%=t("delete")%></a>
+							</div>
+						</td>
+					</tr><% } %>
+				</tbody></table>
 			</div>
-			<div class="wg content">
+
+			<div class="hc-box"> <!-- roles requests ~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+				<h3><%=t("role.requests")%></h3>
+				<table class="table table-striped table-condensed"><thead>
+					<tr>
+						<th><%=t("request.id")%></th>
+						<th><%=t("member")%></th>
+						<th><%=t("role")%></th>
+						<th>&nbsp;</th>
+					</tr>
+				</thead><tbody><%= for (rm) in requests { %>
+					<tr>
+						<td><%= rm.ID %></td>
+						<td><%= rm.Member() %></td>
+						<td><%= rm.Role() %></td>
+						<td>
+							<div class="pull-right btn-group btn-group-sm">
+								<a class="btn btn-secondary" href="<%=
+									requestAcceptPath({ rolemap_id: rm.ID })
+									%>"><%=t("accept")%></a>
+							</div>
+						</td>
+					</tr><% } %>
+				</tbody></table>
 			</div>
-		</div>
-	</div>
-
-	<div class="col-md-9 col-xs-12">
-		<p class="btn-group pull-right">
-		<a class="btn btn-xs btn-default goback" href="<%= appsPath()
-			%>"><i class="fa fa-arrow-left"></i></a>
-		<a class="btn btn-xs btn-default<%= if (app.Code == "uart") {
-			%> disabled<% } %>" href="<%= editAppPath({ app_id: app.ID })
-			%>"><%=t("edit")%></a>
-		<a class="btn btn-xs btn-danger<%= if (app.Code == "uart") {
-			%> disabled<% } %>" href="<%= appPath({ app_id: app.ID })
-			%>" data-method="DELETE" data-confirm="<%=t("are.you.sure")
-			%>"><%=t("delete")%></a>
-		</p>
-
-		<div> <!-- app details ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-			<h3><%= app.Description %></h3>
-			<table class="table table-striped table-condensed">
-				<tbody>
-				<tr>
-					<td><%=t("site.url")%></td>
-					<td><%= app.SiteURL %></td>
-				</tr>
-				<tr>
-					<td><%=t("callback.url")%></td>
-					<td><%= app.CallbackURL %></td>
-				</tr>
-				<tr>
-					<td><%=t("app.key")%></td>
-					<td><%= app.AppKey %></td>
-				</tr>
-				<tr>
-					<td><%=t("app.secret")%></td>
-					<td><%= app.AppSecret %></td>
-				</tr>
-				</tbody>
-			</table>
-		</div>
-
-		<div> <!-- roles ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-			<p class="btn-group pull-right">
-				<a class="btn btn-xs btn-default" data-toggle="modal"
-					data-target="#newRole"><%=t("new.role")%></a>
-			</p>
-			<h3><%=t("roles")%></h3>
-			<table class="table table-striped table-condensed">
-				<thead>
-				<tr>
-					<th><%=t("name")%></th>
-					<th><%=t("description")%></th>
-					<th><%=t("code")%></th>
-					<th><%=t("active.members")%></th>
-					<th><%=t("role.requests")%></th>
-					<th><%=t("rank")%></th>
-					<th>&nbsp;</th>
-				</tr>
-				</thead>
-				<tbody>
-				<%= for (role) in roles { %>
-				<tr>
-					<td><%= role.Name %></td>
-					<td><%= role.Description %></td>
-					<td><%= role.Code %></td>
-					<td><%= role.MemberCount(true) %></td>
-					<td><%= role.MemberCount(false) %></td>
-					<td><%= role.Rank %></td>
-					<td>
-						<p class="pull-right btn-group">
-							<a class="btn btn-xs btn-default<%= if (role.IsReadonly) {
-								%> disabled<% } %>" data-toggle="modal"
-								data-target="#editRole" data-roleid="<%=
-								role.ID %>" data-appid="<%=
-								role.AppID %>" data-rname="<%=
-								role.Name %>" data-rcode="<%=
-								role.Code %>" data-rdesc="<%=
-								role.Description %>" data-rrank="<%=
-								role.Rank %>"><%=t("edit")%></a>
-							<a class="btn btn-xs btn-danger<%= if (role.IsReadonly) {
-								%> disabled<% } %>" href="<%=
-								rolePath({ role_id: role.ID })
-								%>" data-method="DELETE" data-confirm="<%=t("are.you.sure")
-								%>"><%=t("delete")%></a>
-						</p>
-					</td>
-				</tr>
-				<% } %>
-				</tbody>
-			</table>
-		</div>
-
-		<div> <!-- role requests ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
-			<h3><%=t("role.requests")%></h3>
-			<table class="table table-striped table-condensed">
-				<thead>
-				<tr>
-					<th><%=t("request.id")%></th>
-					<th><%=t("member")%></th>
-					<th><%=t("role")%></th>
-					<th>&nbsp;</th>
-				</tr>
-				</thead>
-				<tbody>
-				<%= for (rm) in requests { %>
-				<tr>
-					<td><%= rm.ID %></td>
-					<td><%= rm.Member() %></td>
-					<td><%= rm.Role() %></td>
-					<td>
-						<p class="pull-right btn-group">
-							<a class="btn btn-xs btn-default" href="<%=
-								requestAcceptPath({ rolemap_id: rm.ID })
-								%>"><%=t("accept")%></a>
-					</td>
-				</tr>
-				<% } %>
-				</tbody>
-			</table>
-		</div>
-
-	</div>
-</div>
-
+		</div> <!-- end of contents -->
+	</div> <!-- end of row -->
+</div> <!-- end of page-content -->
 
 
 
@@ -154,16 +129,17 @@
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h4 class="modal-title"><%=t("new.role")%></h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 			</div>
 <%= form_for(role, {action: rolesPath(), method: "POST", class: "horizontal"}) { %>
 			<div class="modal-body">
 <%= partial("roles/form.html") %>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-warning" data-dismiss="modal" aria-label="Close"><%=t("close")%></button>
-				<button class="btn btn-success" style="width: 120px" role="submit"><%=t("add")%></button>
+				<button class="btn btn-warning" type="button" data-dismiss="modal"><%=
+					t("close") %></button>
+				<button class="btn btn-success" role="submit"><%= t("add") %></button>
 			</div>
 <% } %>
 		</div><!-- /.modal-content -->
@@ -175,22 +151,22 @@
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h4 class="modal-title"><%=t("new.role")%></h4>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 			</div>
 <%= form_for(role, {action: rolePath({ role_id: role.ID }), method: "PUT", class:"horizontal"}) { %>
 			<div class="modal-body">
 <%= partial("roles/form.html") %>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-warning" data-dismiss="modal" aria-label="Close"><%=t("close")%></button>
-				<button class="btn btn-success" style="width: 120px" role="submit"><%=t("update")%></button>
+				<button class="btn btn-warning" type="button" data-dismiss="modal"><%=
+					t("close") %></button>
+				<button class="btn btn-success" role="submit"><%= t("update") %></button>
 			</div>
 <% } %>
 		</div><!-- /.modal-content -->
 	</div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-
 <script>
 $(document).ready(function() {
 	$('#editRole').on('show.bs.modal', function (event) {
