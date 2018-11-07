@@ -1,37 +1,32 @@
-<div class="wg card shadow">
-	<div class="wg thumb">
-		<%= imageFor(app.AppIcon, "wg icon32") %>
-	</div>
-	<div class="wg title">
+<div class="hc-card shadow">
+	<div class="thumb"><%= imageFor(app.AppIcon, "wg icon32") %></div>
+	<div class="title">
 		<b><a href="<%= appPath({app_id: app.ID}) %>"><%= app.Name %></a></b>
-		<div class="wg meta">
+		<div class="meta">
 			<div><%= app.Description %></div>
 			<div><%= grant.Description() %></div>
 		</div>
 	</div>
-	<div class="wg content indented">
-		<% let rc = (len(member.AppRoles(app.ID, true))+len(member.AppRoles(app.ID, false))) %>
-		<% let is_active = true %>
-		<%= for (role) in member.AppRoles(app.ID, true) { %><%
-partial("roles/roleline.html") %><%
+	<div class="content indented">
+		<% let rc = (len(member.AppRoles(app.ID, true))+len(member.AppRoles(app.ID, false))) %><%
+		let is_active = true %><%=
+		for (role) in member.AppRoles(app.ID, true) { %><%
+		partial("roles/roleline.html") %><%
 		} %>
-		<% let is_active = false %>
-		<%= for (role) in member.AppRoles(app.ID, false) { %><%
-partial("roles/roleline.html") %><%
-		} %>
+		<% let is_active = false %><%=
+		for (role) in member.AppRoles(app.ID, false) { %><%
+		partial("roles/roleline.html") %><% } %>
 	</div>
-	<div class="wg extra">
-		<p class="btn-group pull-right">
-
-		<a class="btn btn-xs btn-default<%= if (!member.IsActive) {
-			%> disabled<% } %>" data-toggle="modal" data-target="#reqRole-<%=
-			app.ID %>"><%=t("role.request")%></a>
-
-		<a class="btn btn-xs btn-danger<%=
-		if (app.Code == "uart") { %> disabled<%
-			} %>" href="<%= revokePath({ app_id: app.ID })
-			%>" data-confirm="<%=t("are.you.sure")%>"><%=t("revoke")%></a>
-		</p>
+	<div class="extra">
+		<div class="btn-group btn-group-sm pull-right">
+			<a class="btn btn-secondary<%= if (!member.IsActive) {
+				%> disabled<% } %>" data-toggle="modal" data-target="#reqRole-<%=
+				app.ID %>" href="#"><%=t("role.request")%></a>
+			<a class="btn btn-danger<%=
+			if (app.Code == "uart") { %> disabled<%
+				} %>" href="<%= revokePath({ app_id: app.ID })
+				%>" data-confirm="<%=t("are.you.sure")%>"><%=t("revoke")%></a>
+		</div>
 	</div>
 </div>
 
@@ -40,24 +35,27 @@ partial("roles/roleline.html") %><%
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h4 class="modal-title"><%=t("role.request")%></h4>
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
 			</div>
 			<%= form_for(app, {action: requestsRolesPath(), method: "POST"}) { %>
 			<div class="modal-body">
 				<p>
 				<%=t("modal.message.select.perfered.roles.for.this.app")%>
-				</p>
-				<%= for (role) in app.GetRoles() { %><%=
+				</p><%= for (role) in app.GetRoles() { %><%=
 					if ((role.Code != "admin") && (!member.HasRole(role.ID))) { %>
-				<div class="checkbox">
-					<label><input type="checkbox" id="app-role" name="role_id" value="<%=
+				<div class="form-check abc-checkbox abc-checkbox-info">
+					<input class="form-check-input" type="checkbox" id="app-role-<%=
+						role.ID %>" name="role_id" value="<%= role.ID %>">
+					<label class="form-check-label" for="app-role-<%=
 						role.ID %>"><%= role.Name %></label>
 				</div><% } %><% } %>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-warning" data-dismiss="modal" aria-label="Close"><%=t("close")%></button>
-				<button class="btn btn-success" style="width: 120px" role="submit"><%=t("request")%></button>
+				<button type="button" class="btn btn-warning" data-dismiss="modal"><%=
+					t("close") %></button>
+				<button class="btn btn-success" style="width: 120px" role="submit"><%=
+					t("request") %></button>
 			</div>
 			<% } %>
 		</div><!-- /.modal-content -->

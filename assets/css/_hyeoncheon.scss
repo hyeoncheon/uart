@@ -204,6 +204,84 @@ table.table {
 	padding: 0 1rem;
 }
 
+.hc-card {
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	padding: 8px;
+	margin: 2px;
+	.thumb {
+		float: right;
+		margin: 0 0 5px 5px;
+	}
+	.frame {
+		text-align: center;
+		margin-bottom: 10px;
+	}
+	.title {
+		h3, h4, h5 {
+			margin: 0px;
+		}
+		.meta {
+			white-space: nowrap;
+			overflow: hidden;
+			p {
+				white-space: normal;
+			}
+		}
+		.meta,
+		.meta > a {
+			color: #888;
+			font-size: 0.8em;
+		}
+	}
+	.content {
+		margin-top: 2px;
+		font-size: 0.95em;
+		&.indented {
+			padding-left: 20px;
+		}
+	}
+	& > .extra {
+		clear: both;
+		color: #888;
+		font-size: 0.8em;
+		border-top: 1px solid #eee;
+		padding-top: 5px;
+		margin-top: 4px;
+		display: table;
+		width: 100%;
+	}
+	&.float2 {
+		float: left;
+		width: 48%;
+		margin: 2px;
+	}
+	&.shadow {
+		box-shadow: 1px 1px 4px rgba(64,64,64, 0.2) !important;
+	}
+}
+
+.hc-line {
+	border: 1px solid #ddd;
+	border-radius: 5px;
+	padding: 3px 6px;
+	display: table;
+	width: 100%;
+	.thumb {
+		float: left;
+		margin: 0 5px 0 0;
+	}
+	.title {
+		float: left;
+	}
+	.extra {
+		float: right;
+		.btn {
+			line-height: 1.1;
+		}
+	}
+}
+
 .wg.icon {
 	&24 {
 		height: 24px;

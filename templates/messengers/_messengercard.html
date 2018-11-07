@@ -1,33 +1,31 @@
-<div class="wg card shadow<%= if (messenger.IsPrimary) { %> primary<% } %>">
-	<div class="wg title">
-		<%= if (messenger.Priority == 1) {
-		%><b><i class="fa fa-bell-o"></i> Alert</b><% } %>
-		<%= if (messenger.Priority == 5) {
-		%><b><i class="fa fa-newspaper-o"></i> Notification</b><% } %>
-		<%= if (messenger.Priority == 8) {
-		%><b><i class="fa fa-ban"></i> Disabled</b><% } %>
+<div class="hc-card shadow<%= if (messenger.IsPrimary) { %> primary<% } %>">
+	<div class="title"><%= if (messenger.Priority == 1) { %>
+		<b><i class="fa fa-bell-o"></i> Alert</b><% } %><%=
+		if (messenger.Priority == 5) { %>
+		<b><i class="fa fa-newspaper-o"></i> Notification</b><% } %><%=
+		if (messenger.Priority == 8) { %>
+		<b><i class="fa fa-ban"></i> Disabled</b><% } %>
 		<span><%= messenger.Method %> to</span>
 		<span><%= messenger.Value %></span>
 	</div>
-	<div class="wg extra">
-		<%= if (messenger.Priority != 8) { %><%=
-			if (messenger.IsPrimary) { %><i class="fa fa-certificate"></i> Primary<%
-			} else { %><a class="<%= if (!member.IsActive) {
+	<div class="extra"><%= if (messenger.Priority != 8) { %><%=
+			if (messenger.IsPrimary) { %>
+			<i class="fa fa-certificate"></i> Primary<%
+			} else { %>
+			<a class="<%= if (!member.IsActive) {
 				%> disabled<% } %>" href="<%=
 				messengerSetprimaryPath({ messenger_id: messenger.ID }) %>"><%=
-				t("set.as.primary")%></a><%
-			} %><%
-		} %>
-		<p class="btn-group pull-right">
-		<a class="btn btn-xs btn-default<%= if (!member.IsActive) {
+				t("set.as.primary") %></a><% } %><% } %>
+		<div class="btn-group btn-group-sm pull-right">
+		<a class="btn btn-secondary<%= if (!member.IsActive) {
 			%> disabled<% } %>" data-toggle="modal" data-target="#reqRole-<%=
-			messenger.ID %>"><%=t("edit")%></a>
-		<a class="btn btn-xs btn-danger<%= if (!member.IsActive) {
+			messenger.ID %>" href="#"><%=t("edit")%></a>
+		<a class="btn btn-danger<%= if (!member.IsActive) {
 			%> disabled<% } %>" href="<%=
 			messengerPath({ messenger_id: messenger.ID }) %>"
-			data-method="DELETE" data-confirm="<%=t("are.you.sure")
-			%>"><%=t("delete")%></a>
-		</p>
+			data-method="DELETE" data-confirm="<%= t("are.you.sure")
+			%>" href="#"><%= t("delete") %></a>
+		</div>
 	</div>
 </div>
 
@@ -37,19 +35,23 @@
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 				<h4 class="modal-title"><%=t("edit.messenger")%></h4>
+				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
 			</div>
-			<%= form_for(messenger, {action: messengerPath({ messenger_id: messenger.ID }), method: "PUT"}) { %>
+			<%= form_for(messenger,
+				{action: messengerPath({ messenger_id: messenger.ID }),
+				method: "PUT", class: "horizontal" }) { %>
 			<div class="modal-body">
 				<p>
-				<%=t("modal.message.edit.your.messenger.information")%>
+				<%= t("modal.message.edit.your.messenger.information") %>
 				</p>
   			<%= partial("messengers/form.html") %>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-warning" data-dismiss="modal" aria-label="Close"><%=t("close")%></button>
-				<button class="btn btn-success" style="width: 120px" role="submit"><%=t("update")%></button>
+				<button type="button" class="btn btn-warning" data-dismiss="modal"><%=
+					t("close") %></button>
+				<button class="btn btn-success" style="width: 120px" role="submit"><%=
+					t("update") %></button>
 			</div>
 			<% } %>
 		</div><!-- /.modal-content -->
