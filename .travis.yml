@@ -41,7 +41,7 @@ before_install:
 install:
   - dep ensure
   - mkdir -p $TRAVIS_BUILD_DIR/public/assets
-  - npm install --no-progress
+  - yarn
   - sh ./scripts/keygen.sh
 
 before_script:
@@ -52,7 +52,7 @@ before_script:
   - ./cc-test-reporter before-build
 
 script:
-  - buffalo build
+  - buffalo build --skip-assets
   #
   - cp database.yml.travis database.yml
   - buffalo pop create -e test

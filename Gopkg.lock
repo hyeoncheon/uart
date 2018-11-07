@@ -120,15 +120,15 @@
   version = "v0.13.4"
 
 [[projects]]
-  digest = "1:f30030bd007fedc447181ab6c58efb5701042f9084df2a73c3862c3cd2a161ad"
+  digest = "1:e63ef65bc8588a4c7a9acc2ae9304b8933858f50b288dabeacf83b2bf328e95a"
   name = "github.com/gobuffalo/buffalo-plugins"
   packages = [
     "plugins",
     "plugins/plugdeps",
   ]
   pruneopts = "UT"
-  revision = "7111c7547d13752d2abc8f913d5acd9c2f97e86f"
-  version = "v1.6.8"
+  revision = "1884231a3683456216ef141a810616640421a234"
+  version = "v1.6.9"
 
 [[projects]]
   digest = "1:ca5f2d028ba83e3de705db68f7ed2e590632c0a9764393eb6173bfa6c45c1024"
