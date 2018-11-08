@@ -6,14 +6,15 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title><%= brand_name %></title>
 	<%= stylesheetTag("application.css") %>
-	<!--link rel="stylesheet" href="/assets/themes/<%= theme %>/theme.css" type="text/css" media="all" /-->
+	<link rel="stylesheet" href="/assets/themes/<%=
+		theme %>/t.css" type="text/css" media="all" />
 	<link rel="shortcut icon" href="/assets/images/hyeoncheon-icon.png">
 	<meta name="csrf-param" content="authenticity_token" />
 	<meta name="csrf-token" content="<%= authenticity_token %>" />
 	<%= javascriptTag("application.js") %>
 </head>
 <body>
-	<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+	<nav class="navbar navbar-expand-lg navbar-dark bg-primary sticky-top">
 		<a class="navbar-brand" href="/">
 			<img src="<%= assetPath("images/hyeoncheon-icon.png") %>"
 				class="d-inline-block" alt="">
