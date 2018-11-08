@@ -5,6 +5,7 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/912df6609e6cb8da3576/maintainability)](https://codeclimate.com/github/hyeoncheon/uart/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/912df6609e6cb8da3576/test_coverage)](https://codeclimate.com/github/hyeoncheon/uart/test_coverage)
 [![Coverage Status](https://coveralls.io/repos/github/hyeoncheon/uart/badge.svg?branch=master)](https://coveralls.io/github/hyeoncheon/uart?branch=master)
+[![Codecov](https://codecov.io/gh/hyeoncheon/uart/branch/master/graph/badge.svg)](https://codecov.io/gh/hyeoncheon/uart)
 
 UART is an Universal Authorizaion, Role and Team management service software.
 

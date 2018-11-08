@@ -16,6 +16,22 @@ var role = &models.Role{
 	IsReadonly:  false,
 }
 
+var role16 = &models.Role{
+	Name:        "AppMan",
+	Code:        models.RCAppMan,
+	Description: "Application Manager",
+	Rank:        16,
+	IsReadonly:  false,
+}
+
+var role4 = &models.Role{
+	Name:        "UserMan",
+	Code:        models.RCUserMan,
+	Description: "User Manager",
+	Rank:        4,
+	IsReadonly:  false,
+}
+
 func (ms *ModelSuite) Test_Role() {
 	app = models.NewApp(app.Name, app.Code, app.Description, "http://localhost", "http://localhost/auth")
 	verrs, err := models.DB.ValidateAndCreate(app)

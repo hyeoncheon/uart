@@ -171,7 +171,7 @@ func (m Member) AppRoles(appID uuid.UUID, flag ...bool) *Roles {
 	if len(flag) > 0 {
 		Q = Q.Where("role_maps.is_active = ?", flag[0])
 	}
-	err := Q.Where("roles.app_id = ?", appID).All(roles)
+	err := Q.Where("roles.app_id = ?", appID).Order("rank desc").All(roles)
 	if err != nil {
 		log.Warn("cannot found associated roles: ", err)
 	}
@@ -189,6 +189,21 @@ func (m Member) GetAppRoleCodes(appCode string) []string {
 	roles := m.AppRoles(app.ID, true)
 	for _, r := range *roles {
 		ret = append(ret, r.Code)
+	}
+	return ret
+}
+
+// GetAppRank returns the member's active rank from roles of given app.
+func (m Member) GetAppRank(appCode string) int {
+	ret := 0
+	app := GetAppByCode(appCode)
+	if app == nil {
+		log.Error("OOPS! cannot found app with given code!")
+		return ret
+	}
+	roles := m.AppRoles(app.ID, true)
+	for _, r := range *roles {
+		ret += r.Rank
 	}
 	return ret
 }

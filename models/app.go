@@ -20,6 +20,13 @@ const (
 	appDefaultIcon       = "/assets/images/dummy-app.png"
 	hyeoncheonIcon       = "/assets/images/hyeoncheon-icon.png"
 	DefaultSortApps      = "name"
+
+	RankAdmin   = 128
+	RankUserMan = 64
+	RankAppMan  = 32
+	RankLeader  = 16
+	RankUser    = 1
+	RankGuest   = 0
 )
 
 // App is model for application which can be authenticated with uart.
@@ -212,15 +219,16 @@ func NewApp(name, code, desc, url, callback string, icon ...string) *App {
 func createUARTApp(tx *pop.Connection) *App {
 	uart := NewApp("UART", "uart", "UART: Identity Management System", "", "")
 	uart.AppIcon = hyeoncheonIcon
-	err := DB.Create(uart) //! CHKME changed to tx?
+	err := tx.Create(uart)
 	if err != nil {
 		return nil
 	}
-	uart.AddRole(tx, "Admin", RCAdmin, "UART Administrator", 64, true)
-	uart.AddRole(tx, "User Manager", RCUserMan, "UART User Manager", 32, true)
-	uart.AddRole(tx, "App Manager", RCAppMan, "UART App Manager", 16, true)
-	uart.AddRole(tx, "Leader", RCLeader, "Team Leader", 8, true)
-	uart.AddRole(tx, "User", RCUser, "Normal User", 0, true)
+	uart.AddRole(tx, "Admin", RCAdmin, "UART Administrator", RankAdmin, true)
+	uart.AddRole(tx, "User Manager", RCUserMan, "UART User Manager", RankUserMan, true)
+	uart.AddRole(tx, "App Manager", RCAppMan, "UART App Manager", RankAppMan, true)
+	uart.AddRole(tx, "Leader", RCLeader, "Team Leader", RankLeader, true)
+	uart.AddRole(tx, "User", RCUser, "User", RankUser, true)
+	uart.AddRole(tx, "Guest", RCGuest, "Guest", RankGuest, true)
 	return uart
 }
 

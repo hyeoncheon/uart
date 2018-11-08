@@ -86,8 +86,9 @@ func (v AppsResource) Create(c buffalo.Context) error {
 	}
 
 	// set default roles
-	app.AddRole(tx, "Admin", models.RCAdmin, "Administrator", 64, true)
-	app.AddRole(tx, "User", models.RCUser, "Normal User", 0, true)
+	app.AddRole(tx, "Admin", models.RCAdmin, "Administrator", models.RankAdmin, true)
+	app.AddRole(tx, "User", models.RCUser, "Normal User", models.RankUser, true)
+	app.AddRole(tx, "Guest", models.RCGuest, "Guest User", models.RankGuest, true)
 	me := currentMember(c) // for logging only
 	me.AddRole(tx, app.GetRole(tx, models.RCAdmin), true)
 	me.Grant(tx, app, models.AppDefaultAdminScope)
