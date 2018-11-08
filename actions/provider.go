@@ -85,6 +85,7 @@ func authorizeHandler(c buffalo.Context) error {
 				"picture":      user.Icon,
 				"phone_number": user.Mobile,
 				"roles":        user.GetAppRoleCodes(app.Code),
+				"rank":         user.GetAppRank(app.Code),
 			}
 		}
 		svr.FinishAuthorizeRequest(resp, c.Request(), ar)

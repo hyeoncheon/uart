@@ -32,6 +32,7 @@ const (
 	RCAppMan  = "appman"
 	RCUserMan = "userman"
 	RCLeader  = "leader"
+	RCGuest   = "guest"
 )
 
 // String returns pretty printable string of this model.

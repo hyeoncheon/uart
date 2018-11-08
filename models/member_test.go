@@ -86,6 +86,29 @@ func (ms *ModelSuite) Test_Member() {
 	roleCodes := member.GetAppRoleCodes(app.Code)
 	ms.Equal(1, len(roleCodes))
 
+	// more role
+	role16.AppID = app.ID
+	verrs, err = models.DB.ValidateAndCreate(role16)
+	ms.NoError(err)
+	ms.False(verrs.HasAny())
+
+	err = member.AddRole(models.DB, role16, true)
+	ms.NoError(err)
+
+	role4.AppID = app.ID
+	verrs, err = models.DB.ValidateAndCreate(role4)
+	ms.NoError(err)
+	ms.False(verrs.HasAny())
+
+	err = member.AddRole(models.DB, role4, true)
+	ms.NoError(err)
+
+	roles = member.AppRoles(app.ID)
+	ms.NotNil(roles)
+	ms.Equal(3, len(*roles))
+	ms.True((*roles)[0].Rank > (*roles)[1].Rank)
+	ms.True((*roles)[1].Rank > (*roles)[2].Rank)
+
 	// GetAppRoleCodes() with non existing app
 	roleCodes = member.GetAppRoleCodes("NoWhereApp")
 	ms.Equal(0, len(roleCodes))
