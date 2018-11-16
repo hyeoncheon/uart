@@ -3,6 +3,7 @@ package actions
 // TODO REVIEW REQUIRED
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -15,6 +16,7 @@ import (
 	"github.com/markbates/goth/providers/facebook"
 	"github.com/markbates/goth/providers/github"
 	"github.com/markbates/goth/providers/gplus"
+	"github.com/markbates/goth/providers/slack"
 
 	"github.com/hyeoncheon/uart/models"
 )
@@ -25,10 +27,12 @@ func init() {
 	goth.UseProviders(
 		gplus.New(os.Getenv("GPLUS_KEY"), os.Getenv("GPLUS_SECRET"),
 			fmt.Sprintf("%s%s", App().Host, "/auth/gplus/callback")),
-		facebook.New(os.Getenv("FACEBOOK_KEY"), os.Getenv("FACEBOOK_SECRET"),
-			fmt.Sprintf("%s%s", App().Host, "/auth/facebook/callback")),
 		github.New(os.Getenv("GITHUB_KEY"), os.Getenv("GITHUB_SECRET"),
 			fmt.Sprintf("%s%s", App().Host, "/auth/github/callback")),
+		slack.New(os.Getenv("SLACK_KEY"), os.Getenv("SLACK_SECRET"),
+			fmt.Sprintf("%s%s", App().Host, "/auth/slack/callback")),
+		facebook.New(os.Getenv("FACEBOOK_KEY"), os.Getenv("FACEBOOK_SECRET"),
+			fmt.Sprintf("%s%s", App().Host, "/auth/facebook/callback")),
 	)
 }
 
@@ -38,7 +42,8 @@ func AuthCallback(c buffalo.Context) error {
 	if err != nil {
 		return c.Error(401, err)
 	}
-	c.Logger().Debugf("raw user data: %v", r.JSON(user))
+	ju, _ := json.Marshal(user)
+	c.Logger().Debugf("raw user data: %v", string(ju))
 
 	credentials := &models.Credentials{}
 	if err := models.SelectByAttrs(credentials, map[string]interface{}{
@@ -116,6 +121,18 @@ func createMember(c buffalo.Context, user goth.User) (*models.Member, error) {
 		if vm, ok := user.RawData["verified_email"].(bool); ok && !vm {
 			return nil, errors.New(t(c, "unacceptable.email.not.verified"))
 		}
+	}
+	if user.Provider == "slack" {
+		d, ok := user.RawData["user"].(map[string]interface{})
+		if !ok {
+			c.Logger().Errorf("invalid slack data: %v", user.RawData)
+			return nil, errors.New(t(c, "unacceptable.slack.information"))
+		}
+		if d["is_bot"].(bool) || d["deleted"].(bool) {
+			c.Logger().Errorf("invalid user - bot: %v, deleted: %v", d["is_bot"], d["deleted"])
+			return nil, errors.New(t(c, "unacceptable.slack.account"))
+		}
+		// d["has_2fa"], d["is_restricted"], d["is_ultra_restricted"]
 	}
 
 	cred := &models.Credential{}

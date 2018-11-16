@@ -98,15 +98,15 @@
   version = "v1.4.7"
 
 [[projects]]
-  digest = "1:adea5a94903eb4384abef30f3d878dc9ff6b6b5b0722da25b82e5169216dfb61"
+  digest = "1:ec6f9bf5e274c833c911923c9193867f3f18788c461f76f05f62bb1510e0ae65"
   name = "github.com/go-sql-driver/mysql"
   packages = ["."]
   pruneopts = "UT"
-  revision = "d523deb1b23d913de5bdada721a6071e71283618"
-  version = "v1.4.0"
+  revision = "72cd26f257d44c1114970e19afddcd812016007e"
+  version = "v1.4.1"
 
 [[projects]]
-  digest = "1:15bec1827dbb3bff3b3f4022ba29d5e2b079908eb4fc9096aace1bb856a185d8"
+  digest = "1:0ef17ef99b30395469d7483fb98485617dc262c9094bd2d0a4a8c2a50c3e9b26"
   name = "github.com/gobuffalo/buffalo"
   packages = [
     ".",
@@ -116,79 +116,79 @@
     "worker",
   ]
   pruneopts = "UT"
-  revision = "219893eef8a189646dfbed6ce38e92248f31b4f1"
-  version = "v0.13.4"
+  revision = "8a86404c867fc25ce9e9ff444b63ea5dea5e72ab"
+  version = "v0.13.5"
 
 [[projects]]
-  digest = "1:e63ef65bc8588a4c7a9acc2ae9304b8933858f50b288dabeacf83b2bf328e95a"
+  digest = "1:ef76ca8a822cf2b2c8b04efe20d446aa21fd1c4f72a4283988640057e02ca55a"
   name = "github.com/gobuffalo/buffalo-plugins"
   packages = [
     "plugins",
     "plugins/plugdeps",
   ]
   pruneopts = "UT"
-  revision = "1884231a3683456216ef141a810616640421a234"
-  version = "v1.6.9"
+  revision = "cfab938b7e3543b6207615714bd60641e99c2495"
+  version = "v1.6.11"
 
 [[projects]]
-  digest = "1:ca5f2d028ba83e3de705db68f7ed2e590632c0a9764393eb6173bfa6c45c1024"
+  digest = "1:417fc34db1bb84febd4b19a54d28da18bab9d07e3afcb968d2075e0dc47b1784"
   name = "github.com/gobuffalo/buffalo-pop"
   packages = [
     "pop",
     "pop/popmw",
   ]
   pruneopts = "UT"
-  revision = "afb798b46e1299a4db98646773ca4275ec8afda6"
-  version = "v1.1.12"
+  revision = "1f7b16309d5aa0d40bee9cc851d963ce85b48e1a"
+  version = "v1.1.14"
 
 [[projects]]
-  digest = "1:72139cbee5a41ff8a322681be104aa8d7e7c92a5f3ad5501ea3505042b050b57"
+  digest = "1:ba4a13c1846fc9df263e43e61854e2ce530eadfdc10a7ea394cc3b76b42ddaed"
   name = "github.com/gobuffalo/envy"
   packages = ["."]
   pruneopts = "UT"
-  revision = "e0b181c424e7ca1a36f6f2db4bdfd25ef3421e77"
-  version = "v1.6.7"
+  revision = "b29bf6b8134f3398b9333ba1893c58620152edb0"
+  version = "v1.6.9"
 
 [[projects]]
-  digest = "1:df8f4ec150e0c927d49584bfa0ce43d442a17508373190eb2a6297661f34cb94"
+  digest = "1:bed368e3f50b0bfde6f3c0b0052a80eea34eb885481f308d290839a9a1dad183"
   name = "github.com/gobuffalo/events"
   packages = ["."]
   pruneopts = "UT"
-  revision = "f79ac7b3beea13e29f4728717462668868ba55bd"
-  version = "v1.1.5"
+  revision = "5c94ca3b583290078fe5c162c3d5ff1791a6cb96"
+  version = "v1.1.7"
 
 [[projects]]
-  digest = "1:e70602b39aa510ccd6be9284daa502f6f621cc7c41fa39095c9d1fa586431a45"
+  digest = "1:6dfda07e02354fa596ae85622b214e52bcd36cd0ff7e44343aaa2ea31d280f93"
   name = "github.com/gobuffalo/fizz"
   packages = [
     ".",
     "translators",
   ]
   pruneopts = "UT"
-  revision = "c5c75a8fdb96b676ffb8f255252207f09e0aa6cb"
-  version = "v1.0.16"
+  revision = "8ac54629c9b8f484bc21be7a8fd327f63d1d814b"
+  version = "v1.1.3"
 
 [[projects]]
   branch = "master"
-  digest = "1:a0744982bd8707827eff522bb8bf2fcce6c86ee00d4a5820f83bfafbdcbf0526"
+  digest = "1:8d77dba62e39e710f9e71f6c6405c45000b17011291339360b7411fa92e43390"
   name = "github.com/gobuffalo/flect"
   packages = [
     ".",
     "name",
   ]
   pruneopts = "UT"
-  revision = "1f6e9779237a07d172c82fc407ec2e38ef5f8a88"
+  revision = "47375f6d832895843594c60e150fc0a2d2ef87df"
 
 [[projects]]
   branch = "master"
-  digest = "1:98e3796a08802cc956118ef9d26adf0373ff40a7b622490d0d3750557e6d481f"
+  digest = "1:0bf92f7e2580f38beb8f944148d8fc75a2cb15cb7687d49584af97a4714137af"
   name = "github.com/gobuffalo/genny"
   packages = [
     ".",
     "movinglater/gotools/gomods",
   ]
   pruneopts = "UT"
-  revision = "7dcb0924caf1e883115084cee0b0f7ff3389d557"
+  revision = "0a4decd77f5de703cd36ce57531046847b8638fb"
 
 [[projects]]
   digest = "1:114fbde5ab0239bddb4e8733d3174f8f4008ff84d7161c549e501a4339bdc75c"
@@ -206,20 +206,20 @@
   version = "v1.0.7"
 
 [[projects]]
-  digest = "1:b3e6299dff5e73ca84ecf9165f7d69d8c788a4ed90b3006fb08132aa0ae63a41"
+  digest = "1:e0d550b6ee6db0ded97279521188d06b889f428bf93bfee7cd9f4ea1d9fa40b1"
   name = "github.com/gobuffalo/httptest"
   packages = ["."]
   pruneopts = "UT"
-  revision = "b32a7b1c43f64e10ffe13d2becf51faea70b8d32"
-  version = "v1.0.3"
+  revision = "f5842bb8ce56c4b7902b3f411503899452221dd1"
+  version = "v1.0.4"
 
 [[projects]]
   branch = "master"
-  digest = "1:6a6a2c181b2fb80f41ee1e607293753e0612b4cb79e55c82b8bfb948f81996cb"
+  digest = "1:25c5503db4bb94bcd224f2cf90589f87391a67a9c535ed0db9abe6af1109428e"
   name = "github.com/gobuffalo/logger"
   packages = ["."]
   pruneopts = "UT"
-  revision = "9cf4dd0efe466cea86fe6aeeee12e3b50bab4ebd"
+  revision = "3feeab578c17aff8fabe2a2825cff5ce68fe1540"
 
 [[projects]]
   digest = "1:429c929bb5abee25889f9c9783f046a9d8b97d16e1f5734187defe2bca68ae67"
@@ -239,11 +239,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:b5aba31732c2fa646d888b068343233854dcf2b2abc0beb1d1932190f726f716"
+  digest = "1:5ff54105efd5f601d573568b2e4305c7fa4b6b559fbb67ffeb0efd79695543be"
   name = "github.com/gobuffalo/meta"
   packages = ["."]
   pruneopts = "UT"
-  revision = "3a985a084b0ab238e9799474151ed8189e764032"
+  revision = "b130ebedd2f7bf42e7f32eaef79a2546a7aa0526"
 
 [[projects]]
   branch = "master"
@@ -271,19 +271,19 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:3cefd2be286c70e8c6088f8ecb437469ba4e2ff5a8e7e7bc4eaf5b0eb1710d4c"
+  digest = "1:b73defe35e1810e7b7960c9515a99063c004751c11eb80432c987fb983cb7de4"
   name = "github.com/gobuffalo/packd"
   packages = ["."]
   pruneopts = "UT"
-  revision = "d376b15f8e96be52ab5548297cda58713109e15d"
+  revision = "f25c5d2471d797647acdd6179365a5c4a88cf534"
 
 [[projects]]
-  digest = "1:24430e30c5fe94726058c1cb9c36f8fe891ae67c00ee73ee43da1e01528dad1c"
+  digest = "1:4d3eacaf36227ae90a35bf4d36887298183ea481387992413c9efad57734c92f"
   name = "github.com/gobuffalo/packr"
   packages = ["."]
   pruneopts = "UT"
-  revision = "cf1833a64494f56baea836890e2ee5e69c2092dc"
-  version = "v1.19.0"
+  revision = "c3de6602e9f189d038a83a91c570c38a290bbe43"
+  version = "v1.21.0"
 
 [[projects]]
   digest = "1:07e10ef52f5f704dfd64c7fa5760cff981be537008df04b10f7c7c70ed34a7f5"
@@ -300,7 +300,7 @@
   version = "v3.7.22"
 
 [[projects]]
-  digest = "1:c50c44f5d9522da6d62e85e390868105ed0d17922c3ef4c1be1227fb44d2ad65"
+  digest = "1:4c26dd198deb868a27e667e1873aca46a701145af41cddfab4a6056afe543f48"
   name = "github.com/gobuffalo/pop"
   packages = [
     ".",
@@ -311,8 +311,8 @@
     "nulls",
   ]
   pruneopts = "UT"
-  revision = "9d5dff8a5b85dcb7bcd19e6827c578c3c7eb40d6"
-  version = "v4.8.8"
+  revision = "53115b9d3820a71af03939efc46e5ee2d6a76490"
+  version = "v4.9.0"
 
 [[projects]]
   digest = "1:6b6908b59273cb9f2d1dbd7cc6abea699c13395e6a629f1c5acbf0537e80f486"
@@ -366,7 +366,7 @@
     "randx",
   ]
   pruneopts = "UT"
-  revision = "1ef645d63fe8b767ec0945614b08bf40fe57012b"
+  revision = "14085ca3e1a995a72ac03700ee3e6b56706bda8e"
 
 [[projects]]
   digest = "1:c594a691090b434d55c67f6cc8e326ef5ba49452abc059821bd5d4fd4cdef08c"
@@ -521,7 +521,7 @@
   version = "v1.0.2"
 
 [[projects]]
-  digest = "1:aab71ac77609f02587a1cda2df2152dc7fc12c1dca5f88cbc6d6873832f8538b"
+  digest = "1:7ef6364dd1dfb570a5ca06f8944ccf28527d83bb379c4c6b37e8f8e51558130f"
   name = "github.com/markbates/goth"
   packages = [
     ".",
@@ -529,6 +529,7 @@
     "providers/facebook",
     "providers/github",
     "providers/gplus",
+    "providers/slack",
   ]
   pruneopts = "UT"
   revision = "bc6d8ddf751a745f37ca5567dbbfc4157bbf5da9"
@@ -713,7 +714,7 @@
     "reflectsource",
   ]
   pruneopts = "UT"
-  revision = "9e1955d9fb6e1ee2345ba1f5e71669263e719e27"
+  revision = "58262d155ee0c659f3e3963bfccbac0f6a6a1d2b"
 
 [[projects]]
   branch = "master"
@@ -729,7 +730,7 @@
   name = "github.com/shurcooL/graphql"
   packages = ["ident"]
   pruneopts = "UT"
-  revision = "e4a3a37e6d42afa87afee2edeeced52300b63893"
+  revision = "16b88644589aaa174a21ae55cac72a9f60d5d837"
 
 [[projects]]
   branch = "master"
@@ -801,11 +802,11 @@
     "ssh/terminal",
   ]
   pruneopts = "UT"
-  revision = "e4dc69e5b2fd71dcaf8bd5d054eb936deb78d1fa"
+  revision = "3d3f9f413869b949e48070b5bc593aa22cc2b8f2"
 
 [[projects]]
   branch = "master"
-  digest = "1:db7528233e2f178f8770284f05c60708b31e73d9b8d287676ce52a3389681fe4"
+  digest = "1:1aadc7deb82ea4a4bd147b67edcd602f6d39243b2804dc55bf78740ac9356cd6"
   name = "golang.org/x/net"
   packages = [
     "context",
@@ -814,7 +815,7 @@
     "html/atom",
   ]
   pruneopts = "UT"
-  revision = "a544f70c90f196e50d198126db0c4cb2b562fec0"
+  revision = "adae6a3d119ae4890b46832a2e88a95adc62b8e7"
 
 [[projects]]
   branch = "master"
@@ -829,22 +830,22 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:39ebcc2b11457b703ae9ee2e8cca0f68df21969c6102cb3b705f76cca0ea0239"
+  digest = "1:b521f10a2d8fa85c04a8ef4e62f2d1e14d303599a55d64dabf9f5a02f84d35eb"
   name = "golang.org/x/sync"
   packages = ["errgroup"]
   pruneopts = "UT"
-  revision = "1d60e4601c6fd243af51cc01ddf169918a5407ca"
+  revision = "42b317875d0fa942474b76e1b46a6060d720ae6e"
 
 [[projects]]
   branch = "master"
-  digest = "1:f97031542387802b6fd8867c3f29488c2852aac19954ed51df6231a4fadf1707"
+  digest = "1:6a875550c3b582f6c2d7e2ce44aba792511f00016d7c46b0a4fb26f730ef3058"
   name = "golang.org/x/sys"
   packages = [
     "unix",
     "windows",
   ]
   pruneopts = "UT"
-  revision = "3a76605856fddce5718553cbb8bd50ca492a7274"
+  revision = "66b7b1311ac80bbafcd2daeef9a5e6e2cd1e2399"
 
 [[projects]]
   digest = "1:a623ed4965cad144a32551cb009b9bad9ad247c22ca1afdd934fc85d0c891f93"
@@ -916,6 +917,7 @@
     "github.com/markbates/goth/providers/facebook",
     "github.com/markbates/goth/providers/github",
     "github.com/markbates/goth/providers/gplus",
+    "github.com/markbates/goth/providers/slack",
     "github.com/markbates/grift/grift",
     "github.com/markbates/inflect",
     "github.com/pkg/errors",
