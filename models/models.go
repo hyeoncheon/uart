@@ -5,13 +5,14 @@ package models
 import (
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/envy"
-	"github.com/gobuffalo/pop"
+	"github.com/gobuffalo/logger"
+	"github.com/gobuffalo/pop/v5"
 )
 
 // DB and others: shared variables for models
 var DB *pop.Connection
 
-var log = buffalo.NewLogger("Debug").WithField("category", "models")
+var log = logger.NewLogger("Debug").WithField("category", "models")
 var securityLog = log.WithField("category", "security")
 var isDev = false
 

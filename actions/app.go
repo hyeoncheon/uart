@@ -6,7 +6,7 @@ import (
 	"path"
 
 	"github.com/gobuffalo/buffalo"
-	popmw "github.com/gobuffalo/buffalo-pop/pop/popmw"
+	"github.com/gobuffalo/buffalo-pop/v2/pop/popmw"
 	"github.com/gobuffalo/envy"
 	csrf "github.com/gobuffalo/mw-csrf"
 	i18n "github.com/gobuffalo/mw-i18n"

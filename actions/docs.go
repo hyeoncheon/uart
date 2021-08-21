@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/gobuffalo/buffalo"
-	"github.com/gobuffalo/pop"
+	"github.com/gobuffalo/pop/v5"
 	"github.com/markbates/inflect"
 
 	"github.com/hyeoncheon/uart/models"

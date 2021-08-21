@@ -7,10 +7,10 @@ import (
 	"html/template"
 	"time"
 
-	"github.com/gobuffalo/pop"
+	"github.com/gobuffalo/pop/v5"
 	"github.com/gobuffalo/uuid"
 	"github.com/gobuffalo/validate"
-	"gopkg.in/russross/blackfriday.v2"
+	"github.com/russross/blackfriday/v2"
 )
 
 const (

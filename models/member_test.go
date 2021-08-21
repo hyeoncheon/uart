@@ -197,6 +197,6 @@ func (ms *ModelSuite) Test_Member_InvalidAccess() {
 	// Revoke() with invalid value
 	mem := &models.Member{}
 	app := &models.App{}
-	err := mem.Revoke(ms.DB, app)
+	err := mem.Revoke(models.DB, app)
 	ms.Error(err)
 }
