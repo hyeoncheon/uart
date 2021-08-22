@@ -8,7 +8,7 @@ import (
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/pop/v5"
-	"github.com/gobuffalo/uuid"
+	"github.com/gofrs/uuid"
 
 	"github.com/hyeoncheon/uart/models"
 	"github.com/hyeoncheon/uart/utils"

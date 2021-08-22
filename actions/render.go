@@ -7,7 +7,7 @@ import (
 
 	"github.com/gobuffalo/buffalo/render"
 	"github.com/gobuffalo/packr"
-	"github.com/gobuffalo/uuid"
+	"github.com/gofrs/uuid"
 )
 
 var r *render.Engine

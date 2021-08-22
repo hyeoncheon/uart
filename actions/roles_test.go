@@ -7,7 +7,7 @@ import (
 	"net/url"
 
 	"github.com/gobuffalo/httptest"
-	"github.com/gobuffalo/uuid"
+	"github.com/gofrs/uuid"
 
 	"github.com/hyeoncheon/uart/models"
 )

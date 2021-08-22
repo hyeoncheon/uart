@@ -9,7 +9,7 @@ import (
 	"net/http"
 
 	"github.com/gobuffalo/httptest"
-	"github.com/gobuffalo/uuid"
+	"github.com/gofrs/uuid"
 )
 
 func (as *ActionSuite) Test_MembersResource_A_CreateUpdateList() {

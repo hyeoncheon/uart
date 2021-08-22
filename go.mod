@@ -19,9 +19,9 @@ require (
 	github.com/gobuffalo/mw-paramlogger v1.0.0
 	github.com/gobuffalo/packr v1.30.1
 	github.com/gobuffalo/pop/v5 v5.3.4
-	github.com/gobuffalo/suite v2.8.2+incompatible
-	github.com/gobuffalo/uuid v2.0.5+incompatible
-	github.com/gobuffalo/validate v2.0.4+incompatible
+	github.com/gobuffalo/suite/v3 v3.0.2
+	github.com/gobuffalo/validate/v3 v3.1.0
+	github.com/gofrs/uuid v4.0.0+incompatible
 	github.com/gorilla/sessions v1.2.1
 	github.com/jinzhu/copier v0.3.2
 	github.com/markbates/goth v1.68.0
@@ -30,6 +30,6 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/russross/blackfriday/v2 v2.1.0
 	github.com/stretchr/testify v1.7.0
-	golang.org/x/oauth2 v0.0.0-20210817223510-7df4dd6e12ab
+	golang.org/x/oauth2 v0.0.0-20210819190943-2bc19b11175f
 	gopkg.in/mailgun/mailgun-go.v1 v1.1.1
 )

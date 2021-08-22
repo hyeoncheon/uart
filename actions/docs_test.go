@@ -6,7 +6,7 @@ package actions_test
 import (
 	"net/http"
 
-	"github.com/gobuffalo/uuid"
+	"github.com/gofrs/uuid"
 
 	"github.com/hyeoncheon/uart/models"
 )

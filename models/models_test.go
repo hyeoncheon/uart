@@ -3,7 +3,7 @@ package models_test
 import (
 	"testing"
 
-	"github.com/gobuffalo/suite"
+	"github.com/gobuffalo/suite/v3"
 )
 
 type ModelSuite struct {
