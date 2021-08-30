@@ -6,6 +6,7 @@ import (
 	"html/template"
 
 	"github.com/gobuffalo/buffalo/render"
+	"github.com/gobuffalo/flect"
 	"github.com/gobuffalo/packr"
 	"github.com/gofrs/uuid"
 )
@@ -30,9 +31,9 @@ func init() {
 			"iconize": func(s string) template.HTML {
 				switch s {
 				case "admin":
-					return template.HTML(`<i class="fa fa-empire"></i>`)
+					return template.HTML(`<i class="fab fa-empire"></i>`)
 				default:
-					return template.HTML(`<i class="fa fa-` + s + `"></i>`)
+					return template.HTML(`<i class="fas fa-` + s + `"></i>`)
 				}
 			},
 			"trunc": func(t interface{}, args ...int) string {
@@ -53,6 +54,9 @@ func init() {
 					return s
 				}
 				return s[0:length] + "..."
+			},
+			"humanize": func(s string) string {
+				return flect.Humanize(s)
 			},
 		},
 	})

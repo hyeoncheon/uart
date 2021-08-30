@@ -11,8 +11,8 @@ import (
 	"text/template"
 
 	"github.com/gobuffalo/buffalo"
+	"github.com/gobuffalo/flect"
 	"github.com/gobuffalo/pop/v5"
-	"github.com/markbates/inflect"
 	"github.com/pkg/errors"
 
 	"github.com/hyeoncheon/uart/jobs"
@@ -245,14 +245,14 @@ type Inventory interface {
 
 // noteMsg logs and creates info level message with template
 func noteMsg(c buffalo.Context, r *models.Members, fac, tpl string, data Inventory) error {
-	mesg := inflect.Titleize(tpl) + ": " + data.String()
+	mesg := flect.Titleize(tpl) + ": " + data.String()
 	c.Logger().WithField("category", fac).Info(mesg)
 	return xMsg(c, r, models.ACUART, fac, MsgPriNote, mesg, tpl, data)
 }
 
 // alertMsg logs and creates warning level message with template
 func alertMsg(c buffalo.Context, r *models.Members, fac, tpl string, data Inventory) error {
-	mesg := inflect.Titleize(tpl) + ": " + data.String()
+	mesg := flect.Titleize(tpl) + ": " + data.String()
 	c.Logger().WithField("category", fac).Warn(mesg)
 	return xMsg(c, r, models.ACUART, fac, MsgPriAlert, mesg, tpl, data)
 }

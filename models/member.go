@@ -171,7 +171,7 @@ func (m Member) AppRoles(appID uuid.UUID, flag ...bool) *Roles {
 	if len(flag) > 0 {
 		Q = Q.Where("role_maps.is_active = ?", flag[0])
 	}
-	err := Q.Where("roles.app_id = ?", appID).Order("rank desc").All(roles)
+	err := Q.Where("roles.app_id = ?", appID).Order("roles.rank desc").All(roles)
 	if err != nil {
 		log.Warn("cannot found associated roles: ", err)
 	}

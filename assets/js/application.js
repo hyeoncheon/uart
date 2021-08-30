@@ -1,5 +1,8 @@
 require("expose-loader?$!expose-loader?jQuery!jquery");
 require("bootstrap/dist/js/bootstrap.bundle.js");
+require("@fortawesome/fontawesome-free/js/all.js");
+require("jquery-ujs/src/rails.js");
+
 $(() => {
 	// enabling bootstrap widgets
 	$('[data-toggle="popover"]').popover();
@@ -48,8 +51,8 @@ $(() => {
 		$(e).html('<span title="' + time.format() + '">' + disp + '</span>');
 	});
 
-	// SimpleMDE, see https://github.com/sparksuite/simplemde-markdown-editor
-	var simplemde = new SimpleMDE({
+	// EasyMDE: https://github.com/Ionaru/easy-markdown-editor
+	var easyMDE = new EasyMDE({
 		element: document.getElementById("doc-Content"),
 		autoDownloadFontAwesome: false,
 		autosave: {

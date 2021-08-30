@@ -1,6 +1,6 @@
 <div class="hc-line">
-	<div class="thumb"><i class="fa fa-star<%= if (!is_active) {
-		%>-o<% } %>"></i></div>
+	<div class="thumb"><i class="fa<%= if (is_active) {
+			%>s<% } else { %>r<% } %> fa-star"></i></div>
 	<div class="title"><% let app = role.App() %>
 		<b><%= role.Name %></b>
 		<span class="meta"><%= role.Description %></span>

@@ -52,9 +52,10 @@ func (as *ActionSuite) Test_OAuth2Provider_A_Authorize() {
 	as.Contains(res.Body.String(), "Grant "+app.Name)
 
 	//***** GRANT and redirect to origin (but root for this test)
+	as.Session.Set("origin", "/landing")
 	res = as.HTML("/grant/%v?scope=profile+auth:all", app.AppKey).Get()
 	as.Equal(http.StatusTemporaryRedirect, res.Code)
-	as.Equal("/", res.HeaderMap.Get("Location"))
+	as.Equal("/landing", res.HeaderMap.Get("Location"))
 
 	// call authorize by with bad callback, returns OK with invalid request
 	res = as.HTML("/oauth/authorize?%vbadcallback", qs).Get()

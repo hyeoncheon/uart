@@ -91,7 +91,7 @@ func (a App) Requests() *[]RoleMap {
 // GetRoles returns array of roles of the app
 func (a App) GetRoles() *Roles {
 	roles := &Roles{}
-	DB.BelongsTo(&a).Order("rank desc").All(roles)
+	DB.BelongsTo(&a).Order("roles.rank desc").All(roles)
 	return roles
 }
 

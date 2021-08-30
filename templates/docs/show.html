@@ -1,16 +1,16 @@
 <div class="page-header col-12">
 	<div class="page-icon"></div>
-	<h1><i class="fa fa-book"></i> <%= doc.Title %></h1>
+	<h1><i class="far fa-bookmark"></i> <%= doc.Title %></h1>
 	<div class="pull-right">
 		<span data-toggle="popover" data-trigger="hover" data-placement="left"
 			data-content="<%= t("message.popup") %>">
-			<i class="fa fa-question-circle"></i>
+			<i class="fas fa-question-circle"></i>
 		</span>
 	</div>
 	<div class="description">
 		<%= doc.Type %>: <%= doc.Category %> / <%= doc.Subject %>
-		<span class="moment"><%= doc.CreatedAt %></span>
-		by <%= doc.AuthorName() %>
+		<span class="moment small"><%= doc.CreatedAt %></span>
+		<span class="small"> by <%= doc.AuthorName() %></span>
 	</div>
 </div>
 
@@ -22,7 +22,7 @@
 				t("are.you.sure") %>">Publish</a><% } %>
 			<div class="btn-group btn-group-sm">
 			<a class="btn btn-xs btn-dark" href="<%=
-				docsPath() %>"><i class="fa fa-arrow-left"></i></a>
+				docsPath() %>"><i class="fas fa-arrow-left"></i></a>
 			<a class="btn btn-xs btn-secondary" href="<%=
 				editDocPath({ doc_id: doc.ID }) %>"><%=t("edit")%></a>
 			<a class="btn btn-xs btn-danger" href="<%=

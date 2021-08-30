@@ -117,7 +117,8 @@ func App() *buffalo.App {
 		g := app.Resource("/members", r)
 		g.Use(adminHandler)
 		app.GET("/membership/me", membershipHandler)
-		app.GET("/membership/{member_id}", membershipHandler)
+		app.GET("/membership/{member_id}",
+			membershipHandler).Name("membershipPath")
 
 		r = &CredentialsResource{&buffalo.BaseResource{}}
 		g = app.Resource("/credentials", r)
@@ -152,14 +153,16 @@ func App() *buffalo.App {
 		r = &AppsResource{&buffalo.BaseResource{}}
 		g = app.Resource("/apps", r)
 		g.Use(roleBasedLockHandler)
-		app.GET("/grant/{key}", r.(*AppsResource).Grant)
-		app.GET("/revoke/{app_id}", r.(*AppsResource).Revoke)
+		app.GET("/grant/{key}", r.(*AppsResource).Grant).Name("grantPath")
+		app.GET("/revoke/{app_id}",
+			r.(*AppsResource).Revoke).Name("revokePath")
 
 		r = &RolesResource{&buffalo.BaseResource{}}
 		g = app.Resource("/roles", r)
 		g.Use(roleBasedLockHandler)
 		//! FIXME: URLs are not pretty :-(
-		app.GET("/requests/{rolemap_id}/accept", r.(*RolesResource).Accept)
+		app.GET("/requests/{rolemap_id}/accept",
+			r.(*RolesResource).Accept).Name("requestAcceptPath")
 		app.POST("/requests/roles", r.(*RolesResource).Request)
 		app.GET("/requests/roles/{role_id}/retire", r.(*RolesResource).Retire)
 

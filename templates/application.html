@@ -45,13 +45,13 @@
 						aria-haspopup="true" aria-expanded="false"><%= t("admin") %></a>
 					<div class="dropdown-menu" aria-labelledby="navbarAdmin">
 						<a class="dropdown-item" href="<%= credentialsPath()
-							%>"><i aria-hidden="true" class="fa fa-id-badge"></i> <%=
+							%>"><i aria-hidden="true" class="fas fa-id-badge"></i> <%=
 							t("credentials") %></a>
 						<a class="dropdown-item" href="<%= messengersPath()
-							%>"><i aria-hidden="true" class="fa fa-podcast"></i> <%=
+							%>"><i aria-hidden="true" class="fas fa-podcast"></i> <%=
 							t("messengers") %></a>
 						<a class="dropdown-item" href="<%= messagingLogsPath()
-							%>"><i aria-hidden="true" class="fa fa-file-text-o"></i> <%=
+							%>"><i aria-hidden="true" class="fas fa-file-alt"></i> <%=
 							t("messagings") %></a>
 						<div class="dropdown-divider"></div>
 					</div>
@@ -69,18 +69,18 @@
 					</a>
 					<div class="dropdown-menu dropdown-menu-right">
 						<span class="dropdown-item-text"><i aria-hidden="true"
-							class="fa fa-id-card"></i> <%= member_name %></span>
+							class="fas fa-id-card"></i> <%= member_name %></span>
 						<span class="dropdown-item-text"><i aria-hidden="true"
-							class="fa"></i> <%= member_mail %></span>
+							class="fas fa-envelope"></i> <%= member_mail %></span>
 						<span class="dropdown-item-text"><i aria-hidden="true"
-							class="fa fa-star-o"></i> <%= member_roles %></span>
+							class="fas fa-star"></i> <%= member_roles %></span>
 						<div class="dropdown-divider"></div>
 						<a class="dropdown-item" href="<%= membershipMePath()
-							%>"><i aria-hidden="true" class="fa fa-address-card"></i> <%=
+							%>"><i aria-hidden="true" class="fas fa-address-card"></i> <%=
 							t("membership") %></a>
 						<div class="dropdown-divider"></div>
 						<a class="dropdown-item" href="<%= logoutPath()
-							%>"><i aria-hidden="true" class="fa fa-sign-out"></i> <%=
+							%>"><i aria-hidden="true" class="fas fa-sign-out-alt"></i> <%=
 							t("logout") %></a>
 					</div>
 				</div><% } else { %>

@@ -11,6 +11,7 @@ require (
 	github.com/gobuffalo/buffalo v0.17.2
 	github.com/gobuffalo/buffalo-pop/v2 v2.3.0
 	github.com/gobuffalo/envy v1.9.0
+	github.com/gobuffalo/flect v0.2.3
 	github.com/gobuffalo/github_flavored_markdown v1.1.0
 	github.com/gobuffalo/httptest v1.5.0
 	github.com/gobuffalo/logger v1.0.4
@@ -26,7 +27,6 @@ require (
 	github.com/jinzhu/copier v0.3.2
 	github.com/markbates/goth v1.68.0
 	github.com/markbates/grift v1.5.0
-	github.com/markbates/inflect v1.0.4
 	github.com/pkg/errors v0.9.1
 	github.com/russross/blackfriday/v2 v2.1.0
 	github.com/stretchr/testify v1.7.0

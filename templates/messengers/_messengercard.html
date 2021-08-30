@@ -1,16 +1,16 @@
 <div class="hc-card shadow<%= if (messenger.IsPrimary) { %> primary<% } %>">
 	<div class="title"><%= if (messenger.Priority == 1) { %>
-		<b><i class="fa fa-bell-o"></i> Alert</b><% } %><%=
+		<b><i class="fas fa-bell"></i> Alert</b><% } %><%=
 		if (messenger.Priority == 5) { %>
-		<b><i class="fa fa-newspaper-o"></i> Notification</b><% } %><%=
+		<b><i class="far fa-newspaper"></i> Notification</b><% } %><%=
 		if (messenger.Priority == 8) { %>
-		<b><i class="fa fa-ban"></i> Disabled</b><% } %>
+		<b><i class="fas fa-ban"></i> Disabled</b><% } %>
 		<span><%= messenger.Method %> to</span>
 		<span><%= messenger.Value %></span>
 	</div>
 	<div class="extra"><%= if (messenger.Priority != 8) { %><%=
 			if (messenger.IsPrimary) { %>
-			<i class="fa fa-certificate"></i> Primary<%
+			<i class="fas fa-certificate"></i> Primary<%
 			} else { %>
 			<a class="<%= if (!member.IsActive) {
 				%> disabled<% } %>" href="<%=

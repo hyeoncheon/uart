@@ -9,8 +9,8 @@ import (
 	"strings"
 
 	"github.com/gobuffalo/buffalo"
+	"github.com/gobuffalo/flect"
 	"github.com/gobuffalo/pop/v5"
-	"github.com/markbates/inflect"
 
 	"github.com/hyeoncheon/uart/models"
 	"github.com/hyeoncheon/uart/utils"
@@ -98,7 +98,7 @@ func (v DocsResource) Create(c buffalo.Context) error {
 
 	dumme := dummyMember(c)
 	doc.MemberID = dumme.ID
-	doc.Slug = inflect.Dasherize(strings.ToLower(doc.Title))
+	doc.Slug = flect.Dasherize(strings.ToLower(doc.Title))
 
 	tx := c.Value("tx").(*pop.Connection)
 	verrs, err := tx.ValidateAndCreate(doc)
@@ -150,7 +150,7 @@ func (v DocsResource) Update(c buffalo.Context) error {
 	}
 
 	//? update slug or not?
-	//doc.Slug = inflect.Dasherize(strings.ToLower(doc.Title))
+	//doc.Slug = flect.Dasherize(strings.ToLower(doc.Title))
 
 	verrs, err := tx.ValidateAndUpdate(doc)
 	if err != nil {

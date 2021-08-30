@@ -3,7 +3,7 @@
 	<div class="pull-right">
 		<span data-toggle="popover" data-trigger="hover" data-placement="left"
 			data-content="<%= t("messages.all.popup") %>">
-			<i class="fa fa-question-circle"></i>
+			<i class="fas fa-question-circle"></i>
 		</span>
 	</div>
 	<div class="description"><%= t("messages.header.description") %></div>
@@ -28,10 +28,10 @@
 			<td class="moment norel" form="YYYY-MM-DD HH:mm:ss"><%=
 				message.CreatedAt %></td>
 			<td><%= if (message.IsLog) {
-				%><i class="fa fa-sticky-note-o"></i><% } else { %><%=
+				%><i class="far fa-sticky-note"></i><% } else { %><%=
 					if (map.IsSent) {
-					%><i class="fa fa-envelope-o"></i><% } else { %><%=
-					%><i class="fa fa-envelope"></i><% } %><%
+					%><i class="far fa-envelope"></i><% } else { %><%=
+					%><i class="fas fa-envelope"></i><% } %><%
 				} %></td>
 			<td><%= if (!message.IsLog) {
 				%><a id="link" href="<%= messagePath({ message_id: message.ID })

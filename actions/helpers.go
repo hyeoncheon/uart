@@ -11,8 +11,8 @@ func imageForHelper(url, class string) template.HTML {
 func logoForHelper(name string) template.HTML {
 	fontName := map[string]string{
 		"gplus":    "google",
-		"facebook": "facebook-official",
+		"facebook": "facebook",
 		"github":   "github",
 	}
-	return template.HTML(`<i class="fa fa-` + fontName[name] + `"></i>`)
+	return template.HTML(`<i class="fab fa-` + fontName[name] + `"></i>`)
 }

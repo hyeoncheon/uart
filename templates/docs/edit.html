@@ -4,7 +4,7 @@
 	<div class="pull-right">
 		<span data-toggle="popover" data-trigger="hover" data-placement="left"
 			data-content="<%=t("edit.document.here") %>">
-			<i class="fa fa-question-circle"></i>
+			<i class="fas fa-question-circle"></i>
 		</span>
 	</div>
 	<div class="description">
@@ -19,7 +19,7 @@
 				method: "PUT"}) { %>
 <%= partial("docs/form.html") %>
 			<div class="buttons pull-right">
-				<a class="btn btn-warning" href="<%= appsPath()
+				<a class="btn btn-warning" href="<%= docsPath()
 					%>" data-confirm="<%= t("are.you.sure") %>"><%= t("cancel") %></a>
 				<button class="btn btn-success" role="submit"><%= t("save") %></button>
 			</div>

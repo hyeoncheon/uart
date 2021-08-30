@@ -69,7 +69,7 @@ table.table {
 	tfoot tr td,
 	tfoot tr th {
 		padding: 2px 6px;
-		border-bottom: 1px solid $color-border + #222;
+		border-bottom: 1px solid lighten($color-border, 5%);
 		font-weight: normal;
 	}
 }
@@ -183,7 +183,7 @@ table.table {
 	ul {
 		margin: 0;
 		list-style: none;
-		a {
+		a:not(.btn) {
 			color: inherit !important;
 		}
 	}
@@ -353,6 +353,22 @@ table.table {
 
 .btn-sm, .btn-group-sm > .btn {
 	padding: 0 .4rem;
+}
+
+//* bootstrap version compatibility
+.pull-right {
+	float: right !important;
+}
+
+//* workaround for bug of EasyMDEContainer
+.EasyMDEContainer .editor-toolbar.fullscreen {
+	top: $nav-height;
+}
+.EasyMDEContainer .CodeMirror-fullscreen {
+	top: $nav-height + 50px;
+}
+.EasyMDEContainer .editor-preview-side {
+	top: $nav-height + 50px;
 }
 
 //* workaround

@@ -14,7 +14,7 @@ func Test_Helpers_ImageForHelper(t *testing.T) {
 
 func Test_Helpers_LogoForHelper(t *testing.T) {
 	r := require.New(t)
-	r.Equal(template.HTML(`<i class="fa fa-google"></i>`), logoForHelper("gplus"))
-	r.Equal(template.HTML(`<i class="fa fa-facebook-official"></i>`), logoForHelper("facebook"))
-	r.Equal(template.HTML(`<i class="fa fa-github"></i>`), logoForHelper("github"))
+	r.Equal(template.HTML(`<i class="fab fa-google"></i>`), logoForHelper("gplus"))
+	r.Equal(template.HTML(`<i class="fab fa-facebook"></i>`), logoForHelper("facebook"))
+	r.Equal(template.HTML(`<i class="fab fa-github"></i>`), logoForHelper("github"))
 }
