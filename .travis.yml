@@ -1,24 +1,15 @@
 language: go
+dist: bionic
 
 go:
-  - "1.9"
-  - "1.10"
-  - "1.11.1"
+  - 1.16.x
 
 # sudo enabled, fully virtualized virtual machine required for mysql 5.7.
-# https://docs.travis-ci.com/user/database-setup/#MySQL-5.7
+# https://docs.travis-ci.com/user/database-setup/#mysql
 # https://docs.travis-ci.com/user/reference/trusty/
 
-dist: trusty
-sudo: required
-
-addons:
-  apt:
-    sources:
-      - mysql-5.7-trusty
-    package:
-      - mysql-server
-      - mysql-client
+services:
+  - mysql
 
 env:
   global:
@@ -26,43 +17,44 @@ env:
     - CC_TEST_REPORTER_ID=871aa7166cc89677d1839bca6a9213454dcc94344f8ef937f07360e255cb774c
 
 before_install:
-  - sudo mysql_upgrade --force
-  - sudo service mysql restart
+  - env
   - mysql --version
-  - go get -u github.com/golang/dep/cmd/dep
-  - wget -O - https://github.com/gobuffalo/buffalo/releases/download/v0.13.4/buffalo_0.13.4_linux_amd64.tar.gz |tar zxv
-  - mv buffalo-no-sqlite $GOPATH/bin/buffalo
-  - wget -O - https://github.com/gobuffalo/buffalo-pop/releases/download/v1.1.12/buffalo-pop_1.1.12_linux_amd64.tar.gz |tar zxv
-  - mv buffalo-pop $GOPATH/bin/
+  - wget -O - https://github.com/gobuffalo/cli/releases/download/v0.17.1/buffalo_0.17.1_Linux_x86_64.tar.gz |tar zxv
+  - mv buffalo $GOPATH/bin/buffalo
+  - go get -v github.com/gobuffalo/buffalo-pop/v2
   - ls -l $GOPATH/bin
-  - ls -ld $GOPATH/src/*/*
+  - buffalo version
   - buffalo help
+  - buffalo-pop help
+  - go install github.com/mattn/goveralls@latest
 
 install:
-  - dep ensure
+  - go mod tidy
   - mkdir -p $TRAVIS_BUILD_DIR/public/assets
   - yarn
   - sh ./scripts/keygen.sh
 
 before_script:
-  - go get -u github.com/mattn/goveralls
-  - go get -u github.com/AlekSi/gocoverutil
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
 
+go_import_path: github.com/hyeoncheon/uart
+
 script:
-  - buffalo build --skip-assets
-  #
-  - cp database.yml.travis database.yml
-  - buffalo pop create -e test
-  - buffalo pop migrate -e test
-  - UART_HOME=`pwd` GO_ENV=test gocoverutil -coverprofile=c.out -ignore=./vendor/... test -covermode=count ./... && ./cc-test-reporter after-build --exit-code 0
-  #
-  - buffalo pop drop -e test
-  - buffalo pop create -e test
-  - buffalo pop migrate -e test
-  - UART_HOME=`pwd` goveralls -service=travis-ci
+  - >
+    go mod tidy &&
+    cat go.mod go.sum
+  - >
+    buffalo build --skip-assets &&
+    ls -l bin/uart &&
+    cp database.yml.travis database.yml &&
+    UART_HOME=`pwd` buffalo test -coverprofile=c.out -covermode=count ./... &&
+    ./cc-test-reporter after-build --exit-code 0 &&
+    buffalo pop drop -e test &&
+    buffalo pop create -e test &&
+    buffalo pop migrate -e test &&
+    UART_HOME=`pwd` goveralls -v -service=travis-ci
 
 after_script: true
 
