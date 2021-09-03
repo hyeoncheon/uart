@@ -8,7 +8,7 @@ import (
 	"log"
 
 	"github.com/RangelReale/osin"
-	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt"
 )
 
 // RS256AccessTokenGen is JWT access token generator
