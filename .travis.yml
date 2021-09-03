@@ -17,6 +17,9 @@ env:
     - CC_TEST_REPORTER_ID=871aa7166cc89677d1839bca6a9213454dcc94344f8ef937f07360e255cb774c
 
 before_install:
+  - nvm --version
+  - nvm install 14.17.4
+  - node --version
   - env
   - mysql --version
   - wget -O - https://github.com/gobuffalo/cli/releases/download/v0.17.1/buffalo_0.17.1_Linux_x86_64.tar.gz |tar zxv

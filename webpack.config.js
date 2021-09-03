@@ -41,11 +41,11 @@ const configurator = {
         $: "jquery",
         jQuery: "jquery",
         EasyMDE: "easymde",
-        hljs: "highlightjs",
+        hljs: "highlight.js",
         moment: "moment"
       }),
       new MiniCssExtractPlugin({filename: "[name].[contenthash].css"}),
-      new CopyWebpackPlugin([{from: "./assets",to: ""}], {copyUnmodified: true,ignore: ["css/**", "js/**", "src/**"] }),
+      new CopyWebpackPlugin({patterns:[{from: "./assets",to: ""}]}, {copyUnmodified: true,ignore: ["css/**", "js/**", "src/**"]}),
       new Webpack.LoaderOptionsPlugin({minimize: true,debug: false}),
       new ManifestPlugin({fileName: "manifest.json"}),
       new CleanObsoleteChunks()
