@@ -1,6 +1,7 @@
-require("expose-loader?$!expose-loader?jQuery!jquery");
+require("expose-loader?exposes=$,jQuery!jquery");
 require("bootstrap/dist/js/bootstrap.bundle.js");
 require("@fortawesome/fontawesome-free/js/all.js");
+hljs = require("highlight.js/lib/common");
 require("jquery-ujs/src/rails.js");
 
 $(() => {
@@ -69,7 +70,7 @@ $(() => {
 
 	// highlight.js, see https://highlightjs.org/usage/
 	$('.highlight pre').each(function(i, block) {
-		hljs.highlightBlock(block);
+		hljs.highlightElement(block);
 	});
 
 	// goback
@@ -79,3 +80,4 @@ $(() => {
 	});
 
 });
+// vim: set noexpandtab:
