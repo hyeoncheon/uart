@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "webpack --watch",
-    "build": "webpack -p --progress"
+    "build": "webpack --mode production --progress"
   },
   "repository": "github.com/gobuffalo/buffalo",
   "dependencies": {

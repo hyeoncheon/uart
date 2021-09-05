@@ -63,6 +63,6 @@ after_script: true
 
 after_success:
   # for codecov.io
-  - cp c.out coverage.txt
-  - bash <(curl -s https://codecov.io/bash)
-
+  - curl -Os https://uploader.codecov.io/latest/linux/codecov
+  - chmod +x codecov
+  - ./codecov -v -f c.out

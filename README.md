@@ -1,146 +1,126 @@
 # It's UART
 
-[![Build Status](https://travis-ci.org/hyeoncheon/uart.svg?branch=master)](https://travis-ci.org/hyeoncheon/uart)
+[![Build Status](https://app.travis-ci.com/hyeoncheon/uart.svg?branch=master)](https://app.travis-ci.com/hyeoncheon/uart)
 [![Go Report Card](https://goreportcard.com/badge/github.com/hyeoncheon/uart)](https://goreportcard.com/report/github.com/hyeoncheon/uart)
 [![Maintainability](https://api.codeclimate.com/v1/badges/912df6609e6cb8da3576/maintainability)](https://codeclimate.com/github/hyeoncheon/uart/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/912df6609e6cb8da3576/test_coverage)](https://codeclimate.com/github/hyeoncheon/uart/test_coverage)
 [![Coverage Status](https://coveralls.io/repos/github/hyeoncheon/uart/badge.svg?branch=master)](https://coveralls.io/github/hyeoncheon/uart?branch=master)
-[![Codecov](https://codecov.io/gh/hyeoncheon/uart/branch/master/graph/badge.svg)](https://codecov.io/gh/hyeoncheon/uart)
+[![codecov](https://codecov.io/gh/hyeoncheon/uart/branch/master/graph/badge.svg?token=F95PxOlGec)](https://codecov.io/gh/hyeoncheon/uart)
 
-UART is an Universal Authorizaion, Role and Team management service software.
+UART is a management service for Universal Authorization, Authentication,
+Roles, and Teams for Hyeoncheon project.
 
-UART was developed to succeed my old SiSO project, the original SSO service
-for Hyeoncheon Project. (which was developed with Ruby on Rails framework
-with well known Devise, OmniAuth and other open source components.)
+UART was developed as a successor of my old SiSO project, the original SSO
+service for Hyeoncheon project. (which was developed with Ruby on Rails
+on top of well known Devise, OmniAuth, and other open source components.)
 
-UART is written in Go Language and also is built upon many open source
+UART is written in Go (golang) and also is built upon many open source
 software modules including
 [OSIN OAuth2 server library](https://github.com/RangelReale/osin)
 and powered by open source
 [Buffalo Go web development eco-system](https://github.com/gochigo/buffalo).
 
+
+
 ## Feature
 
-The main features are below:
+The main features are:
 
-* Support sign on/in with social network accounts
-  * currently Google, Facebook, and Github accounts are allowed.
-* (Future Plan) Email address based local authentication will be added soon.
+* Supports sign on/in with social network accounts
+  * currently Google, Facebook, and Github accounts are supported.
+* (Future Plan) Email address based local authentication will be added.
   * This will be used as One-Time-Password option for other authentication.
-* Work as OAuth2 Provider to act as SSO authenticator for family projects.
+* Works as OAuth2 Provider to provide SSO service for family projects.
 * OAuth2 Client App management with optional role based authorization.
-  * Role management per each apps.
-* Support standard OAuth2 authorization process.
+  * Role management per each application.
+* Supports standard OAuth2 authorization process.
   * The format of Access Token is JWT(JSON Web Token).
   * Also provide `/userinfo` API endpoint.
 * Member management and per App roles.
+
+
 
 ## Install
 
 Installation procedure for Ubuntu Linux.
 
+
 ### Requirement
 
-#### Essential Build Environment
+To build UART, you need a golang development environment, node.js, and
+gobuffalo. Also database like MySQL is required to run UART.
 
-```console
-$ sudo apt-get update
-$ sudo apt-get install build-essential
-$ 
-```
-
-#### Install Golang
-
-```console
-$ sudo mkdir -p /opt/google
-$ cd /opt/google/
-$ rm -f go
-$ wget -nv https://storage.googleapis.com/golang/go1.10.linux-amd64.tar.gz -O - |sudo tar zx
-$ sudo mv go go-1.10
-$ sudo ln -s go-1.10 go
-$ cat >> ~/.bashrc <<EOF
-> 
-> ## GOLANG
-> export GOPATH="\$HOME/go"
-> export GOROOT="/opt/google/go"
-> export PATH="\$PATH:\$GOPATH/bin:\$GOROOT/bin"
-> 
-> EOF
-$ 
-$ # source bashrc or restart the shell
-$ mkdir $GOPATH
-$ cd $GOPATH
-$ 
-```
-
-#### Install Node.js with nvm
-
-```console
-$ curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
-$ 
-$ # source bashrc or restart the shell
-$ nvm --version
-0.33.2
-$ nvm ls-remote --lts |tail -2
-        v6.11.1   (LTS: Boron)
-        v6.11.2   (Latest LTS: Boron)
-$ nvm install lts/boron
-$ node --version
-v6.11.2
-$ yarn --version
-1.10.1
-$ 
-```
+The separated document
+[Requirements to Build/Run UART](Requirements.md) could be a good reference
+if you are not prepared with the environment and need a reference.
 
 
 ### Get and Build UART
 
-#### Get Source
+Clone this repository first.
 
 ```console
-$ go get github.com/hyeoncheon/uart
-$ cd $GOPATH/src/hyeoncheon/uart
-$ 
-```
-
-or
-
-```console
-$ mkdir -p $GOPATH/src/github.com/hyeoncheon
-$ cd $GOPATH/src/github.com/hyeoncheon
+$ cd $YOUR_WORKSPACE
 $ git clone https://github.com/hyeoncheon/uart.git
 $ cd uart
-$ 
 ```
 
-#### Vendoring with Godep
+Then run following commands to get related packages.
 
 ```console
-$ go get -u github.com/golang/dep/cmd/dep
-$ dep ensure
-$ 
-```
-
-#### Get Buffalo and Build
-
-```console
-$ go get -u github.com/gobuffalo/buffalo/buffalo
+$ go mod tidy
+warning: ignoring symlink /home/sio4/git/hyeoncheon/uart/assets/themes/admin
+go: downloading github.com/golang-jwt/jwt v3.2.2+incompatible
+go: downloading golang.org/x/oauth2 v0.0.0-20210819190943-2bc19b11175f
+<...>
 $ yarn
-$ buffalo build
-$ ls bin/uart
+yarn install v1.22.11
+[1/4] Resolving packages...
+[2/4] Fetching packages...
+info fsevents@2.3.2: The platform "linux" is incompatible with this module.
+info "fsevents@2.3.2" is an optional dependency and failed compatibility check. Excluding it from installation.
+[3/4] Linking dependencies...
+[4/4] Building fresh packages...
+Done in 10.32s.
 $ 
 ```
 
-#### Install Files
+and build the binary.
+
+```console
+$ buffalo build
+warning: ignoring symlink /home/sio4/git/hyeoncheon/uart/assets/themes/admin
+warning: ignoring symlink /home/sio4/git/hyeoncheon/uart/assets/themes/admin
+$ ls -lh bin/uart
+-rwxrwxr-x 1 sio4 sio4 27M  9월  5 19:13 bin/uart
+$ ls -sh public/assets/*.*
+132K public/assets/23f19bb08961f37aaf692ff943823453.eot
+ 36K public/assets/77206a6bb316fa0aded5083cc57f92b9.eot
+200K public/assets/9bbb245e67a133f6e486d8d2545e14a5.eot
+2.8M public/assets/application.8fe89f055dac055f617c.js
+4.0K public/assets/application.8fe89f055dac055f617c.js.LICENSE.txt
+3.5M public/assets/application.fbee4f0dc0b49d557c81.css
+4.0K public/assets/hyeoncheon.866b2e6102f939c332e1.css
+   0 public/assets/hyeoncheon.8fe89f055dac055f617c.js
+4.0K public/assets/manifest.json
+$ 
+```
+
+
+### Install Files
+
+UART has assets to be installed with it. Configure `$UART_HOME`, generate
+SSL keys, then install binary and all assets into `$UART_HOME`.
+
+`uart.conf` and `database.yml` are provided as a sample. Please modify them
+with your conditions.
 
 ```console
 $ export UART_HOME=/opt/hyeoncheon/uart
-$ scripts/keygen.sh
 $ mkdir -p $UART_HOME
+$ scripts/keygen.sh
 $ install bin/uart $UART_HOME
 $ cp -a messages files locales templates $UART_HOME
-$ cp -a uart.conf $UART_HOME
-$ cp -a supports/uart.service $UART_HOME
 $ cp supports/uart.service $UART_HOME
 $ cp supports/uart.conf.dist $UART_HOME/uart.conf
 $ cp database.yml.dist $UART_HOME/database.yml
@@ -149,7 +129,7 @@ $ $EDITOR $UART_HOME/database.yml
 $ 
 ```
 
-and register it as system service
+Assets also includes service description. Register it as system service.
 
 ```console
 $ sudo systemctl enable $UART_HOME/uart.service
@@ -159,28 +139,83 @@ $
 ```
 
 
+
 ## Setup and Run
+
+Mostly done. But UART needs some more preparation to be ready to run.
 
 ### Configure Database
 
-For development,
+UART is backed by database. You need to configure database before run it.
+
+(Please make sure if you configure `database.yml` before run the commands.)
+
+For development, run the following command. The default environment is
+`development` so we can omit the configuration. The output can be different
+for each database engine. The following is for MySQL.
 
 ```console
-$ buffalo db create && buffalo db migrate
+$ buffalo pop create && buffalo pop migrate
+v5.3.0
+
+[POP] 2021/09/05 20:01:41 info - create hc_uart_development (hyeoncheon:hyeoncheon@(localhost:3306)/hc_uart_development?collation=utf8mb4_general_ci&multiStatements=true&readTimeout=10s&parseTime=true)
+[POP] 2021/09/05 20:01:41 info - created database hc_uart_development
+v5.3.0
+
+[POP] 2021/09/05 20:01:42 info - > uart
+[POP] 2021/09/05 20:01:42 info - > messaging
+[POP] 2021/09/05 20:01:42 info - > docs
+[POP] 2021/09/05 20:01:42 info - Successfully applied 3 migrations.
+[POP] 2021/09/05 20:01:42 info - 0.9432 seconds
+mysqldump: [Warning] Using a password on the command line interface can be insecure.
+mysqldump: Error: 'Access denied; you need (at least one of) the PROCESS privilege(s) for this operation' when trying to dump tablespaces
+[POP] 2021/09/05 20:01:42 info - dumped schema for hc_uart_development
 $ 
 ```
 
-or 
+For production mode, you can run following command. (or you can use the same
+command above if you already exported `GO_ENV` environment variable.)
 
 ```console
 $ GO_ENV=production buffalo db create && GO_ENV=production buffalo db migrate
 $ 
 ```
 
-for production.
+
+### Preparing Social Logins
+
+Currently UART supports login via Google, Facebook, and Github. Before using
+them, you need to configure them from their own websites.
+
+* https://console.cloud.google.com/apis/credentials
+* https://developers.facebook.com/apps/
+* https://github.com/organizations/YOUR-ORG/settings/applications
+
+Then configure environment variables for them
+
+```
+export GPLUS_KEY="..."
+export GPLUS_SECRET="..."
+export FACEBOOK_KEY="..."
+export FACEBOOK_SECRET="..."
+export GITHUB_KEY="..."
+export GITHUB_SECRET="..."
+```
+
+Note: UART does not support enabling/disabling selectively for now. You need
+to configure them all, otherwise users will see errors when they click on
+unconfigured login link.
+
+
+### Configure Mailgun
+
+The only suppported email sending feature for now is using www.mailgun.com.
+Not sure they still provide Free Plan but please check and configure it.
 
 
 ### Run
+
+Wow! Such a long configuration steps! but now we are ready to run!
 
 ```console
 $ sudo systemctl start uart
@@ -200,6 +235,42 @@ $
 ```
 
 
+### Run in Development Mode
+
+Well, we still need a test. The following script is what I used for dev mode
+execution.
+
+```bash
+#!/bin/bash
+# environment for uart
+# vim: set nowrap syntax=sh:
+
+export GO_ENV='development'
+export SESSION_SECRET='fdb3...55b9'
+export SESSION_NAME='_uart_session'
+export HOST='http://localhost:3000'
+
+export GPLUS_KEY='8730....apps.googleusercontent.com'
+export GPLUS_SECRET='c4m1...vwTu'
+export GITHUB_KEY='50d4...b4ab'
+export GITHUB_SECRET='1cf2...9ba5'
+export FACEBOOK_KEY='4231...3146'
+export FACEBOOK_SECRET='d4ed...b40f'
+#export FACEBOOK_KEY='3201...5981'
+#export FACEBOOK_SECRET='6bd6...ee96'
+export CF_KEY='b8B2...Hcwv'
+export CF_SECRET='Vt7D...lCbT'
+
+export MG_API_KEY='key-78...cf53'
+export MG_DOMAIN='mg.example.com'
+export MG_URL='https://api.mailgun.net/v3'
+export MAIL_SENDER='C-3PO <c3po@example.com>'
+
+buffalo dev
+```
+
+
+
 ## OK, Show Me the Shots
 
 #### Login Screen
@@ -207,6 +278,10 @@ $
 ![UART Login](docs/uart-login.png)
 
 #### Register New App
+
+Each family app should be registered here as the same as we registered UART
+on Google, Facebook, and Github. By doing this, users of UART will be able
+to login to those family apps.
 
 ![UART New App](docs/uart-new-app.png)
 
@@ -216,14 +291,25 @@ $
 
 #### App Details
 
+Application managers can configure their own application's OAuth2 settings
+and its own roles.
+
 ![UART App Details](docs/uart-app-details.png)
 
 #### Membership
+
+Users can see their registered applications as a user, Messangers, Teams,
+and Credentials. Also they can request roles for each applications. E.g.
+An user can be an user of App-A, a manager of App-B, while they all are
+basically an user of UART itself.
 
 ![UART Membership](docs/uart-membership.png)
 
 
 ## TODO
+
+* Team support
+* Email login
 
 ## Author
 

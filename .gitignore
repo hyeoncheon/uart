@@ -22,5 +22,6 @@
 database.yml
 /files/*.pem
 
+/c.out
 /cover.out
 /cover.html
