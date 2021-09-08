@@ -18,7 +18,7 @@
 				t("set.as.primary") %></a><% } %><% } %>
 		<div class="btn-group btn-group-sm pull-right">
 		<a class="btn btn-secondary<%= if (!member.IsActive) {
-			%> disabled<% } %>" data-toggle="modal" data-target="#reqRole-<%=
+			%> disabled<% } %>" data-bs-toggle="modal" data-bs-target="#reqRole-<%=
 			messenger.ID %>" href="#"><%=t("edit")%></a>
 		<a class="btn btn-danger<%= if (!member.IsActive) {
 			%> disabled<% } %>" href="<%=
@@ -36,7 +36,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h4 class="modal-title"><%=t("edit.messenger")%></h4>
-				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<%= form_for(messenger,
 				{action: messengerPath({ messenger_id: messenger.ID }),
@@ -48,9 +48,9 @@
   			<%= partial("messengers/form.html") %>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-warning" data-dismiss="modal"><%=
+				<button type="button" class="btn btn-warning" data-bs-dismiss="modal"><%=
 					t("close") %></button>
-				<button class="btn btn-success" style="width: 120px" role="submit"><%=
+				<button class="btn btn-success" role="submit"><%=
 					t("update") %></button>
 			</div>
 			<% } %>

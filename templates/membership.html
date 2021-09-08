@@ -2,8 +2,9 @@
 	<div class="page-icon"></div>
 	<h1><%= member %></h1>
 	<div class="pull-right">
-		<span data-toggle="popover" data-trigger="hover" data-placement="left"
-			data-content="<%=t("show.and.edit.your.settings") %>">
+		<span data-bs-toggle="popover"
+			data-bs-trigger="hover" data-bs-placement="left"
+			data-bs-content="<%=t("show.and.edit.your.settings") %>">
 			<i class="fas fa-question-circle"></i>
 		</span>
 	</div>
@@ -43,7 +44,7 @@
 			<div class="hc-box"> <!-- messengers ~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 				<div class="pull-right"><a href="#" class="btn btn-sm btn-secondary<%=
 					if (!member.IsActive) { %> disabled<% }
-					%>" data-toggle="modal" data-target="#newMessenger"><%=
+					%>" data-bs-toggle="modal" data-bs-target="#newMessenger"><%=
 					t("add.new.messenger") %></a></div>
 				<h2 class=""><%= t("messengers") %></h2>
 				<div class="wg content-box">
@@ -85,7 +86,7 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h4 class="modal-title"><%=t("add.new.messenger")%></h4>
-				<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<%= form_for(messenger, {action: messengersPath(),
 				method: "POST", class: "horizontal"}) { %>
@@ -96,9 +97,9 @@
 				<%= partial("messengers/form.html") %>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-warning" data-dismiss="modal"><%=
+				<button type="button" class="btn btn-warning" data-bs-dismiss="modal"><%=
 					t("close") %></button>
-				<button class="btn btn-success" style="width: 120px" role="submit"><%=
+				<button class="btn btn-success" role="submit"><%=
 					t("add") %></button>
 			</div><% } %>
 		</div><!-- /.modal-content -->

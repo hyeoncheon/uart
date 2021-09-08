@@ -2,8 +2,9 @@
 	<div class="page-icon"></div>
 	<h1><%= app.Name %> (<%= t("App") %>)</h1>
 	<div class="pull-right">
-		<span data-toggle="popover" data-trigger="hover" data-placement="left"
-			data-content="<%=t("app.header.popup") %>">
+		<span data-bs-toggle="popover"
+			data-bs-trigger="hover" data-bs-placement="left"
+			data-bs-content="<%=t("app.header.popup") %>">
 			<i class="fas fa-question-circle"></i>
 		</span>
 	</div>
@@ -49,8 +50,8 @@
 
 			<div class="hc-box"> <!-- roles ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
 				<div class="btn-group btn-group-sm pull-right">
-					<a class="btn btn-secondary" data-toggle="modal"
-						href="#" data-target="#newRole"><%=t("new.role")%></a>
+					<a class="btn btn-secondary" data-bs-toggle="modal"
+						href="#" data-bs-target="#newRole"><%=t("new.role")%></a>
 				</div>
 
 				<h3><%=t("roles")%></h3>
@@ -75,8 +76,8 @@
 						<td>
 							<div class="pull-right btn-group btn-group-sm">
 								<a class="btn btn-secondary<%= if (role.IsReadonly) {
-									%> disabled<% } %>" data-toggle="modal"
-									data-target="#editRole" data-roleid="<%=
+									%> disabled<% } %>" data-bs-toggle="modal"
+									data-bs-target="#editRole" data-roleid="<%=
 									role.ID %>" data-appid="<%=
 									role.AppID %>" data-rname="<%=
 									role.Name %>" data-rcode="<%=
@@ -130,14 +131,14 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h4 class="modal-title"><%=t("new.role")%></h4>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 <%= form_for(role, {action: rolesPath(), method: "POST", class: "horizontal"}) { %>
 			<div class="modal-body">
 <%= partial("roles/form.html") %>
 			</div>
 			<div class="modal-footer">
-				<button class="btn btn-warning" type="button" data-dismiss="modal"><%=
+				<button class="btn btn-warning" type="button" data-bs-dismiss="modal"><%=
 					t("close") %></button>
 				<button class="btn btn-success" role="submit"><%= t("add") %></button>
 			</div>
@@ -152,14 +153,14 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<h4 class="modal-title"><%=t("new.role")%></h4>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 <%= form_for(role, {action: rolePath({ role_id: role.ID }), method: "PUT", class:"horizontal"}) { %>
 			<div class="modal-body">
 <%= partial("roles/form.html") %>
 			</div>
 			<div class="modal-footer">
-				<button class="btn btn-warning" type="button" data-dismiss="modal"><%=
+				<button class="btn btn-warning" type="button" data-bs-dismiss="modal"><%=
 					t("close") %></button>
 				<button class="btn btn-success" role="submit"><%= t("update") %></button>
 			</div>

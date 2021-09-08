@@ -6,13 +6,13 @@ require("jquery-ujs/src/rails.js");
 
 $(() => {
 	// enabling bootstrap widgets
-	$('[data-toggle="popover"]').popover();
-	$('[data-toggle="tooltip"]').tooltip();
+	$('[data-bs-toggle="popover"]').popover();
+	$('[data-bs-toggle="tooltip"]').tooltip();
 
 	// auto-close alerts
 	window.setTimeout(function() {
 		$(".alert:not('.alert-danger')").alert('close');
-	}, 10000);
+	}, 5000);
 
 	// navigation position highlighter
 	var current_path = document.location.pathname;

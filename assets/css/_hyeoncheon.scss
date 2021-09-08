@@ -1,6 +1,8 @@
 //* css for hyeoncheon project rebooted.
 //*
 
+@use "sass:math";
+
 @import url('//cdn.jsdelivr.net/nanumsquare/1.0/nanumsquare.css');
 @import url('//fonts.googleapis.com/earlyaccess/notosanskr.css');
 @import url('//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800');
@@ -12,6 +14,7 @@ $font-type: Monaco, "Ubuntu Mono", "Courier New", monospace !important;
 $font-size: 16px;
 $nav-height: 40px;
 $nav-icon-size: 32px;
+$content-padding-default: 15px;
 
 $color-nav: black;
 $color-hover: #555;
@@ -104,8 +107,6 @@ table.table {
 				}
 			}
 			.page-content {
-				padding-top: 15px;
-				padding-bottom: 30px;
 				.pagination {
 					display: inline-flex;
 				}
@@ -119,6 +120,18 @@ table.table {
 .lay-footer {
 	margin-top: -60px;
 	color: $color-gray;
+	font-size: 0.9em;
+}
+
+//* main layout/page paddings
+.lay-inner-container .page-header,
+.lay-footer div {
+	padding: 0 $content-padding-default 0 $content-padding-default;
+}
+.lay-inner-container .page-content {
+	padding: $content-padding-default;
+	padding-top: $content-padding-default;
+	padding-bottom: 30px;
 }
 
 
@@ -126,7 +139,7 @@ table.table {
 .hc-img-profile {
 	height: $nav-icon-size;
 	width: $nav-icon-size;
-	border-radius: $nav-icon-size / 3;
+	border-radius: math.div($nav-icon-size, 3);
 }
 
 .overlay-flash {
@@ -139,14 +152,13 @@ table.table {
 	.alert {
 		position: relative;
 		margin-bottom: 10px;
-		padding: 10px 15px;
 		clear: both;
 		float: right;
 		box-shadow: 2px 2px 2px rgba(100,100,100, 0.5);
 		border-width: 0 0 0 3px;
 		border-radius: 0;
 		border-style: solid;
-		.close {
+		.btn-close {
 			margin-left: 10px;
 		}
 	}
@@ -308,7 +320,7 @@ table.table {
 		line-height: 1em;
 	}
 	.navbar-brand {
-		padding: ($nav-height - $font-size * 1.25) / 2 0;
+		padding: math.div(($nav-height - $font-size * 1.25), 2) 0;
 		img {
 			width: $nav-height - 8px;
 			height: $nav-height - 8px;
@@ -319,12 +331,12 @@ table.table {
 		padding: 0;
 	}
 	.nav-item {
-		padding: ($nav-height - $font-size - 2) / 2 0.5rem !important;
+		padding: math.div(($nav-height - $font-size - 2), 2) 0.5rem !important;
 		&:last-child {
 			padding-right: 0 !important;
 		}
 		img {
-			margin: ($font-size - $nav-icon-size) / 2 0;
+			margin: math.div(($font-size - $nav-icon-size), 2) 0;
 		}
 		&.hc-badge .fa-empire {
 			color: orange;

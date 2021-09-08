@@ -1,8 +1,9 @@
 <div class="page-header col-12">
 	<h1><%= t("messaging.logs") %></h1>
 	<div class="pull-right">
-		<span data-toggle="popover" data-trigger="hover" data-placement="left"
-			data-content="<%= t("all.processed.messagings")
+		<span data-bs-toggle="popover"
+			data-bs-trigger="hover" data-bs-placement="left"
+			data-bs-content="<%= t("all.processed.messagings")
 			%>"><i class="fas fa-question-circle"></i></span>
 	</div>
 	<div class="description"><%= t("credentials.header.description") %></div>
@@ -20,12 +21,12 @@
 	</thead><tbody><%= for (messagingLog) in messagingLogs { %>
 		<tr>
 			<td class="moment"><%= messagingLog.CreatedAt %></td>
-			<td><span data-toggle="tooltip" data-placement="top" title="<%=
+			<td><span data-bs-toggle="tooltip" data-bs-placement="top" title="<%=
 				messagingLog.Notes %>"><%= messagingLog.Subject %></span></td>
-			<td><span data-toggle="tooltip" data-placement="top" title="<%=
+			<td><span data-bs-toggle="tooltip" data-bs-placement="top" title="<%=
 				messagingLog.Method %> to <%= messagingLog.SentTo %>"><%=
 				messagingLog.SentFor %></span></td>
-			<td><span data-toggle="tooltip" data-placement="top" title="<%=
+			<td><span data-bs-toggle="tooltip" data-bs-placement="top" title="<%=
 				messagingLog.QueueID %>/<%= messagingLog.Response %>"><%=
 				humanize(messagingLog.Status) %></span></td>
 			<td>

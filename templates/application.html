@@ -19,8 +19,8 @@
 			<img src="<%= assetPath("images/hyeoncheon-icon.png") %>"
 				class="d-inline-block" alt="">
 			<%= brand_name %></a>
-		<button class="navbar-toggler" type="button" data-toggle="collapse"
-			data-target="#navbarNav"
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+			data-bs-target="#navbarNav"
 			aria-controls="navbarNav"
 			aria-expanded="false"
 			aria-label="Toggle navigation">
@@ -41,9 +41,10 @@
 					t("docs") %></a><% } %><%= if (member_is_admin) { %>
 				<div class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" href="#" id="navbarAdmin"
-						role="button" data-toggle="dropdown"
+						role="button" data-bs-toggle="dropdown"
 						aria-haspopup="true" aria-expanded="false"><%= t("admin") %></a>
-					<div class="dropdown-menu" aria-labelledby="navbarAdmin">
+					<div class="dropdown-menu dropdown-menu-dark"
+						aria-labelledby="navbarAdmin">
 						<a class="dropdown-item" href="<%= credentialsPath()
 							%>"><i aria-hidden="true" class="fas fa-id-badge"></i> <%=
 							t("credentials") %></a>
@@ -63,11 +64,11 @@
 					iconize(member_roles[0]) %></span><% } %>
 				<div class="nav-item dropdown">
 					<a href="#" class="nav-link dropdown-toggle"
-						data-toggle="dropdown" role="button"
+						data-bs-toggle="dropdown" role="button"
 						aria-haspopup="true" aria-expanded="false">
 						<img src="<%= member_icon %>" class="hc-img-profile img-circle">
 					</a>
-					<div class="dropdown-menu dropdown-menu-right">
+					<div class="dropdown-menu dropdown-menu-dark dropdown-menu-end">
 						<span class="dropdown-item-text"><i aria-hidden="true"
 							class="fas fa-id-card"></i> <%= member_name %></span>
 						<span class="dropdown-item-text"><i aria-hidden="true"
@@ -100,7 +101,7 @@
     </div>
 	</div>
 	<div class="lay-footer">
-		<div class="col-12 text-right">
+		<div class="col-12 text-end">
 			UART, the Hyeoncheon Project Member<br>
 			Golang, Buffalo, and many FOSSes under the hood<br>
 		</div>
