@@ -2,44 +2,37 @@
 #
 # vim: set ts=4 sw=4:
 
-set -xe
-
-HC_ROOT=/opt/hyeoncheon
+[ "$HC_ROOT" = "" ] && HC_ROOT=/opt/hyeoncheon
 UART_HOME=$HC_ROOT/uart
 
 if [ ! -f "database.yml" ]; then
-	echo "'database.yml' not exists. please create this file before run."
-	echo "'database.yml.dist' is good start point for this."
-	exit
+	echo "'database.yml' does not exists. create default."
+	cp database.yml.dist database.yml
 fi
 
-if [ ! -f "uart.conf" ]; then
-	echo "'uart.conf' not exists. please create this file before run."
-	echo "'supports/uart.conf.dist' is good start point for this."
-	exit
-fi
+set -xe
 
-# ensure package dependancy, vendoring
-go get -u github.com/golang/dep/cmd/dep
-dep ensure
-
-# setup buffalo environment and build
-npm install --no-progress
-go get -u github.com/gobuffalo/buffalo/buffalo
-buffalo build --static
+# ensure package dependancy, yarn, and build
+go mod tidy
+yarn install --no-progress
+buffalo build --static --tags netgo --clean-assets -o bin/uart
 
 # setup database
-buffalo db create && buffalo db migrate
-GO_ENV=production buffalo db create && GO_ENV=production buffalo db migrate
+#buffalo db create && buffalo db migrate
+#GO_ENV=production buffalo db create && GO_ENV=production buffalo db migrate
 
 # install files
+mkdir -p $UART_HOME/bin
 scripts/keygen.sh
-mkdir -p $UART_HOME
-install bin/uart $UART_HOME
-cp -a messages files locales templates $UART_HOME
+install bin/uart $UART_HOME/bin
+cp -a files messages $UART_HOME
 cp -a supports/uart.service $UART_HOME
-cp -a uart.conf $UART_HOME
+if [ -f "uart.conf" ]; then
+	cp -a uart.conf $UART_HOME/
+else
+	cp -a supports/uart.conf.dist $UART_HOME/uart.conf
+fi
 
 # setup systemd
-sudo ln -s /opt/hyeoncheon/uart/uart.service /etc/systemd/system/
+#sudo ln -s $UART_HOME/uart.service /etc/systemd/system/
 

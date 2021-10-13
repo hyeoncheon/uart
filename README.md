@@ -8,11 +8,11 @@
 [![codecov](https://codecov.io/gh/hyeoncheon/uart/branch/master/graph/badge.svg?token=F95PxOlGec)](https://codecov.io/gh/hyeoncheon/uart)
 
 UART is a management service for Universal Authorization, Authentication,
-Roles, and Teams for Hyeoncheon project.
+Roles, and Teams for the Hyeoncheon project.
 
 UART was developed as a successor of my old SiSO project, the original SSO
-service for Hyeoncheon project. (which was developed with Ruby on Rails
-on top of well known Devise, OmniAuth, and other open source components.)
+service for the Hyeoncheon project. (which was developed with Ruby on Rails
+on top of well-known Devise, OmniAuth, and other opensource components.)
 
 UART is written in Go (golang) and also is built upon many open source
 software modules including
@@ -29,7 +29,7 @@ The main features are:
 * Supports sign on/in with social network accounts
   * currently Google, Facebook, and Github accounts are supported.
 * (Future Plan) Email address based local authentication will be added.
-  * This will be used as One-Time-Password option for other authentication.
+  * This will be used as a One-Time-Password option for other authentication.
 * Works as OAuth2 Provider to provide SSO service for family projects.
 * OAuth2 Client App management with optional role based authorization.
   * Role management per each application.
@@ -48,7 +48,7 @@ Installation procedure for Ubuntu Linux.
 ### Requirement
 
 To build UART, you need a golang development environment, node.js, and
-gobuffalo. Also database like MySQL is required to run UART.
+gobuffalo. Also, a database like MySQL is required to run UART.
 
 The separated document
 [Requirements to Build/Run UART](Requirements.md) could be a good reference
@@ -65,7 +65,7 @@ $ git clone https://github.com/hyeoncheon/uart.git
 $ cd uart
 ```
 
-Then run following commands to get related packages.
+Then run the following commands to get related packages.
 
 ```console
 $ go mod tidy
@@ -83,6 +83,13 @@ info "fsevents@2.3.2" is an optional dependency and failed compatibility check. 
 [4/4] Building fresh packages...
 Done in 10.32s.
 $ 
+```
+
+Prepare `database.yml`.
+
+```console
+$ cp database.yml.dist database.yml
+$ $EDIT database.yml
 ```
 
 and build the binary.
@@ -110,26 +117,25 @@ $
 ### Install Files
 
 UART has assets to be installed with it. Configure `$UART_HOME`, generate
-SSL keys, then install binary and all assets into `$UART_HOME`.
+SSL keys, then install the binary and all assets into `$UART_HOME`.
 
 `uart.conf` and `database.yml` are provided as a sample. Please modify them
 with your conditions.
 
 ```console
 $ export UART_HOME=/opt/hyeoncheon/uart
-$ mkdir -p $UART_HOME
+$ mkdir -p $UART_HOME/bin
 $ scripts/keygen.sh
-$ install bin/uart $UART_HOME
-$ cp -a messages files locales templates $UART_HOME
+$ install bin/uart $UART_HOME/bin
+$ cp -a files messages $UART_HOME
 $ cp supports/uart.service $UART_HOME
 $ cp supports/uart.conf.dist $UART_HOME/uart.conf
-$ cp database.yml.dist $UART_HOME/database.yml
+$ cp database.yml $UART_HOME/database.yml
 $ $EDITOR $UART_HOME/uart.conf
-$ $EDITOR $UART_HOME/database.yml
 $ 
 ```
 
-Assets also includes service description. Register it as system service.
+Assets also include a service description. Register it as a system service.
 
 ```console
 $ sudo systemctl enable $UART_HOME/uart.service
@@ -146,9 +152,11 @@ Mostly done. But UART needs some more preparation to be ready to run.
 
 ### Configure Database
 
-UART is backed by database. You need to configure database before run it.
+UART is backed by a database. You need to configure the database before
+running it.
 
-(Please make sure if you configure `database.yml` before run the commands.)
+(Please make sure if you configure `database.yml` before running the
+commands.)
 
 For development, run the following command. The default environment is
 `development` so we can omit the configuration. The output can be different
@@ -173,8 +181,8 @@ mysqldump: Error: 'Access denied; you need (at least one of) the PROCESS privile
 $ 
 ```
 
-For production mode, you can run following command. (or you can use the same
-command above if you already exported `GO_ENV` environment variable.)
+For production mode, you can run the following command. (or you can use the
+same command above if you already exported the `GO_ENV` environment variable.)
 
 ```console
 $ GO_ENV=production buffalo db create && GO_ENV=production buffalo db migrate
@@ -184,7 +192,7 @@ $
 
 ### Preparing Social Logins
 
-Currently UART supports login via Google, Facebook, and Github. Before using
+Currently, UART supports login via Google, Facebook, and Github. Before using
 them, you need to configure them from their own websites.
 
 * https://console.cloud.google.com/apis/credentials
@@ -203,13 +211,13 @@ export GITHUB_SECRET="..."
 ```
 
 Note: UART does not support enabling/disabling selectively for now. You need
-to configure them all, otherwise users will see errors when they click on
+to configure them all, otherwise, users will see errors when they click on
 unconfigured login link.
 
 
 ### Configure Mailgun
 
-The only suppported email sending feature for now is using www.mailgun.com.
+The only supported email sending feature, for now, is using www.mailgun.com.
 Not sure they still provide Free Plan but please check and configure it.
 
 
@@ -298,10 +306,10 @@ and its own roles.
 
 #### Membership
 
-Users can see their registered applications as a user, Messangers, Teams,
-and Credentials. Also they can request roles for each applications. E.g.
-An user can be an user of App-A, a manager of App-B, while they all are
-basically an user of UART itself.
+Users can see their registered applications as a user, Messengers, Teams,
+and Credentials. Also, they can request roles for each application. E.g.
+A user can be a user of App-A, a manager of App-B, while they all are
+basically a user of UART itself.
 
 ![UART Membership](docs/uart-membership.png)
 

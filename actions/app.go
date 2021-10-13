@@ -11,7 +11,7 @@ import (
 	csrf "github.com/gobuffalo/mw-csrf"
 	i18n "github.com/gobuffalo/mw-i18n"
 	paramlogger "github.com/gobuffalo/mw-paramlogger"
-	"github.com/gobuffalo/packr"
+	"github.com/gobuffalo/packr/v2"
 	"github.com/gorilla/sessions"
 	"github.com/markbates/goth/gothic"
 	"github.com/pkg/errors"
@@ -74,7 +74,7 @@ func App() *buffalo.App {
 
 		// Setup and use translations:
 		var err error
-		if T, err = i18n.New(packr.NewBox(uartHome+"/locales"), "en-US"); err != nil {
+		if T, err = i18n.New(packr.New("app:locales", "../locales"), "en-US"); err != nil {
 			app.Stop(err)
 		}
 		app.Use(T.Middleware())

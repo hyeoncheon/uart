@@ -1,28 +1,28 @@
 # This is a multi-stage Dockerfile and requires >= Docker 17.05
 # https://docs.docker.com/engine/userguide/eng-image/multistage-build/
-FROM gobuffalo/buffalo:v0.9.1.2 as builder
+FROM gobuffalo/buffalo:v0.17.3 as builder
 
-RUN mkdir -p $GOPATH/src/github.com/hyeoncheon/uart
-WORKDIR $GOPATH/src/github.com/hyeoncheon/uart
+RUN mkdir -p /build
+WORKDIR /build
 
-# this will cache the npm install step, unless package.json changes
-ADD package.json .
-RUN npm install
+# cache npm and go packages, unless they are changed
+COPY package.json yarn.lock ./
+RUN yarn install --no-progress
+COPY go.mod go.sum ./
+RUN go mod download
+# then copy source tree and build
 ADD . .
-RUN buffalo build --static -o /bin/app
+RUN HC_ROOT=/ scripts/setup.sh
+
 
 FROM alpine
-RUN apk add --no-cache bash
+RUN apk add --no-cache bash ca-certificates
+COPY --from=builder /uart /uart
+WORKDIR /uart
 
-# Comment out to run the binary in "production" mode:
-# ENV GO_ENV=production
-
-WORKDIR /bin/
-
-COPY --from=builder /bin/app .
-
+# Uncomment to run the binary in "production" mode:
+#ENV GO_ENV=production
+ENV ADDR=0.0.0.0
 EXPOSE 3000
 
-# Comment out to run the migrations before running the binary:
-# CMD /bin/app migrate; /bin/app
-CMD /bin/app
+CMD /uart/bin/uart migrate && /uart/bin/uart
