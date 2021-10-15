@@ -16,7 +16,7 @@ RUN HC_ROOT=/ scripts/setup.sh
 
 
 FROM alpine
-RUN apk add --no-cache bash ca-certificates
+RUN apk add --no-cache bash ca-certificates curl
 COPY --from=builder /uart /uart
 WORKDIR /uart
 

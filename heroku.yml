@@ -1,0 +1,9 @@
+build:
+  docker:
+    web: Dockerfile
+
+release:
+  command:
+    - /uart/bin/uart migrate
+  image: web
+
