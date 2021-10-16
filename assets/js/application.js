@@ -18,14 +18,14 @@ $(() => {
 	var current_path = document.location.pathname;
 	$(".nav-item").removeClass("active");
 	$(".nav-item").each(function(index) {
-		if ($(this).attr('href') == current_path) {
+		if (current_path.startsWith($(this).attr('href'))) {
 			$(this).addClass("active");
 			return false; // exit the loop
 		}
 	});
 	$(".dropdown-item").removeClass("active");
 	$(".dropdown-item").each(function(index) {
-		if ($(this).attr('href') == current_path) {
+		if (current_path.startsWith($(this).attr('href'))) {
 			$(this).addClass("active");
 			$(this).parent().parent().addClass("active");
 			return false; // exit the loop
