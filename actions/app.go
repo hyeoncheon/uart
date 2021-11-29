@@ -2,22 +2,24 @@ package actions
 
 import (
 	"log"
+	"net/http"
 	"os"
 	"path"
 
 	"github.com/gobuffalo/buffalo"
-	"github.com/gobuffalo/buffalo-pop/v2/pop/popmw"
+	"github.com/gobuffalo/buffalo-pop/v3/pop/popmw"
 	"github.com/gobuffalo/envy"
 	csrf "github.com/gobuffalo/mw-csrf"
-	i18n "github.com/gobuffalo/mw-i18n"
+	i18n "github.com/gobuffalo/mw-i18n/v2"
 	paramlogger "github.com/gobuffalo/mw-paramlogger"
-	"github.com/gobuffalo/packr/v2"
 	"github.com/gorilla/sessions"
 	"github.com/markbates/goth/gothic"
 	"github.com/pkg/errors"
 
 	"github.com/hyeoncheon/uart/jobs"
+	"github.com/hyeoncheon/uart/locales"
 	"github.com/hyeoncheon/uart/models"
+	"github.com/hyeoncheon/uart/public"
 )
 
 // ENV is used to help switch settings based on where the
@@ -71,13 +73,7 @@ func App() *buffalo.App {
 		//  c.Value("tx").(*pop.PopTransaction)
 		// Remove to disable this.
 		app.Use(popmw.Transaction(models.DB))
-
-		// Setup and use translations:
-		var err error
-		if T, err = i18n.New(packr.New("app:locales", "../locales"), "en-US"); err != nil {
-			app.Stop(err)
-		}
-		app.Use(T.Middleware())
+		app.Use(translations())
 
 		app.GET("/", HomeHandler)
 		app.GET("/login", LoginHandler)
@@ -167,7 +163,7 @@ func App() *buffalo.App {
 		app.GET("/requests/roles/{role_id}/retire", r.(*RolesResource).Retire)
 
 		// move to end of the routing :-(
-		app.ServeFiles("/", assetsBox)
+		app.ServeFiles("/", http.FS(public.FS()))
 	}
 
 	return app
@@ -181,4 +177,12 @@ func newSessionStore(env string) sessions.Store {
 	cookieStore := sessions.NewCookieStore([]byte(secret))
 	cookieStore.MaxAge(60 * 60 * 1)
 	return cookieStore
+}
+
+func translations() buffalo.MiddlewareFunc {
+	var err error
+	if T, err = i18n.New(locales.FS(), "en-US"); err != nil {
+		app.Stop(err)
+	}
+	return T.Middleware()
 }

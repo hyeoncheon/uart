@@ -140,13 +140,9 @@ Buffalo provides several ways to install and configure it. Since I want
 a sqlite support, my choice is as follow.
 
 ```console
-$ go install -v -tags sqlite github.com/gobuffalo/cli/cmd/buffalo@v0.17.2
-go: downloading github.com/gobuffalo/cli v0.17.2
-go: downloading github.com/gobuffalo/clara v0.10.1
-go: downloading github.com/gobuffalo/buffalo-pop v1.23.1
+$ go install -v -tags sqlite github.com/gobuffalo/cli/cmd/buffalo@v0.18.1
+go: downloading github.com/gobuffalo/cli v0.18.1
 <...>
-github.com/gobuffalo/cli/internal/genny/newapp/web
-github.com/gobuffalo/cli/internal/cmd
 github.com/gobuffalo/cli/cmd/buffalo
 $ 
 ```
@@ -155,7 +151,7 @@ Now you have `buffalo` command.
 
 ```console
 $ buffalo version
-INFO[0000] Buffalo version is: v0.17.2
+INFO[0000] Buffalo version is: v0.18.1
 $ which buffalo
 /home/sio4/go/bin/buffalo
 $ 
@@ -168,14 +164,14 @@ Buffalo has plugins and `buffalo-pop` is one of them when the application
 needs database access via pop.
 
 ```console
-$ go get -v -tags sqlite github.com/gobuffalo/buffalo-pop/v2
-go: downloading github.com/spf13/cobra v0.0.6
-go: downloading github.com/gobuffalo/pop/v5 v5.3.0
-go: downloading github.com/gobuffalo/flect v0.2.1
+$ go get -v -tags sqlite github.com/gobuffalo/buffalo-pop/v3
+go: downloading github.com/spf13/cobra v1.2.1
+go: downloading github.com/gobuffalo/pop/v6 v6.0.0
+go: downloading github.com/gobuffalo/flect v0.2.4
 <...>
-github.com/gobuffalo/pop/v5/soda/cmd
-github.com/gobuffalo/buffalo-pop/v2/cmd
-github.com/gobuffalo/buffalo-pop/v2
+github.com/gobuffalo/pop/v6/soda/cmd
+github.com/gobuffalo/buffalo-pop/v3/cmd
+github.com/gobuffalo/buffalo-pop/v3
 $ 
 ```
 

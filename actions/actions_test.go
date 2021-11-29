@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/gobuffalo/httptest"
-	"github.com/gobuffalo/suite/v3"
+	"github.com/gobuffalo/suite/v4"
 	"github.com/gofrs/uuid"
 
 	"github.com/hyeoncheon/uart/actions"

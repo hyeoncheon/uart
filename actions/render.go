@@ -7,22 +7,24 @@ import (
 
 	"github.com/gobuffalo/buffalo/render"
 	"github.com/gobuffalo/flect"
-	"github.com/gobuffalo/packr/v2"
 	"github.com/gofrs/uuid"
+
+	"github.com/hyeoncheon/uart/public"
+	"github.com/hyeoncheon/uart/templates"
 )
 
 var r *render.Engine
-var assetsBox = packr.New("app:assets", "../public")
 
 func init() {
 	r = render.New(render.Options{
 		// HTML layout to be used for all HTML requests:
 		HTMLLayout: "application.html",
 
-		// Box containing all of the templates:
-		//TemplatesBox: packr.NewBox("../templates"),
-		TemplatesBox: packr.New("app:templates", "../templates"),
-		AssetsBox:    assetsBox,
+		// fs.FS containing templates
+		TemplatesFS: templates.FS(),
+
+		// fs.FS containing assets
+		AssetsFS: public.FS(),
 
 		// Add template helpers here:
 		Helpers: render.Helpers{

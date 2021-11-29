@@ -12,7 +12,7 @@ import (
 
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/flect"
-	"github.com/gobuffalo/pop/v5"
+	"github.com/gobuffalo/pop/v6"
 	"github.com/pkg/errors"
 
 	"github.com/hyeoncheon/uart/jobs"
