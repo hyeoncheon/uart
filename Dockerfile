@@ -1,28 +1,42 @@
 # This is a multi-stage Dockerfile and requires >= Docker 17.05
 # https://docs.docker.com/engine/userguide/eng-image/multistage-build/
-FROM gobuffalo/buffalo:v0.17.3 as builder
+FROM gobuffalo/buffalo:v0.18.3 as builder
 
-RUN mkdir -p /build
-WORKDIR /build
+ENV GOPROXY http://proxy.golang.org
 
-# cache npm and go packages, unless they are changed
-COPY package.json yarn.lock ./
-RUN yarn install --no-progress
-COPY go.mod go.sum ./
+RUN mkdir -p /src/github.com/hyeoncheon/uart
+WORKDIR /src/github.com/hyeoncheon/uart
+
+# this will cache the npm install step, unless package.json changes
+ADD package.json .
+ADD yarn.lock .
+RUN yarn install
+# Copy the Go Modules manifests
+COPY go.mod go.mod
+COPY go.sum go.sum
+# cache deps before building and copying source so that we don't need to re-download as much
+# and so that source changes don't invalidate our downloaded layer
 RUN go mod download
-# then copy source tree and build
+
 ADD . .
 RUN HC_ROOT=/ scripts/setup.sh
 
-
 FROM alpine
-RUN apk add --no-cache bash ca-certificates curl
-COPY --from=builder /uart /uart
+RUN apk add --no-cache bash
+RUN apk add --no-cache ca-certificates
+
 WORKDIR /uart
 
+COPY --from=builder /uart /uart
+
 # Uncomment to run the binary in "production" mode:
-#ENV GO_ENV=production
+# ENV GO_ENV=production
+
+# Bind the app to 0.0.0.0 so it can be seen from outside the container
 ENV ADDR=0.0.0.0
+
 EXPOSE 3000
 
-CMD /uart/bin/uart migrate && /uart/bin/uart
+# Uncomment to run the migrations before running the binary:
+# CMD /bin/app migrate; /bin/app
+CMD exec /bin/app

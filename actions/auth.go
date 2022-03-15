@@ -22,13 +22,14 @@ import (
 func init() {
 	gothic.Store = App().SessionStore
 
+	fmt.Println("App().Host:", App().Options.Host)
 	goth.UseProviders(
 		gplus.New(os.Getenv("GPLUS_KEY"), os.Getenv("GPLUS_SECRET"),
-			fmt.Sprintf("%s%s", App().Host, "/auth/gplus/callback")),
+			fmt.Sprintf("%s%s", App().Options.Host, "/auth/gplus/callback")),
 		facebook.New(os.Getenv("FACEBOOK_KEY"), os.Getenv("FACEBOOK_SECRET"),
-			fmt.Sprintf("%s%s", App().Host, "/auth/facebook/callback")),
+			fmt.Sprintf("%s%s", App().Options.Host, "/auth/facebook/callback")),
 		github.New(os.Getenv("GITHUB_KEY"), os.Getenv("GITHUB_SECRET"),
-			fmt.Sprintf("%s%s", App().Host, "/auth/github/callback")),
+			fmt.Sprintf("%s%s", App().Options.Host, "/auth/github/callback")),
 	)
 }
 
