@@ -1,6 +1,6 @@
 # This is a multi-stage Dockerfile and requires >= Docker 17.05
 # https://docs.docker.com/engine/userguide/eng-image/multistage-build/
-FROM gobuffalo/buffalo:v0.18.3 as builder
+FROM gobuffalo/buffalo:v0.18.7 as builder
 
 ENV GOPROXY http://proxy.golang.org
 
@@ -9,7 +9,9 @@ WORKDIR /src/github.com/hyeoncheon/uart
 
 # this will cache the npm install step, unless package.json changes
 ADD package.json .
-ADD yarn.lock .
+ADD yarn.lock .yarnrc.yml ./
+RUN mkdir .yarn
+COPY .yarn .yarn
 RUN yarn install
 # Copy the Go Modules manifests
 COPY go.mod go.mod
@@ -19,13 +21,14 @@ COPY go.sum go.sum
 RUN go mod download
 
 ADD . .
+#RUN buffalo build --static -o /bin/app
 RUN HC_ROOT=/ scripts/setup.sh
 
 FROM alpine
 RUN apk add --no-cache bash
 RUN apk add --no-cache ca-certificates
 
-WORKDIR /uart
+WORKDIR /uart/
 
 COPY --from=builder /uart /uart
 
