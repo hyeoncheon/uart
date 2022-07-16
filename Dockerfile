@@ -8,10 +8,9 @@ RUN mkdir -p /src/github.com/hyeoncheon/uart
 WORKDIR /src/github.com/hyeoncheon/uart
 
 # this will cache the npm install step, unless package.json changes
-ADD package.json .
-ADD yarn.lock .yarnrc.yml ./
-RUN mkdir .yarn
-COPY .yarn .yarn
+COPY package.json .
+COPY yarn.lock .
+COPY .yarn* .
 RUN yarn install
 # Copy the Go Modules manifests
 COPY go.mod go.mod
@@ -20,13 +19,13 @@ COPY go.sum go.sum
 # and so that source changes don't invalidate our downloaded layer
 RUN go mod download
 
-ADD . .
+COPY . .
 #RUN buffalo build --static -o /bin/app
 RUN HC_ROOT=/ scripts/setup.sh
 
-FROM alpine
-RUN apk add --no-cache bash
-RUN apk add --no-cache ca-certificates
+### check and update package version here: https://pkgs.alpinelinux.org/packages
+FROM alpine:latest
+RUN apk add --no-cache 'bash=~5.1' 'ca-certificates>=20211220-r0'
 
 WORKDIR /uart/
 
@@ -42,4 +41,4 @@ EXPOSE 3000
 
 # Uncomment to run the migrations before running the binary:
 # CMD /bin/app migrate; /bin/app
-CMD exec /bin/app
+CMD ["/uart/bin/uart"]
