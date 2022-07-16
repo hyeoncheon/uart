@@ -2,7 +2,8 @@ language: go
 dist: bionic
 
 go:
-  - 1.16.x
+  - 1.17.x
+  - 1.18.x
 
 # sudo enabled, fully virtualized virtual machine required for mysql 5.7.
 # https://docs.travis-ci.com/user/database-setup/#mysql
@@ -18,15 +19,15 @@ env:
 
 before_install:
   - nvm --version
-  - nvm install 14.17.4
+  - nvm install lts/fermium
   - node --version
   - env
   - mysql --version
   - go install -tags sqlite github.com/gobuffalo/cli/cmd/buffalo@latest
+  - go install github.com/mattn/goveralls@latest
   - ls -l $GOPATH/bin
   - buffalo version
   - buffalo help
-  - go install github.com/mattn/goveralls@latest
 
 install:
   - go mod tidy
@@ -42,15 +43,14 @@ before_script:
 go_import_path: github.com/hyeoncheon/uart
 
 script:
+  - buffalo plugins install
+  - buffalo plugins list
+  - buffalo build
+  - cp database.yml.travis database.yml
   - >
-    go mod tidy &&
-    cat go.mod go.sum
-  - >
-    buffalo build --skip-assets &&
-    ls -l bin/uart &&
-    cp database.yml.travis database.yml &&
     UART_HOME=`pwd` buffalo test -coverprofile=c.out -covermode=count ./... &&
-    ./cc-test-reporter after-build --exit-code 0 &&
+    ./cc-test-reporter after-build --exit-code 0
+  - >
     buffalo pop drop -e test &&
     buffalo pop create -e test &&
     buffalo pop migrate -e test &&
