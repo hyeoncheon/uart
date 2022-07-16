@@ -126,7 +126,7 @@ func (ms *ModelSuite) Test_Member() {
 
 	// Credentials
 	cred.MemberID = member.ID
-	verrs, err = models.DB.ValidateAndCreate(cred)
+	_, err = models.DB.ValidateAndCreate(cred)
 	ms.Error(err) // duplicated
 
 	creds := mem.Credentials()

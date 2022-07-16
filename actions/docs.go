@@ -26,7 +26,7 @@ func (v DocsResource) List(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	docs := &models.Docs{}
 	q := tx.Q()
-	if false == c.Value("member_is_admin").(bool) {
+	if !c.Value("member_is_admin").(bool) {
 		q = q.Where("is_published = ?", true)
 	}
 	err := q.Order("category, subject").All(docs)
@@ -58,13 +58,13 @@ func (v DocsResource) Show(c buffalo.Context) error {
 	tx := c.Value("tx").(*pop.Connection)
 	doc := &models.Doc{}
 	q := tx.Q()
-	if false == c.Value("member_is_admin").(bool) {
+	if !c.Value("member_is_admin").(bool) {
 		q = q.Where("is_published = ?", true)
 	}
 	err := q.Find(doc, c.Param("doc_id"))
 	if err != nil {
 		q := tx.Q()
-		if false == c.Value("member_is_admin").(bool) {
+		if !c.Value("member_is_admin").(bool) {
 			q = q.Where("is_published = ?", true)
 		}
 		err = q.Where("slug = ?", c.Param("doc_id")).First(doc)

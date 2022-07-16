@@ -45,7 +45,6 @@ func initProvider(l buffalo.Logger) {
 	svr.AccessTokenGen = utils.NewRS256AccessTokenGen(brandName, keyFile)
 
 	logger.Info("oauth2 provider with jwt support initialized!")
-	return
 }
 
 func authorizeHandler(c buffalo.Context) error {

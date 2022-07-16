@@ -56,23 +56,22 @@ func RegisterAll(app *buffalo.App) {
 		logger.Infof("new background job handler %v registered", h)
 	}
 	logger.Infof("jobs registration completed! (%v handlers)", len(handlers))
-	return
 }
 
 func countRunning(name string) {
-	if h, ok := handlers[name]; ok == true {
+	if h, ok := handlers[name]; ok {
 		h.Running++
 	}
 }
 
 func countSuccess(name string) {
-	if h, ok := handlers[name]; ok == true {
+	if h, ok := handlers[name]; ok {
 		h.Success++
 	}
 }
 
 func printStatistics(name string) {
-	if h, ok := handlers[name]; ok == true {
+	if h, ok := handlers[name]; ok {
 		logger.Infof("statistics: %v", h)
 	}
 }

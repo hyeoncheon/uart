@@ -13,7 +13,7 @@ import (
 )
 
 func membershipHandler(c buffalo.Context) error {
-	member := &models.Member{}
+	var member *models.Member
 	if c.Value("member_is_admin").(bool) && c.Param("member_id") != "" {
 		member = models.GetMember(c.Param("member_id"))
 	} else {

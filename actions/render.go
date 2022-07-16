@@ -41,11 +41,11 @@ func init() {
 			"trunc": func(t interface{}, args ...int) string {
 				length := 20
 				var s string
-				switch t.(type) {
+				switch t := t.(type) {
 				case string:
-					s = t.(string)
+					s = t
 				case uuid.UUID:
-					s = t.(uuid.UUID).String()
+					s = t.String()
 					length = 14
 				}
 
