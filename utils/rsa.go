@@ -19,7 +19,7 @@ const (
 
 // GenRSAKeyPair generates and returns RSA private key, public pem with error
 func GenRSAKeyPair() (*rsa.PrivateKey, []byte, error) {
-	privateKey, err := rsa.GenerateKey(rand.Reader, 1024)
+	privateKey, err := rsa.GenerateKey(rand.Reader, 2048)
 	if err != nil {
 		return nil, []byte{}, errors.New(ErrKeyGen)
 	}

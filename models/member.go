@@ -128,10 +128,7 @@ func (m Member) GrantedApps() *Apps {
 // HasRole return true if the member has the role regardless of activated.
 func (m Member) HasRole(roleID uuid.UUID) bool {
 	err := DB.BelongsToThrough(&m, &RoleMap{}).Find(&Role{}, roleID)
-	if err != nil {
-		return false
-	}
-	return true
+	return err == nil
 }
 
 // AddRole create mapping object for the member.

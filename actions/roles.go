@@ -66,7 +66,7 @@ func (v RolesResource) Update(c buffalo.Context) error {
 		return c.Redirect(http.StatusFound, "/")
 	}
 
-	if role.IsReadonly == true {
+	if role.IsReadonly {
 		c.Flash().Add("danger", t(c, "cannot.delete.readonly.role"))
 		c.Logger().Errorf("access violation: %v tried to delete a readonly role %v", currentMember(c), role)
 		return c.Redirect(http.StatusFound, "/")
@@ -107,7 +107,7 @@ func (v RolesResource) Destroy(c buffalo.Context) error {
 		return c.Redirect(http.StatusFound, "/")
 	}
 
-	if role.IsReadonly == true {
+	if role.IsReadonly {
 		c.Flash().Add("danger", t(c, "cannot.delete.readonly.role"))
 		c.Logger().Errorf("access violation: %v tried to delete a readonly role %v", currentMember(c), role)
 		return c.Redirect(http.StatusFound, "/")
